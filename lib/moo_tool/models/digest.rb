@@ -6,8 +6,6 @@ module MooTool
       attr_reader :value
       attr_accessor :hint
 
-      DEVICE_TREE = IOReg.create
-
       def initialize(value, hint = nil)
         @hint = hint
 
@@ -59,7 +57,15 @@ module MooTool
       end
 
       def properties
-        DEVICE_TREE.properties_with_hash(shasum)
+        Digest.manifests.properties_with_hash(shasum)
+      end
+
+      def self.manifests
+        @manifests ||= IOReg.create
+      end
+
+      def self.load_manifests(path)
+        @manifest = IOReg.create path
       end
 
       def as_json(*_options)

@@ -58,8 +58,13 @@ module MooTool
         Node.new node
       end
 
-      def self.create
-        IOReg.new `ioreg -a -p IODeviceTree -l`
+      def self.create(path = nil)
+        if path
+          IOReg.new File.read(path)
+        else
+          IOReg.new `ioreg -a -p IODeviceTree -l`
+        end
+
       end
 
       attr_reader :manifests

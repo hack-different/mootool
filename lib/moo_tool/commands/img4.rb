@@ -4,9 +4,11 @@ module MooTool
   module Commands
     class IMG4 < Thor
 
+      method_option :manifest, type: :string, required: false, default: nil
       method_option :friendly, type: :boolean, default: true
       desc 'print', 'Parses and prints pretty versions of an img4/DER'
       def print(filename)
+        Models::Digest.load_manifests(options[:manifest]) if options[:manifest]
         file = Models::IMG4::File.load(filename)
         file.print(options[:friendly])
       end
@@ -26,9 +28,10 @@ module MooTool
         ap indexer.index
       end
 
+      method_option :path, type: :string, default: nil
       desc 'manifest', 'Prints the manifest of an img4/DER'
-      def manifest()
-        ap Models::IOReg.create.manifests
+      def manifest
+        ap Models::IOReg.create(options[:path]).manifests
       end
     end
   end
