@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     mootool (0.1.0)
-      ruby-macho
+      ruby-macho (~> 3)
       sorbet-runtime
 
 GEM
@@ -63,7 +63,6 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
-  bundler (> 2)
   mootool!
   overcommit
   rake
@@ -71,7 +70,6 @@ DEPENDENCIES
   rubocop
   rubocop-rake
   rubocop-rspec
-  ruby-macho
   sorbet
 
 BUNDLED WITH
