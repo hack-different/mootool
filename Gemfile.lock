@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mootool (0.1.0)
+    mootool (0.1.1)
       ruby-macho (~> 3)
       sorbet-runtime
 
@@ -55,12 +55,15 @@ GEM
     ruby-progressbar (1.11.0)
     sorbet (0.5.9553)
       sorbet-static (= 0.5.9553)
-    sorbet-runtime (0.5.9553)
+    sorbet-runtime (0.5.9589)
     sorbet-static (0.5.9553-universal-darwin-21)
+    sorbet-static (0.5.9553-x86_64-linux)
     unicode-display_width (2.1.0)
 
 PLATFORMS
+  arm64-darwin-21
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   mootool!
