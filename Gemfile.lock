@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mootool (0.2)
+    mootool (0.2.1)
       plist (~> 3)
       ruby-macho (~> 3)
       rubyzip (~> 2)
