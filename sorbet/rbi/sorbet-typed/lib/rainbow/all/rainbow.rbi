@@ -21,17 +21,23 @@ module Rainbow
         values: T.any([Integer], [Integer, Integer, Integer])
       ).returns(Color)
     end
-    def self.build(ground, values); end
+    def self.build(ground, values)
+      ;
+    end
 
     sig { params(hex: String).returns([Integer, Integer, Integer]) }
-    def self.parse_hex_color(hex); end
+    def self.parse_hex_color(hex)
+      ;
+    end
 
     class Indexed < Color
       sig { returns(Integer) }
       attr_reader :num
 
       sig { params(ground: Symbol, num: Integer).void }
-      def initialize(ground, num); end
+      def initialize(ground, num)
+        ;
+      end
 
       sig { returns(T::Array[Integer]) }
       def codes; end
@@ -47,7 +53,9 @@ module Rainbow
       def self.valid_names; end
 
       sig { params(ground: Symbol, name: Symbol).void }
-      def initialize(ground, name); end
+      def initialize(ground, name)
+        ;
+      end
     end
 
     class RGB < Indexed
@@ -55,10 +63,14 @@ module Rainbow
       attr_accessor :r, :g, :b
 
       sig { params(value: Numeric).returns(Integer) }
-      def to_ansi_domain(value); end
+      def to_ansi_domain(value)
+        ;
+      end
 
       sig { params(ground: Symbol, values: Integer).void }
-      def initialize(ground, *values); end
+      def initialize(ground, *values)
+        ;
+      end
 
       sig { returns(T::Array[Integer]) }
       def codes; end
@@ -74,7 +86,9 @@ module Rainbow
       def self.valid_names; end
 
       sig { params(ground: Symbol, name: Symbol).void }
-      def initialize(ground, name); end
+      def initialize(ground, name)
+        ;
+      end
     end
   end
 
@@ -85,26 +99,40 @@ module Rainbow
   def self.enabled; end
 
   sig { params(value: T::Boolean).returns(T::Boolean) }
-  def self.enabled=(value); end
+  def self.enabled=(value)
+    ;
+  end
 
   sig { params(string: String).returns(String) }
-  def self.uncolor(string); end
+  def self.uncolor(string)
+    ;
+  end
 
   class NullPresenter < String
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(NullPresenter) }
-    def color(*values); end
+    def color(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(NullPresenter) }
-    def foreground(*values); end
+    def foreground(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(NullPresenter) }
-    def fg(*values); end
+    def fg(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(NullPresenter) }
-    def background(*values); end
+    def background(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(NullPresenter) }
-    def bg(*values); end
+    def bg(*values)
+      ;
+    end
 
     sig { returns(NullPresenter) }
     def reset; end
@@ -171,19 +199,29 @@ module Rainbow
     TERM_EFFECTS = T.let(nil, T::Hash[Symbol, Integer])
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(Presenter) }
-    def color(*values); end
+    def color(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(Presenter) }
-    def foreground(*values); end
+    def foreground(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(Presenter) }
-    def fg(*values); end
+    def fg(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(Presenter) }
-    def background(*values); end
+    def background(*values)
+      ;
+    end
 
     sig { params(values: T.any([Integer], [Integer, Integer, Integer])).returns(Presenter) }
-    def bg(*values); end
+    def bg(*values)
+      ;
+    end
 
     sig { returns(Presenter) }
     def reset; end
@@ -248,10 +286,14 @@ module Rainbow
 
   class StringUtils
     sig { params(string: String, codes: T::Array[Integer]).returns(String) }
-    def self.wrap_with_sgr(string, codes); end
+    def self.wrap_with_sgr(string, codes)
+      ;
+    end
 
     sig { params(string: String).returns(String) }
-    def uncolor(string); end
+    def uncolor(string)
+      ;
+    end
   end
 
   VERSION = T.let(nil, String)
@@ -261,10 +303,14 @@ module Rainbow
     attr_accessor :enabled
 
     sig { params(enabled: T::Boolean).void }
-    def initialize(enabled = true); end
+    def initialize(enabled = true)
+      ;
+    end
 
     sig { params(string: String).returns(T.any(Rainbow::Presenter, Rainbow::NullPresenter)) }
-    def wrap(string); end
+    def wrap(string)
+      ;
+    end
   end
 
   module X11ColorNames
@@ -273,4 +319,6 @@ module Rainbow
 end
 
 sig { params(string: String).returns(Rainbow::Presenter) }
-def Rainbow(string); end
+def Rainbow(string)
+  ;
+end

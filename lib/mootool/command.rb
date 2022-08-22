@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module MooTool
+  # Abstract base command for all command types.
   class Command
     attr_reader :file, :controller, :action, :output_format, :remain
 
