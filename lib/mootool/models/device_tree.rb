@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# typed: true
 
 require 'sorbet-runtime'
 
@@ -19,9 +20,12 @@ module MooTool
 
         sig { params(data: T.any(IO, StringIO)).void }
         def initialize(data)
-          property_count, child_count = data.read(8).unpack(NODE_FORMAT)
-          @properties = {}
-          @children = []
+          vals = T.must(data.read(8)).unpack(NODE_FORMAT)
+          property_count = T.cast(vals[0], Integer)
+          child_count = T.cast(vals[1], Integer)
+
+          @properties = T.let({}, T::Hash[String, Property])
+          @children = T.let([], T::Array[Node])
 
           property_count.times do
             prop = Property.new(data)
@@ -39,11 +43,10 @@ module MooTool
 
         sig { params(data: T.any(StringIO, IO)).void }
         def initialize(data)
-          header = data.read(36)
+          args = T.must(data.read(36)).unpack(PROP_FORMAT)
 
-          raise  'Unable to read property header' unless header
-
-          @name, @size = header.unpack(PROP_FORMAT)
+          @name = T.let(T.cast(args[0], String), String)
+          @size = T.let(T.cast(args[1], Integer), Integer)
 
           if @size & 0x80000000 != 0
             @template = true
@@ -51,62 +54,31 @@ module MooTool
           end
 
           @value = data.read(@size.align(4))
-          @value = @value[0..@size]
+          @value = T.must(@value)[0..@size]
         end
       end
 
       attr_reader :root
 
       # @param [String] data
-      sig { params(data: T.any(IO, String, Pathname)).void }
+      sig { params(data: T.any(IO, String, StringIO, Pathname)).void }
       def initialize(data)
-        @data = data
-
-        @data = File.open(@data.realpath, 'rb') if @data.is_a?(Pathname)
-        @data = StringIO.new(@data) if @data.is_a?(String)
-
+        case data
+        when Pathname
+          data = T.assert_type!(data, Pathname)
+          @data = File.open(data.realpath, 'rb')
+        when String
+          data = T.assert_type!(data, String)
+          @data = StringIO.new(data)
+        when IO
+          @data = T.cast(data, IO)
+        end
         @root = Node.new(@data)
       end
 
       sig { params(path: String).returns(DeviceTree) }
       def self.open(path)
         DeviceTree.new(Pathname.new(path))
-      end
-
-      private
-
-      def parse
-        @children = []
-        @total_length = 8
-        @property_count, @child_count = data.unpack(NODE_FORMAT)
-        data = data[8..]
-
-        (0...@property_count).inject(data) do |data, _|
-          parse_property(data)
-        end
-
-        @child_count.times { @children << DeviceTreeNode.new(data) }
-      end
-
-      sig { params(data: String).returns(String) }
-      def parse_property(data)
-        key, length = data.unpack(PROP_FORMAT)
-        data = data[36..]
-
-        # Indicates that the value is padded out to the next whole int32
-        if length & 0x80000000 != 0
-          @template = true
-          length &= 0x7fffffff
-        end
-
-        aligned_length = length.align(4)
-
-        @key = key
-        @value = data[0..length - 1]
-
-        @total_length += 32 + 4 + aligned_length
-
-        data[aligned_length..]
       end
     end
   end

@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email = ['rickmark@outlook.com']
 
   spec.summary = "Mach-O's Other Tool"
-  spec.description = 'mootool is a swiss army knife for dealing wiith Apple Mach-O files'
+  spec.description = 'mootool is a swiss army knife for dealing with Apple Mach-O files'
   spec.homepage = 'https://github.com/hack-different/mootool'
   spec.license = 'MIT'
 

@@ -1,8 +1,11 @@
 Metrics/BlockLength:
+  Max: 35
   Exclude:
     - 'spec/**/*.rb'
     - '*.gemspec'
 
+Metrics/MethodLength:
+  Max: 35
 
 Gemspec/DeprecatedAttributeAssignment: # new in 1.30
   Enabled: true

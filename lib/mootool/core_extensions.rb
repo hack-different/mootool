@@ -1,9 +1,8 @@
 # frozen_string_literal: true
+# typed: true
 
-# rubocop:disable Style/Documentation
 class Integer
   extend T::Sig
-  # rubocop:enable Style/Documentation
   # Aligns the integer to the nearest multiple of the alignment.
   # @param alignment [Integer] the alignment
   # @return [Integer] the aligned integer

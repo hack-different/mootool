@@ -3,7 +3,9 @@
 require 'openssl'
 
 module MooTool
+  # Module for Apple's IMG4 encryption and signing format
   module Img4
+    # An instance of a IMG4 file
     class File
       attr_reader :payload, :manifest
 
@@ -11,8 +13,6 @@ module MooTool
         @path = path
         der = ::File.binread(path)
         @data = OpenSSL::ASN1.decode(der)
-        @payload = nil
-        @manifest = nil
 
         case @data.first.value
         when 'IM4P'

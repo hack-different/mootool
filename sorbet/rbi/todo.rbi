@@ -4,6 +4,4 @@
 
 # typed: false
 
-module MooTool::Models::DeviceTree::DeviceTreeNode
-  ;
-end
+module MooTool::Models::DeviceTree::DeviceTreeNode; end
