@@ -2,7 +2,7 @@
 
 module MooTool
   module Controllers
-    class Sections
+    class Sections < ControllerBase
     end
   end
 end

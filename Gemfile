@@ -14,6 +14,8 @@ group :development, :test do
   gem 'rubocop'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
+  gem 'simplecov'
   gem 'sorbet'
+  gem 'spoom'
   gem 'tapioca', require: false
 end

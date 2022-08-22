@@ -15,7 +15,10 @@ module MooTool
           output_path = File.join(output_folder, entry.entry_id.to_s)
           puts "Writing to #{output_path}"
           output_file = File.open(output_path, 'wb')
+          # rubocop:disable Naming/VariableNumber
+          # We do not have control of this name as it is part of ruby-macho
           matching = file.command(:LC_SEGMENT_64).find { |c| c.fileoff == entry.fileoff }
+          # rubocop:enable Naming/VariableNumber
 
           input.seek(matching.fileoff)
           output_file.write input.read(matching.filesize)

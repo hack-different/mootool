@@ -3,7 +3,10 @@
 CONTROLLERS_PATH = File.join(File.dirname(__FILE__), 'controllers')
 
 module MooTool
+  # Controller base is the base class for all controllers that respond to command line requests.
   class ControllerBase
+    @controllers = []
+
     def self.load_all
       Dir.glob(File.join(CONTROLLERS_PATH, '*')).each do |file|
         require file
@@ -15,8 +18,8 @@ module MooTool
     end
 
     def self.inherited(child)
-      @@controllers ||= []
       @@controllers << child
+      super
     end
 
     class << self

@@ -2,7 +2,7 @@
 
 module MooTool
   module Controllers
-    class DyldLinker
+    class DyldLinker < ControllerBase
     end
   end
 end

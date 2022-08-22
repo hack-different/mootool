@@ -7,6 +7,9 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35
 
+Metrics/AbcSize:
+  Max: 25
+
 Gemspec/DeprecatedAttributeAssignment: # new in 1.30
   Enabled: true
 Gemspec/RequireMFA: # new in 1.23

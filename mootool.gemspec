@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'plist', '~> 3'
   spec.add_runtime_dependency 'ruby-macho', '~> 3'
-  spec.add_runtime_dependency 'rubyzip', '>= 2'
-  spec.add_runtime_dependency 'sorbet-runtime'
+  spec.add_runtime_dependency 'rubyzip', '~> 2'
+  spec.add_runtime_dependency 'sorbet-runtime', '~> 0'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
