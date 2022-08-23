@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'openssl'
+require_relative 'decompressor'
 
 module MooTool
   # Module for Apple's IMG4 encryption and signing format
@@ -18,12 +19,14 @@ module MooTool
         when 'IM4P'
           @type = @data.value[1].value
           @build = @data.value[2].value
-          @payload = @data.value[3].value
+          @payload = MooTool::Decompressor.new(@data.value[3].value).value
         when 'IMG4', 'IM4M'
           raise 'Not implemented'
         else
           raise "Unknown IMG4 type #{@data.first.value}"
         end
+
+        @manifest = Manifest.new(@payload) if @payload.start_with?('IM4M')
       end
 
       def payload?

@@ -37,7 +37,10 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_runtime_dependency 'lzfse'
+  spec.add_runtime_dependency 'lzss'
   spec.add_runtime_dependency 'plist', '~> 3'
+  spec.add_runtime_dependency 'ruby-lzma'
   spec.add_runtime_dependency 'ruby-macho', '~> 3'
   spec.add_runtime_dependency 'rubyzip', '~> 2'
   spec.add_runtime_dependency 'sorbet-runtime', '~> 0'
