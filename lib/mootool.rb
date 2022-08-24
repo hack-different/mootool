@@ -2,6 +2,7 @@
 
 require_relative 'mootool/version'
 
+require 'sorbet-runtime'
 require 'macho'
 require 'zip'
 
@@ -10,6 +11,9 @@ require_relative 'mootool/core_extensions'
 # MooTool
 module MooTool
   class Error < StandardError; end
+
+  # Namespace for all command line controllers
+  module Controllers; end
 
   # Your code goes here...
   autoload :Command, 'mootool/command'

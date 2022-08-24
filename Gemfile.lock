@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mootool (0.2.5)
+    mootool (0.2.6)
       lzfse
       lzss
       plist (~> 3)
