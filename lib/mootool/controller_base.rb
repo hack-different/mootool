@@ -1,3 +1,4 @@
+# typed: true
 # frozen_string_literal: true
 
 CONTROLLERS_PATH = File.join(File.dirname(__FILE__), 'controllers')

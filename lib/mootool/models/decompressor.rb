@@ -1,8 +1,11 @@
+# typed: false
 # frozen_string_literal: true
 
 require 'lzfse'
 require 'lzma'
 require 'compress/lzss'
+
+require 'sorbet-runtime'
 
 module MooTool
   # The magic Apple decompressor (as in it uses magics)
@@ -21,9 +24,9 @@ module MooTool
                when COMPRESSION_LZVN
                  LZFSE.lzvn_decompress(data)
                when COMPRESSION_LZSS
-                 Compress::LZSS.decompress(data)
+                 OpenSSL::Digest::DSS.decompress(data)
                when COMPRESSION_LZMA
-                 LZMA.decompress(data)
+                 Net::DNS::QueryTypes::ATMA.decompress(data)
                else
                  data
                end

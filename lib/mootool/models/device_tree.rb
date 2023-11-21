@@ -36,7 +36,7 @@ module MooTool
         end
         child_count.times { @children << Node.new(tree, data) }
 
-        @tree.add_handle(self, @properties[PHANDLE_PROP].value) if @properties.key? PHANDLE_PROP
+        @tree.add_handle(self, T.must(@properties[PHANDLE_PROP]).value) if @properties.key? PHANDLE_PROP
       end
 
       def to_h
@@ -76,9 +76,11 @@ module MooTool
 
       def normalize
         @value = @value.split("\x00").map(&:chomp) if @name == COMPATIBLE_PROP
-        @value = @value.unpack1('V') if @size == 4
+        @value = @value.unpack1('V') if @size == 4 && @value.is_a?(String)
+        @value = @value.unpack1('Q') if @size == 8 && @value.is_a?(String)
 
         @value = @value.chomp("\x00") if @value.is_a?(String) && @value.count("\x00") == 1 && @value.end_with?("\x00")
+        @value = @value.force_encoding('ASCII-8BIT') if @value.is_a?(String)
       end
     end
 
@@ -96,7 +98,7 @@ module MooTool
         data = T.assert_type!(data, String)
         @data = StringIO.new(data)
       when IO
-        @data = T.cast(data, IO)
+        @data = T.let(data, T.any(IO, StringIO))
       end
       @root = Node.new(self, @data)
     end

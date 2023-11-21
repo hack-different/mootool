@@ -6,7 +6,7 @@
 
 # The primary namespace for ruby-macho.
 #
-# source://ruby-macho-3.0.0/lib/macho/structure.rb:3
+# source://ruby-macho//lib/macho/structure.rb#3
 module MachO
   class << self
     # Signs the dylib using an ad-hoc identity.
@@ -17,10 +17,8 @@ module MachO
     # @raise [ModificationError] if the operation fails
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho.rb:51
-    def codesign!(filename)
-      ;
-    end
+    # source://ruby-macho//lib/macho.rb#51
+    def codesign!(filename); end
 
     # Opens the given filename as a MachOFile or FatFile, depending on its magic.
     #
@@ -31,102 +29,92 @@ module MachO
     # @return [MachOFile] if the file is a Mach-O
     # @return [FatFile] if the file is a Fat file
     #
-    # source://ruby-macho-3.0.0/lib/macho.rb:28
-    def open(filename)
-      ;
-    end
+    # source://ruby-macho//lib/macho.rb#28
+    def open(filename); end
   end
 end
 
 # Raised when the CPU type/sub-type pair is unknown.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:84
+# source://ruby-macho//lib/macho/exceptions.rb#84
 class MachO::CPUSubtypeError < ::MachO::MachOError
   # @param cputype [Integer] the CPU type of the unknown pair
   # @param cpusubtype [Integer] the CPU sub-type of the unknown pair
   # @return [CPUSubtypeError] a new instance of CPUSubtypeError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:85
-  def initialize(cputype, cpusubtype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#85
+  def initialize(cputype, cpusubtype); end
 end
 
 # Raised when the CPU type is unknown.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:75
+# source://ruby-macho//lib/macho/exceptions.rb#75
 class MachO::CPUTypeError < ::MachO::MachOError
   # @param cputype [Integer] the unknown CPU type
   # @return [CPUTypeError] a new instance of CPUTypeError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:76
-  def initialize(cputype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#76
+  def initialize(cputype); end
 end
 
 # Raised when codesigning fails. Certain environments
 # may want to rescue this to treat it as non-fatal.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:14
+# source://ruby-macho//lib/macho/exceptions.rb#14
 class MachO::CodeSigningError < ::MachO::MachOError; end
 
 # Raised when attempting to parse a compressed Mach-O without explicitly
 # requesting decompression.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:213
+# source://ruby-macho//lib/macho/exceptions.rb#213
 class MachO::CompressedMachOError < ::MachO::MachOError; end
 
 # Raised when attempting to decompress a compressed Mach-O without adequate
 # dependencies, or on other decompression errors.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:218
+# source://ruby-macho//lib/macho/exceptions.rb#218
 class MachO::DecompressionError < ::MachO::MachOError; end
 
 # Raised when a dylib is missing an ID
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:171
+# source://ruby-macho//lib/macho/exceptions.rb#171
 class MachO::DylibIdMissingError < ::MachO::RecoverableModificationError
   # @return [DylibIdMissingError] a new instance of DylibIdMissingError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:172
+  # source://ruby-macho//lib/macho/exceptions.rb#172
   def initialize; end
 end
 
 # Raised when attempting to change a dylib name that doesn't exist.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:164
+# source://ruby-macho//lib/macho/exceptions.rb#164
 class MachO::DylibUnknownError < ::MachO::RecoverableModificationError
   # @param dylib [String] the unknown shared library name
   # @return [DylibUnknownError] a new instance of DylibUnknownError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:165
-  def initialize(dylib)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#165
+  def initialize(dylib); end
 end
 
 # Raised when attempting to create a {FatFile} from one or more {MachOFile}s
 #  whose offsets will not fit within the resulting 32-bit {Headers::FatArch#offset} fields.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:204
+# source://ruby-macho//lib/macho/exceptions.rb#204
 class MachO::FatArchOffsetOverflowError < ::MachO::MachOError
   # @param offset [Integer] the offending offset
   # @return [FatArchOffsetOverflowError] a new instance of FatArchOffsetOverflowError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:205
-  def initialize(offset)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#205
+  def initialize(offset); end
 end
 
 # Raised when a fat binary is loaded with MachOFile.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:60
+# source://ruby-macho//lib/macho/exceptions.rb#60
 class MachO::FatBinaryError < ::MachO::MachOError
   # @return [FatBinaryError] a new instance of FatBinaryError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:61
+  # source://ruby-macho//lib/macho/exceptions.rb#61
   def initialize; end
 end
 
@@ -136,7 +124,7 @@ end
 # @see https://en.wikipedia.org/wiki/Mach-O#Multi-architecture_binaries
 # @see MachOFile
 #
-# source://ruby-macho-3.0.0/lib/macho/fat_file.rb:10
+# source://ruby-macho//lib/macho/fat_file.rb#10
 class MachO::FatFile
   extend ::Forwardable
 
@@ -148,10 +136,8 @@ class MachO::FatFile
   # @raise [ArgumentError] if the given file does not exist
   # @return [FatFile] a new instance of FatFile
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:94
-  def initialize(filename, **opts)
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#94
+  def initialize(filename, **opts); end
 
   # Add the given runtime path to the file's Mach-Os.
   #
@@ -161,17 +147,13 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#add_rpath
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:260
-  def add_rpath(path, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#260
+  def add_rpath(path, options = T.unsafe(nil)); end
 
   # @return [Boolean] whether or not the file is of type `MH_BUNDLE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def bundle?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def bundle?(*args, **_arg1, &block); end
 
   # Changes all dependent shared library install names from `old_name` to
   # `new_name`. In a fat file, this changes install names in all internal
@@ -186,10 +168,8 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#change_install_name
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:217
-  def change_dylib(old_name, new_name, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#217
+  def change_dylib(old_name, new_name, options = T.unsafe(nil)); end
 
   # Changes the file's dylib ID to `new_id`. If the file is not a dylib,
   #  does nothing.
@@ -203,10 +183,8 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#linked_dylibs
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:182
-  def change_dylib_id(new_id, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#182
+  def change_dylib_id(new_id, options = T.unsafe(nil)); end
 
   # Changes all dependent shared library install names from `old_name` to
   # `new_name`. In a fat file, this changes install names in all internal
@@ -221,10 +199,8 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#change_install_name
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:217
-  def change_install_name(old_name, new_name, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#217
+  def change_install_name(old_name, new_name, options = T.unsafe(nil)); end
 
   # Change the runtime path `old_path` to `new_path` in the file's Mach-Os.
   #
@@ -236,17 +212,13 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#change_rpath
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:245
-  def change_rpath(old_path, new_path, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#245
+  def change_rpath(old_path, new_path, options = T.unsafe(nil)); end
 
   # @return [Boolean] whether or not the file is of type `MH_CORE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def core?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def core?(*args, **_arg1, &block); end
 
   # Delete the given runtime path from the file's Mach-Os.
   #
@@ -257,31 +229,23 @@ class MachO::FatFile
   # @return void
   # @see MachOFile#delete_rpath
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:278
-  def delete_rpath(path, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#278
+  def delete_rpath(path, options = T.unsafe(nil)); end
 
   # @return [Boolean] whether or not the file is of type `MH_DSYM`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dsym?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dsym?(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLIB`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dylib?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dylib?(*args, **_arg1, &block); end
 
   # @return [String, nil] the Mach-O's dylib ID
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dylib_id(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dylib_id(*args, **_arg1, &block); end
 
   # Changes the file's dylib ID to `new_id`. If the file is not a dylib,
   #  does nothing.
@@ -295,31 +259,25 @@ class MachO::FatFile
   # @return [void]
   # @see MachOFile#linked_dylibs
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:182
-  def dylib_id=(new_id, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#182
+  def dylib_id=(new_id, options = T.unsafe(nil)); end
 
   # All load commands responsible for loading dylibs in the file's Mach-O's.
   #
   # @return [Array<LoadCommands::DylibCommand>] an array of DylibCommands
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:167
+  # source://ruby-macho//lib/macho/fat_file.rb#167
   def dylib_load_commands; end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLINKER`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dylinker?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dylinker?(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_EXECUTE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def executable?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def executable?(*args, **_arg1, &block); end
 
   # Extract a Mach-O with the given CPU type from the file.
   #
@@ -328,45 +286,37 @@ class MachO::FatFile
   # @param cputype [Symbol] the CPU type of the Mach-O being extracted
   # @return [MachOFile, nil] the extracted Mach-O or nil if no Mach-O has the given CPU type
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:291
-  def extract(cputype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#291
+  def extract(cputype); end
 
   # @return [Array<Headers::FatArch>, Array<Headers::FatArch64] an array of fat architectures] Array<Headers::FatArch>, Array<Headers::FatArch64] an array of fat architectures
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:24
+  # source://ruby-macho//lib/macho/fat_file.rb#24
   def fat_archs; end
 
   # @return [String] the filename loaded from, or nil if loaded from a binary string
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:14
+  # source://ruby-macho//lib/macho/fat_file.rb#14
   def filename; end
 
   # @return [String] the filename loaded from, or nil if loaded from a binary string
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:14
-  def filename=(_arg0)
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#14
+  def filename=(_arg0); end
 
   # @return [Symbol] a string representation of the Mach-O's filetype
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def filetype(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def filetype(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_FVMLIB`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def fvmlib?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def fvmlib?(*args, **_arg1, &block); end
 
   # @return [Headers::FatHeader] the file's header
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:21
+  # source://ruby-macho//lib/macho/fat_file.rb#21
   def header; end
 
   # Initializes a new FatFile instance from a binary string with the given options.
@@ -374,54 +324,46 @@ class MachO::FatFile
   # @api private
   # @see new_from_bin
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:106
-  def initialize_from_bin(bin, opts)
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#106
+  def initialize_from_bin(bin, opts); end
 
   # @return [Boolean] whether or not the file is of type `MH_KEXT_BUNDLE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def kext?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def kext?(*args, **_arg1, &block); end
 
   # All shared libraries linked to the file's Mach-Os.
   #
   # @return [Array<String>] an array of all shared libraries
   # @see MachOFile#linked_dylibs
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:198
+  # source://ruby-macho//lib/macho/fat_file.rb#198
   def linked_dylibs; end
 
   # @return [Array<MachOFile>] an array of Mach-O binaries
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:27
+  # source://ruby-macho//lib/macho/fat_file.rb#27
   def machos; end
 
   # @return [Integer] the magic number of the header (and file)
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def magic(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def magic(*args, **_arg1, &block); end
 
   # @return [String] a string representation of the file's magic number
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:152
+  # source://ruby-macho//lib/macho/fat_file.rb#152
   def magic_string; end
 
   # @return [Boolean] whether or not the file is of type `MH_OBJECT`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def object?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def object?(*args, **_arg1, &block); end
 
   # @note Options specified in a {FatFile} trickle down into the internal {MachOFile}s.
   # @return [Hash] any parser options that the instance was created with
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:18
+  # source://ruby-macho//lib/macho/fat_file.rb#18
   def options; end
 
   # Populate the instance's fields with the raw Fat Mach-O data.
@@ -429,34 +371,32 @@ class MachO::FatFile
   # @note This method is public, but should (almost) never need to be called.
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:159
+  # source://ruby-macho//lib/macho/fat_file.rb#159
   def populate_fields; end
 
   # @return [Boolean] whether or not the file is of type `MH_PRELOAD`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def preload?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def preload?(*args, **_arg1, &block); end
 
   # All runtime paths associated with the file's Mach-Os.
   #
   # @return [Array<String>] an array of all runtime paths
   # @see MachOFile#rpaths
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:230
+  # source://ruby-macho//lib/macho/fat_file.rb#230
   def rpaths; end
 
   # The file's raw fat data.
   #
   # @return [String] the raw fat data
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:115
+  # source://ruby-macho//lib/macho/fat_file.rb#115
   def serialize; end
 
   # @return [Hash] a hash representation of this {FatFile}
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:313
+  # source://ruby-macho//lib/macho/fat_file.rb#313
   def to_h; end
 
   # Write all (fat) data to the given filename.
@@ -464,10 +404,8 @@ class MachO::FatFile
   # @param filename [String] the file to write to
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:298
-  def write(filename)
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#298
+  def write(filename); end
 
   # Write all (fat) data to the file used to initialize the instance.
   #
@@ -475,7 +413,7 @@ class MachO::FatFile
   # @raise [MachOError] if the instance was initialized without a file
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:306
+  # source://ruby-macho//lib/macho/fat_file.rb#306
   def write!; end
 
   private
@@ -486,7 +424,7 @@ class MachO::FatFile
   # @api private
   # @return [MachOFile] the Mach-O file
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:424
+  # source://ruby-macho//lib/macho/fat_file.rb#424
   def canonical_macho; end
 
   # Yield each Mach-O object in the file, rescuing and accumulating errors.
@@ -497,17 +435,15 @@ class MachO::FatFile
   # @raise [RecoverableModificationError] under the conditions of
   #   the `:strict` option above.
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:401
-  def each_macho(options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/fat_file.rb#401
+  def each_macho(options = T.unsafe(nil)); end
 
   # Obtain an array of fat architectures from raw file data.
   #
   # @api private
   # @return [Array<Headers::FatArch>] an array of fat architectures
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:355
+  # source://ruby-macho//lib/macho/fat_file.rb#355
   def populate_fat_archs; end
 
   # Obtain the fat header from raw file data.
@@ -520,7 +456,7 @@ class MachO::FatFile
   # @raise [JavaClassFileError] if the file is a Java classfile
   # @return [Headers::FatHeader] the fat header
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:331
+  # source://ruby-macho//lib/macho/fat_file.rb#331
   def populate_fat_header; end
 
   # Obtain an array of Mach-O blobs from raw file data.
@@ -528,7 +464,7 @@ class MachO::FatFile
   # @api private
   # @return [Array<MachOFile>] an array of Mach-Os
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:372
+  # source://ruby-macho//lib/macho/fat_file.rb#372
   def populate_machos; end
 
   # Repopulate the raw Mach-O data with each internal Mach-O object.
@@ -536,7 +472,7 @@ class MachO::FatFile
   # @api private
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:385
+  # source://ruby-macho//lib/macho/fat_file.rb#385
   def repopulate_raw_machos; end
 
   class << self
@@ -547,10 +483,8 @@ class MachO::FatFile
     # @param opts [Hash] options to control the parser with
     # @return [FatFile] a new FatFile
     #
-    # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:82
-    def new_from_bin(bin, **opts)
-      ;
-    end
+    # source://ruby-macho//lib/macho/fat_file.rb#82
+    def new_from_bin(bin, **opts); end
 
     # Creates a new FatFile from the given (single-arch) Mach-Os
     #
@@ -561,65 +495,57 @@ class MachO::FatFile
     #   in a 32-bit {Headers::FatArch} and `fat64` is `false`.
     # @return [FatFile] a new FatFile containing the give machos
     #
-    # source://ruby-macho-3.0.0/lib/macho/fat_file.rb:36
-    def new_from_machos(*machos, fat64: T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/fat_file.rb#36
+    def new_from_machos(*machos, fat64: T.unsafe(nil)); end
   end
 end
 
 # Raised when a mach-o file's filetype field is unknown.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:93
+# source://ruby-macho//lib/macho/exceptions.rb#93
 class MachO::FiletypeError < ::MachO::MachOError
   # @param num [Integer] the unknown number
   # @return [FiletypeError] a new instance of FiletypeError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:94
-  def initialize(num)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#94
+  def initialize(num); end
 end
 
 # Raised when load commands are too large to fit in the current file.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:154
+# source://ruby-macho//lib/macho/exceptions.rb#154
 class MachO::HeaderPadError < ::MachO::ModificationError
   # @param filename [String] the filename
   # @return [HeaderPadError] a new instance of HeaderPadError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:155
-  def initialize(filename)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#155
+  def initialize(filename); end
 end
 
 # Classes and constants for parsing the headers of Mach-O binaries.
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:5
-module MachO::Headers
-  ;
-end
+# source://ruby-macho//lib/macho/headers.rb#5
+module MachO::Headers; end
 
 # compressed mach-o magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:42
+# source://ruby-macho//lib/macho/headers.rb#42
 MachO::Headers::COMPRESSED_MAGIC = T.let(T.unsafe(nil), Integer)
 
 # a compressed mach-o slice, using LZVN ("FastLib") for compression
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:50
+# source://ruby-macho//lib/macho/headers.rb#50
 MachO::Headers::COMP_TYPE_FASTLIB = T.let(T.unsafe(nil), Integer)
 
 # a compressed mach-o slice, using LZSS for compression
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:46
+# source://ruby-macho//lib/macho/headers.rb#46
 MachO::Headers::COMP_TYPE_LZSS = T.let(T.unsafe(nil), Integer)
 
 # mask for CPUs with 64-bit architectures (when running a 32-bit ABI?)
@@ -627,14 +553,14 @@ MachO::Headers::COMP_TYPE_LZSS = T.let(T.unsafe(nil), Integer)
 # @api private
 # @see https://github.com/Homebrew/ruby-macho/issues/113
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:70
+# source://ruby-macho//lib/macho/headers.rb#70
 MachO::Headers::CPU_ARCH_ABI32 = T.let(T.unsafe(nil), Integer)
 
 # mask for CPUs with 64-bit architectures (when running a 64-bit ABI?)
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:65
+# source://ruby-macho//lib/macho/headers.rb#65
 MachO::Headers::CPU_ARCH_ABI64 = T.let(T.unsafe(nil), Integer)
 
 # association of CPU types/subtype pairs to symbol representations in
@@ -643,154 +569,154 @@ MachO::Headers::CPU_ARCH_ABI64 = T.let(T.unsafe(nil), Integer)
 # @api private
 # @see https://opensource.apple.com/source/cctools/cctools-877.8/libstuff/arch.c
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:338
+# source://ruby-macho//lib/macho/headers.rb#338
 MachO::Headers::CPU_SUBTYPES = T.let(T.unsafe(nil), Hash)
 
 # the i486 sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:140
+# source://ruby-macho//lib/macho/headers.rb#140
 MachO::Headers::CPU_SUBTYPE_486 = T.let(T.unsafe(nil), Integer)
 
 # the i486SX sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:144
+# source://ruby-macho//lib/macho/headers.rb#144
 MachO::Headers::CPU_SUBTYPE_486SX = T.let(T.unsafe(nil), Integer)
 
 # the i586 (P5, Pentium) sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:148
+# source://ruby-macho//lib/macho/headers.rb#148
 MachO::Headers::CPU_SUBTYPE_586 = T.let(T.unsafe(nil), Integer)
 
 # the e (A12) sub-type for `CPU_TYPE_ARM64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:260
+# source://ruby-macho//lib/macho/headers.rb#260
 MachO::Headers::CPU_SUBTYPE_ARM64E = T.let(T.unsafe(nil), Integer)
 
 # the v8 sub-type for `CPU_TYPE_ARM64_32`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:256
+# source://ruby-macho//lib/macho/headers.rb#256
 MachO::Headers::CPU_SUBTYPE_ARM64_32_V8 = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_ARM64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:248
+# source://ruby-macho//lib/macho/headers.rb#248
 MachO::Headers::CPU_SUBTYPE_ARM64_ALL = T.let(T.unsafe(nil), Integer)
 
 # the v8 sub-type for `CPU_TYPE_ARM64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:252
+# source://ruby-macho//lib/macho/headers.rb#252
 MachO::Headers::CPU_SUBTYPE_ARM64_V8 = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:196
+# source://ruby-macho//lib/macho/headers.rb#196
 MachO::Headers::CPU_SUBTYPE_ARM_ALL = T.let(T.unsafe(nil), Integer)
 
 # the v4t sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:200
+# source://ruby-macho//lib/macho/headers.rb#200
 MachO::Headers::CPU_SUBTYPE_ARM_V4T = T.let(T.unsafe(nil), Integer)
 
 # the v5 sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:208
+# source://ruby-macho//lib/macho/headers.rb#208
 MachO::Headers::CPU_SUBTYPE_ARM_V5TEJ = T.let(T.unsafe(nil), Integer)
 
 # the v6 sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:204
+# source://ruby-macho//lib/macho/headers.rb#204
 MachO::Headers::CPU_SUBTYPE_ARM_V6 = T.let(T.unsafe(nil), Integer)
 
 # the v6m sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:232
+# source://ruby-macho//lib/macho/headers.rb#232
 MachO::Headers::CPU_SUBTYPE_ARM_V6M = T.let(T.unsafe(nil), Integer)
 
 # the v7 sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:216
+# source://ruby-macho//lib/macho/headers.rb#216
 MachO::Headers::CPU_SUBTYPE_ARM_V7 = T.let(T.unsafe(nil), Integer)
 
 # the v7em sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:240
+# source://ruby-macho//lib/macho/headers.rb#240
 MachO::Headers::CPU_SUBTYPE_ARM_V7EM = T.let(T.unsafe(nil), Integer)
 
 # the v7f (Cortex A9) sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:220
+# source://ruby-macho//lib/macho/headers.rb#220
 MachO::Headers::CPU_SUBTYPE_ARM_V7F = T.let(T.unsafe(nil), Integer)
 
 # the v7k ("Kirkwood40") sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:228
+# source://ruby-macho//lib/macho/headers.rb#228
 MachO::Headers::CPU_SUBTYPE_ARM_V7K = T.let(T.unsafe(nil), Integer)
 
 # the v7m sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:236
+# source://ruby-macho//lib/macho/headers.rb#236
 MachO::Headers::CPU_SUBTYPE_ARM_V7M = T.let(T.unsafe(nil), Integer)
 
 # the v7s ("Swift") sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:224
+# source://ruby-macho//lib/macho/headers.rb#224
 MachO::Headers::CPU_SUBTYPE_ARM_V7S = T.let(T.unsafe(nil), Integer)
 
 # the v8 sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:244
+# source://ruby-macho//lib/macho/headers.rb#244
 MachO::Headers::CPU_SUBTYPE_ARM_V8 = T.let(T.unsafe(nil), Integer)
 
 # the xscale (v5 family) sub-type for `CPU_TYPE_ARM`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:212
+# source://ruby-macho//lib/macho/headers.rb#212
 MachO::Headers::CPU_SUBTYPE_ARM_XSCALE = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:136
+# source://ruby-macho//lib/macho/headers.rb#136
 MachO::Headers::CPU_SUBTYPE_I386 = T.let(T.unsafe(nil), Integer)
 
 # 64-bit libraries (undocumented!)
@@ -798,291 +724,291 @@ MachO::Headers::CPU_SUBTYPE_I386 = T.let(T.unsafe(nil), Integer)
 # @api private
 # @see http://llvm.org/docs/doxygen/html/Support_2MachO_8h_source.html
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:132
+# source://ruby-macho//lib/macho/headers.rb#132
 MachO::Headers::CPU_SUBTYPE_LIB64 = T.let(T.unsafe(nil), Integer)
 
 # mask for CPU subtype capabilities
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:127
+# source://ruby-macho//lib/macho/headers.rb#127
 MachO::Headers::CPU_SUBTYPE_MASK = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see CPU_SUBTYPE_MC680X0_ALL
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:176
+# source://ruby-macho//lib/macho/headers.rb#176
 MachO::Headers::CPU_SUBTYPE_MC68030 = T.let(T.unsafe(nil), Integer)
 
 # the 030 subtype for `CPU_TYPE_MC680X0`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:184
+# source://ruby-macho//lib/macho/headers.rb#184
 MachO::Headers::CPU_SUBTYPE_MC68030_ONLY = T.let(T.unsafe(nil), Integer)
 
 # the 040 subtype for `CPU_TYPE_MC680X0`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:180
+# source://ruby-macho//lib/macho/headers.rb#180
 MachO::Headers::CPU_SUBTYPE_MC68040 = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_MC680X0`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:172
+# source://ruby-macho//lib/macho/headers.rb#172
 MachO::Headers::CPU_SUBTYPE_MC680X0_ALL = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_MC88000`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:264
+# source://ruby-macho//lib/macho/headers.rb#264
 MachO::Headers::CPU_SUBTYPE_MC88000_ALL = T.let(T.unsafe(nil), Integer)
 
 # the 100 sub-type for `CPU_TYPE_MC88000`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:272
+# source://ruby-macho//lib/macho/headers.rb#272
 MachO::Headers::CPU_SUBTYPE_MC88100 = T.let(T.unsafe(nil), Integer)
 
 # the 110 sub-type for `CPU_TYPE_MC88000`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:276
+# source://ruby-macho//lib/macho/headers.rb#276
 MachO::Headers::CPU_SUBTYPE_MC88110 = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see CPU_SUBTYPE_MC88000_ALL
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:268
+# source://ruby-macho//lib/macho/headers.rb#268
 MachO::Headers::CPU_SUBTYPE_MMAX_JPC = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see CPU_SUBTYPE_586
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:152
+# source://ruby-macho//lib/macho/headers.rb#152
 MachO::Headers::CPU_SUBTYPE_PENT = T.let(T.unsafe(nil), Integer)
 
 # the Pentium II (P6, M3?) sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:160
+# source://ruby-macho//lib/macho/headers.rb#160
 MachO::Headers::CPU_SUBTYPE_PENTII_M3 = T.let(T.unsafe(nil), Integer)
 
 # the Pentium II (P6, M5?) sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:164
+# source://ruby-macho//lib/macho/headers.rb#164
 MachO::Headers::CPU_SUBTYPE_PENTII_M5 = T.let(T.unsafe(nil), Integer)
 
 # the Pentium 4 (Netburst) sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:168
+# source://ruby-macho//lib/macho/headers.rb#168
 MachO::Headers::CPU_SUBTYPE_PENTIUM_4 = T.let(T.unsafe(nil), Integer)
 
 # the Pentium Pro (P6) sub-type for `CPU_TYPE_I386`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:156
+# source://ruby-macho//lib/macho/headers.rb#156
 MachO::Headers::CPU_SUBTYPE_PENTPRO = T.let(T.unsafe(nil), Integer)
 
 # any CPU sub-type for CPU type `CPU_TYPE_POWERPC64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:332
+# source://ruby-macho//lib/macho/headers.rb#332
 MachO::Headers::CPU_SUBTYPE_POWERPC64_ALL = T.let(T.unsafe(nil), Integer)
 
 # the 601 sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:284
+# source://ruby-macho//lib/macho/headers.rb#284
 MachO::Headers::CPU_SUBTYPE_POWERPC_601 = T.let(T.unsafe(nil), Integer)
 
 # the 602 sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:288
+# source://ruby-macho//lib/macho/headers.rb#288
 MachO::Headers::CPU_SUBTYPE_POWERPC_602 = T.let(T.unsafe(nil), Integer)
 
 # the 603 sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:292
+# source://ruby-macho//lib/macho/headers.rb#292
 MachO::Headers::CPU_SUBTYPE_POWERPC_603 = T.let(T.unsafe(nil), Integer)
 
 # the 603e (G2) sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:296
+# source://ruby-macho//lib/macho/headers.rb#296
 MachO::Headers::CPU_SUBTYPE_POWERPC_603E = T.let(T.unsafe(nil), Integer)
 
 # the 603ev sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:300
+# source://ruby-macho//lib/macho/headers.rb#300
 MachO::Headers::CPU_SUBTYPE_POWERPC_603EV = T.let(T.unsafe(nil), Integer)
 
 # the 604 sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:304
+# source://ruby-macho//lib/macho/headers.rb#304
 MachO::Headers::CPU_SUBTYPE_POWERPC_604 = T.let(T.unsafe(nil), Integer)
 
 # the 604e sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:308
+# source://ruby-macho//lib/macho/headers.rb#308
 MachO::Headers::CPU_SUBTYPE_POWERPC_604E = T.let(T.unsafe(nil), Integer)
 
 # the 620 sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:312
+# source://ruby-macho//lib/macho/headers.rb#312
 MachO::Headers::CPU_SUBTYPE_POWERPC_620 = T.let(T.unsafe(nil), Integer)
 
 # the 7400 (G4) sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:320
+# source://ruby-macho//lib/macho/headers.rb#320
 MachO::Headers::CPU_SUBTYPE_POWERPC_7400 = T.let(T.unsafe(nil), Integer)
 
 # the 7450 (G4 "Voyager") sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:324
+# source://ruby-macho//lib/macho/headers.rb#324
 MachO::Headers::CPU_SUBTYPE_POWERPC_7450 = T.let(T.unsafe(nil), Integer)
 
 # the 750 (G3) sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:316
+# source://ruby-macho//lib/macho/headers.rb#316
 MachO::Headers::CPU_SUBTYPE_POWERPC_750 = T.let(T.unsafe(nil), Integer)
 
 # the 970 (G5) sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:328
+# source://ruby-macho//lib/macho/headers.rb#328
 MachO::Headers::CPU_SUBTYPE_POWERPC_970 = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_POWERPC`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:280
+# source://ruby-macho//lib/macho/headers.rb#280
 MachO::Headers::CPU_SUBTYPE_POWERPC_ALL = T.let(T.unsafe(nil), Integer)
 
 # the lowest common sub-type for `CPU_TYPE_X86_64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:188
+# source://ruby-macho//lib/macho/headers.rb#188
 MachO::Headers::CPU_SUBTYPE_X86_64_ALL = T.let(T.unsafe(nil), Integer)
 
 # the Haskell sub-type for `CPU_TYPE_X86_64`
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:192
+# source://ruby-macho//lib/macho/headers.rb#192
 MachO::Headers::CPU_SUBTYPE_X86_64_H = T.let(T.unsafe(nil), Integer)
 
 # association of cpu types to symbol representations
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:114
+# source://ruby-macho//lib/macho/headers.rb#114
 MachO::Headers::CPU_TYPES = T.let(T.unsafe(nil), Hash)
 
 # any CPU (unused?)
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:74
+# source://ruby-macho//lib/macho/headers.rb#74
 MachO::Headers::CPU_TYPE_ANY = T.let(T.unsafe(nil), Integer)
 
 # 32-bit ARM compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:90
+# source://ruby-macho//lib/macho/headers.rb#90
 MachO::Headers::CPU_TYPE_ARM = T.let(T.unsafe(nil), Integer)
 
 # 64-bit ARM compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:98
+# source://ruby-macho//lib/macho/headers.rb#98
 MachO::Headers::CPU_TYPE_ARM64 = T.let(T.unsafe(nil), Integer)
 
 # 64-bit ARM compatible CPUs (running in 32-bit mode?)
 #
 # @see https://github.com/Homebrew/ruby-macho/issues/113
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:102
+# source://ruby-macho//lib/macho/headers.rb#102
 MachO::Headers::CPU_TYPE_ARM64_32 = T.let(T.unsafe(nil), Integer)
 
 # i386 and later compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:82
+# source://ruby-macho//lib/macho/headers.rb#82
 MachO::Headers::CPU_TYPE_I386 = T.let(T.unsafe(nil), Integer)
 
 # m68k compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:78
+# source://ruby-macho//lib/macho/headers.rb#78
 MachO::Headers::CPU_TYPE_MC680X0 = T.let(T.unsafe(nil), Integer)
 
 # m88k compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:94
+# source://ruby-macho//lib/macho/headers.rb#94
 MachO::Headers::CPU_TYPE_MC88000 = T.let(T.unsafe(nil), Integer)
 
 # PowerPC compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:106
+# source://ruby-macho//lib/macho/headers.rb#106
 MachO::Headers::CPU_TYPE_POWERPC = T.let(T.unsafe(nil), Integer)
 
 # PowerPC64 compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:110
+# source://ruby-macho//lib/macho/headers.rb#110
 MachO::Headers::CPU_TYPE_POWERPC64 = T.let(T.unsafe(nil), Integer)
 
 # x86_64 (AMD64) compatible CPUs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:86
+# source://ruby-macho//lib/macho/headers.rb#86
 MachO::Headers::CPU_TYPE_X86_64 = T.let(T.unsafe(nil), Integer)
 
 # little-endian fat magic
@@ -1091,7 +1017,7 @@ MachO::Headers::CPU_TYPE_X86_64 = T.let(T.unsafe(nil), Integer)
 # @note This is defined for completeness, but should never appear in ruby-macho code,
 #   since fat headers are always big-endian.
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:14
+# source://ruby-macho//lib/macho/headers.rb#14
 MachO::Headers::FAT_CIGAM = T.let(T.unsafe(nil), Integer)
 
 # 64-bit little-endian fat magic
@@ -1099,19 +1025,19 @@ MachO::Headers::FAT_CIGAM = T.let(T.unsafe(nil), Integer)
 # @note This is defined for completeness, but should never appear in ruby-macho code,
 #   since fat headers are always big-endian.
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:22
+# source://ruby-macho//lib/macho/headers.rb#22
 MachO::Headers::FAT_CIGAM_64 = T.let(T.unsafe(nil), Integer)
 
 # big-endian fat magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:8
+# source://ruby-macho//lib/macho/headers.rb#8
 MachO::Headers::FAT_MAGIC = T.let(T.unsafe(nil), Integer)
 
 # 64-bit big-endian fat magic
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:17
+# source://ruby-macho//lib/macho/headers.rb#17
 MachO::Headers::FAT_MAGIC_64 = T.let(T.unsafe(nil), Integer)
 
 # 32-bit fat binary header architecture structure. A 32-bit fat Mach-O has one or more of
@@ -1121,49 +1047,47 @@ MachO::Headers::FAT_MAGIC_64 = T.let(T.unsafe(nil), Integer)
 #   Mach-Os that it points to necessarily *are* 32-bit.
 # @see MachO::Headers::FatHeader
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:550
+# source://ruby-macho//lib/macho/headers.rb#550
 class MachO::Headers::FatArch < ::MachO::MachOStructure
   # @api private
   # @return [FatArch] a new instance of FatArch
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:575
-  def initialize(cputype, cpusubtype, offset, size, align)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#575
+  def initialize(cputype, cpusubtype, offset, size, align); end
 
   # @return [Integer] the alignment, as a power of 2
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:563
+  # source://ruby-macho//lib/macho/headers.rb#563
   def align; end
 
   # @return [Integer] the CPU subtype of the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:554
+  # source://ruby-macho//lib/macho/headers.rb#554
   def cpusubtype; end
 
   # @return [Integer] the CPU type of the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:551
+  # source://ruby-macho//lib/macho/headers.rb#551
   def cputype; end
 
   # @return [Integer] the file offset to the beginning of the Mach-O data
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:557
+  # source://ruby-macho//lib/macho/headers.rb#557
   def offset; end
 
   # @return [String] the serialized fields of the fat arch
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:585
+  # source://ruby-macho//lib/macho/headers.rb#585
   def serialize; end
 
   # @return [Integer] the size, in bytes, of the Mach-O data
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:560
+  # source://ruby-macho//lib/macho/headers.rb#560
   def size; end
 
   # @return [Hash] a hash representation of this {FatArch}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:590
+  # source://ruby-macho//lib/macho/headers.rb#590
   def to_h; end
 end
 
@@ -1174,29 +1098,27 @@ end
 #   Mach-Os that it points to necessarily *are* 64-bit.
 # @see MachO::Headers::FatHeader
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:609
+# source://ruby-macho//lib/macho/headers.rb#609
 class MachO::Headers::FatArch64 < ::MachO::Headers::FatArch
   # @api private
   # @return [FatArch64] a new instance of FatArch64
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:622
-  def initialize(cputype, cpusubtype, offset, size, align, reserved = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#622
+  def initialize(cputype, cpusubtype, offset, size, align, reserved = T.unsafe(nil)); end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:610
+  # source://ruby-macho//lib/macho/headers.rb#610
   def reserved; end
 
   # @return [String] the serialized fields of the fat arch
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:628
+  # source://ruby-macho//lib/macho/headers.rb#628
   def serialize; end
 
   # @return [Hash] a hash representation of this {FatArch64}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:633
+  # source://ruby-macho//lib/macho/headers.rb#633
   def to_h; end
 end
 
@@ -1204,60 +1126,58 @@ end
 # @note Always big endian.
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:615
+# source://ruby-macho//lib/macho/headers.rb#615
 MachO::Headers::FatArch64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:619
+# source://ruby-macho//lib/macho/headers.rb#619
 MachO::Headers::FatArch64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @note Always big endian.
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:568
+# source://ruby-macho//lib/macho/headers.rb#568
 MachO::Headers::FatArch::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:572
+# source://ruby-macho//lib/macho/headers.rb#572
 MachO::Headers::FatArch::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # Fat binary header structure
 #
 # @see MachO::FatArch
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:507
+# source://ruby-macho//lib/macho/headers.rb#507
 class MachO::Headers::FatHeader < ::MachO::MachOStructure
   # @api private
   # @return [FatHeader] a new instance of FatHeader
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:523
-  def initialize(magic, nfat_arch)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#523
+  def initialize(magic, nfat_arch); end
 
   # @return [Integer] the magic number of the header (and file)
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:508
+  # source://ruby-macho//lib/macho/headers.rb#508
   def magic; end
 
   # @return [Integer] the number of fat architecture structures following the header
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:511
+  # source://ruby-macho//lib/macho/headers.rb#511
   def nfat_arch; end
 
   # @return [String] the serialized fields of the fat header
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:530
+  # source://ruby-macho//lib/macho/headers.rb#530
   def serialize; end
 
   # @return [Hash] a hash representation of this {FatHeader}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:535
+  # source://ruby-macho//lib/macho/headers.rb#535
   def to_h; end
 end
 
@@ -1266,76 +1186,76 @@ end
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:516
+# source://ruby-macho//lib/macho/headers.rb#516
 MachO::Headers::FatHeader::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:520
+# source://ruby-macho//lib/macho/headers.rb#520
 MachO::Headers::FatHeader::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # dynamically bound bundle file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:434
+# source://ruby-macho//lib/macho/headers.rb#434
 MachO::Headers::MH_BUNDLE = T.let(T.unsafe(nil), Integer)
 
 # 32-bit little-endian magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:30
+# source://ruby-macho//lib/macho/headers.rb#30
 MachO::Headers::MH_CIGAM = T.let(T.unsafe(nil), Integer)
 
 # 64-bit little-endian magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:38
+# source://ruby-macho//lib/macho/headers.rb#38
 MachO::Headers::MH_CIGAM_64 = T.let(T.unsafe(nil), Integer)
 
 # core dump file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:418
+# source://ruby-macho//lib/macho/headers.rb#418
 MachO::Headers::MH_CORE = T.let(T.unsafe(nil), Integer)
 
 # companion file with only debug sections
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:442
+# source://ruby-macho//lib/macho/headers.rb#442
 MachO::Headers::MH_DSYM = T.let(T.unsafe(nil), Integer)
 
 # dynamically bound shared library
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:426
+# source://ruby-macho//lib/macho/headers.rb#426
 MachO::Headers::MH_DYLIB = T.let(T.unsafe(nil), Integer)
 
 # shared library stub for static linking only, no section contents
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:438
+# source://ruby-macho//lib/macho/headers.rb#438
 MachO::Headers::MH_DYLIB_STUB = T.let(T.unsafe(nil), Integer)
 
 # dynamic link editor
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:430
+# source://ruby-macho//lib/macho/headers.rb#430
 MachO::Headers::MH_DYLINKER = T.let(T.unsafe(nil), Integer)
 
 # demand paged executable file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:410
+# source://ruby-macho//lib/macho/headers.rb#410
 MachO::Headers::MH_EXECUTE = T.let(T.unsafe(nil), Integer)
 
 # a set of Mach-Os, running in the same userspace, sharing a linkedit.  The kext collection files are an example
@@ -1343,137 +1263,135 @@ MachO::Headers::MH_EXECUTE = T.let(T.unsafe(nil), Integer)
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:451
+# source://ruby-macho//lib/macho/headers.rb#451
 MachO::Headers::MH_FILESET = T.let(T.unsafe(nil), Integer)
 
 # association of filetypes to Symbol representations
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:455
+# source://ruby-macho//lib/macho/headers.rb#455
 MachO::Headers::MH_FILETYPES = T.let(T.unsafe(nil), Hash)
 
 # association of mach header flag symbols to values
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:472
+# source://ruby-macho//lib/macho/headers.rb#472
 MachO::Headers::MH_FLAGS = T.let(T.unsafe(nil), Hash)
 
 # fixed VM shared library file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:414
+# source://ruby-macho//lib/macho/headers.rb#414
 MachO::Headers::MH_FVMLIB = T.let(T.unsafe(nil), Integer)
 
 # x86_64 kexts
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:446
+# source://ruby-macho//lib/macho/headers.rb#446
 MachO::Headers::MH_KEXT_BUNDLE = T.let(T.unsafe(nil), Integer)
 
 # 32-bit big-endian magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:26
+# source://ruby-macho//lib/macho/headers.rb#26
 MachO::Headers::MH_MAGIC = T.let(T.unsafe(nil), Integer)
 
 # association of magic numbers to string representations
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:54
+# source://ruby-macho//lib/macho/headers.rb#54
 MachO::Headers::MH_MAGICS = T.let(T.unsafe(nil), Hash)
 
 # 64-bit big-endian magic
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:34
+# source://ruby-macho//lib/macho/headers.rb#34
 MachO::Headers::MH_MAGIC_64 = T.let(T.unsafe(nil), Integer)
 
 # relocatable object file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:406
+# source://ruby-macho//lib/macho/headers.rb#406
 MachO::Headers::MH_OBJECT = T.let(T.unsafe(nil), Integer)
 
 # preloaded executable file
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:422
+# source://ruby-macho//lib/macho/headers.rb#422
 MachO::Headers::MH_PRELOAD = T.let(T.unsafe(nil), Integer)
 
 # 32-bit Mach-O file header structure
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:642
+# source://ruby-macho//lib/macho/headers.rb#642
 class MachO::Headers::MachHeader < ::MachO::MachOStructure
   # @api private
   # @return [MachHeader] a new instance of MachHeader
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:672
-  def initialize(magic, cputype, cpusubtype, filetype, ncmds, sizeofcmds, flags)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#672
+  def initialize(magic, cputype, cpusubtype, filetype, ncmds, sizeofcmds, flags); end
 
   # @return [Integer] the file's internal alignment
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:764
+  # source://ruby-macho//lib/macho/headers.rb#764
   def alignment; end
 
   # @return [Boolean] whether or not the file is of type `MH_BUNDLE`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:734
+  # source://ruby-macho//lib/macho/headers.rb#734
   def bundle?; end
 
   # @return [Boolean] whether or not the file is of type `MH_CORE`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:714
+  # source://ruby-macho//lib/macho/headers.rb#714
   def core?; end
 
   # @return [Integer] the CPU subtype of the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:649
+  # source://ruby-macho//lib/macho/headers.rb#649
   def cpusubtype; end
 
   # @return [Integer] the CPU type of the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:646
+  # source://ruby-macho//lib/macho/headers.rb#646
   def cputype; end
 
   # @return [Boolean] whether or not the file is of type `MH_DSYM`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:739
+  # source://ruby-macho//lib/macho/headers.rb#739
   def dsym?; end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLIB`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:724
+  # source://ruby-macho//lib/macho/headers.rb#724
   def dylib?; end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLINKER`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:729
+  # source://ruby-macho//lib/macho/headers.rb#729
   def dylinker?; end
 
   # @return [Boolean] whether or not the file is of type `MH_EXECUTE`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:704
+  # source://ruby-macho//lib/macho/headers.rb#704
   def executable?; end
 
   # @return [Boolean] whether or not the file is of type `MH_FILESET`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:749
+  # source://ruby-macho//lib/macho/headers.rb#749
   def fileset?; end
 
   # @return [Integer] the file type of the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:652
+  # source://ruby-macho//lib/macho/headers.rb#652
   def filetype; end
 
   # @example
@@ -1481,403 +1399,379 @@ class MachO::Headers::MachHeader < ::MachO::MachOStructure
   # @param flag [Symbol] a mach header flag symbol
   # @return [Boolean] true if `flag` is present in the header's flag section
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:690
-  def flag?(flag)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#690
+  def flag?(flag); end
 
   # @return [Integer] the header flags associated with the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:661
+  # source://ruby-macho//lib/macho/headers.rb#661
   def flags; end
 
   # @return [Boolean] whether or not the file is of type `MH_FVMLIB`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:709
+  # source://ruby-macho//lib/macho/headers.rb#709
   def fvmlib?; end
 
   # @return [Boolean] whether or not the file is of type `MH_KEXT_BUNDLE`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:744
+  # source://ruby-macho//lib/macho/headers.rb#744
   def kext?; end
 
   # @return [Integer] the magic number
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:643
+  # source://ruby-macho//lib/macho/headers.rb#643
   def magic; end
 
   # @return [Boolean] true if the Mach-O has 32-bit magic, false otherwise
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:754
+  # source://ruby-macho//lib/macho/headers.rb#754
   def magic32?; end
 
   # @return [Boolean] true if the Mach-O has 64-bit magic, false otherwise
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:759
+  # source://ruby-macho//lib/macho/headers.rb#759
   def magic64?; end
 
   # @return [Integer] the number of load commands in the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:655
+  # source://ruby-macho//lib/macho/headers.rb#655
   def ncmds; end
 
   # @return [Boolean] whether or not the file is of type `MH_OBJECT`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:699
+  # source://ruby-macho//lib/macho/headers.rb#699
   def object?; end
 
   # @return [Boolean] whether or not the file is of type `MH_PRELOAD`
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:719
+  # source://ruby-macho//lib/macho/headers.rb#719
   def preload?; end
 
   # @return [Integer] the size of all load commands, in bytes, in the Mach-O
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:658
+  # source://ruby-macho//lib/macho/headers.rb#658
   def sizeofcmds; end
 
   # @return [Hash] a hash representation of this {MachHeader}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:769
+  # source://ruby-macho//lib/macho/headers.rb#769
   def to_h; end
 end
 
 # 64-bit Mach-O file header structure
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:789
+# source://ruby-macho//lib/macho/headers.rb#789
 class MachO::Headers::MachHeader64 < ::MachO::Headers::MachHeader
   # @api private
   # @return [MachHeader64] a new instance of MachHeader64
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:801
-  def initialize(magic, cputype, cpusubtype, filetype, ncmds, sizeofcmds, flags, reserved)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#801
+  def initialize(magic, cputype, cpusubtype, filetype, ncmds, sizeofcmds, flags, reserved); end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:790
+  # source://ruby-macho//lib/macho/headers.rb#790
   def reserved; end
 
   # @return [Hash] a hash representation of this {MachHeader64}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:808
+  # source://ruby-macho//lib/macho/headers.rb#808
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:794
+# source://ruby-macho//lib/macho/headers.rb#794
 MachO::Headers::MachHeader64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:798
+# source://ruby-macho//lib/macho/headers.rb#798
 MachO::Headers::MachHeader64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:665
+# source://ruby-macho//lib/macho/headers.rb#665
 MachO::Headers::MachHeader::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:669
+# source://ruby-macho//lib/macho/headers.rb#669
 MachO::Headers::MachHeader::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # Prelinked kernel/"kernelcache" header structure
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:817
+# source://ruby-macho//lib/macho/headers.rb#817
 class MachO::Headers::PrelinkedKernelHeader < ::MachO::MachOStructure
   # @api private
   # @return [PrelinkedKernelHeader] a new instance of PrelinkedKernelHeader
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:853
-  def initialize(signature, compress_type, adler32, uncompressed_size, compressed_size, prelink_version, reserved, platform_name, root_path)
-    ;
-  end
+  # source://ruby-macho//lib/macho/headers.rb#853
+  def initialize(signature, compress_type, adler32, uncompressed_size, compressed_size, prelink_version, reserved, platform_name, root_path); end
 
   # @return [Integer] a checksum for the uncompressed data
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:824
+  # source://ruby-macho//lib/macho/headers.rb#824
   def adler32; end
 
   # @return [Integer] the type of compression used
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:821
+  # source://ruby-macho//lib/macho/headers.rb#821
   def compress_type; end
 
   # @return [Integer] the size of the compressed data, in bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:830
+  # source://ruby-macho//lib/macho/headers.rb#830
   def compressed_size; end
 
   # @return [Boolean] whether this prelinked kernel supports KASLR
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:868
+  # source://ruby-macho//lib/macho/headers.rb#868
   def kaslr?; end
 
   # @return [Boolean] whether this prelinked kernel is compressed with LZSS
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:873
+  # source://ruby-macho//lib/macho/headers.rb#873
   def lzss?; end
 
   # @return [Boolean] whether this prelinked kernel is compressed with LZVN
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:878
+  # source://ruby-macho//lib/macho/headers.rb#878
   def lzvn?; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:839
+  # source://ruby-macho//lib/macho/headers.rb#839
   def platform_name; end
 
   # @return [Integer] the version of the prelink format
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:833
+  # source://ruby-macho//lib/macho/headers.rb#833
   def prelink_version; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:836
+  # source://ruby-macho//lib/macho/headers.rb#836
   def reserved; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:842
+  # source://ruby-macho//lib/macho/headers.rb#842
   def root_path; end
 
   # @return [Integer] the magic number for a compressed header ({COMPRESSED_MAGIC})
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:818
+  # source://ruby-macho//lib/macho/headers.rb#818
   def signature; end
 
   # @return [Hash] a hash representation of this {PrelinkedKernelHeader}
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:883
+  # source://ruby-macho//lib/macho/headers.rb#883
   def to_h; end
 
   # @return [Integer] the size of the uncompressed data, in bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/headers.rb:827
+  # source://ruby-macho//lib/macho/headers.rb#827
   def uncompressed_size; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:846
+# source://ruby-macho//lib/macho/headers.rb#846
 MachO::Headers::PrelinkedKernelHeader::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/headers.rb:850
+# source://ruby-macho//lib/macho/headers.rb#850
 MachO::Headers::PrelinkedKernelHeader::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # Raised when a file is a Java classfile instead of a fat Mach-O.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:53
+# source://ruby-macho//lib/macho/exceptions.rb#53
 class MachO::JavaClassFileError < ::MachO::NotAMachOError
   # @return [JavaClassFileError] a new instance of JavaClassFileError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:54
+  # source://ruby-macho//lib/macho/exceptions.rb#54
   def initialize; end
 end
 
 # Raised when a load command string is malformed in some way.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:137
+# source://ruby-macho//lib/macho/exceptions.rb#137
 class MachO::LCStrMalformedError < ::MachO::MachOError
   # @param lc [MachO::LoadCommand] the load command containing the string
   # @return [LCStrMalformedError] a new instance of LCStrMalformedError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:138
-  def initialize(lc)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#138
+  def initialize(lc); end
 end
 
 # Raised when the number of arguments used to create a load command manually
 # is wrong.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:120
+# source://ruby-macho//lib/macho/exceptions.rb#120
 class MachO::LoadCommandCreationArityError < ::MachO::MachOError
   # @param cmd_sym [Symbol] the load command's symbol
   # @param expected_arity [Integer] the number of arguments expected
   # @param actual_arity [Integer] the number of arguments received
   # @return [LoadCommandCreationArityError] a new instance of LoadCommandCreationArityError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:121
-  def initialize(cmd_sym, expected_arity, actual_arity)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#121
+  def initialize(cmd_sym, expected_arity, actual_arity); end
 end
 
 # Raised when an unknown load command is encountered.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:101
+# source://ruby-macho//lib/macho/exceptions.rb#101
 class MachO::LoadCommandError < ::MachO::MachOError
   # @param num [Integer] the unknown number
   # @return [LoadCommandError] a new instance of LoadCommandError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:102
-  def initialize(num)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#102
+  def initialize(num); end
 end
 
 # Raised when a load command can't be created manually.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:109
+# source://ruby-macho//lib/macho/exceptions.rb#109
 class MachO::LoadCommandNotCreatableError < ::MachO::MachOError
   # @param cmd_sym [Symbol] the uncreatable load command's symbol
   # @return [LoadCommandNotCreatableError] a new instance of LoadCommandNotCreatableError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:110
-  def initialize(cmd_sym)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#110
+  def initialize(cmd_sym); end
 end
 
 # Raised when a load command can't be serialized.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:129
+# source://ruby-macho//lib/macho/exceptions.rb#129
 class MachO::LoadCommandNotSerializableError < ::MachO::MachOError
   # @param cmd_sym [Symbol] the load command's symbol
   # @return [LoadCommandNotSerializableError] a new instance of LoadCommandNotSerializableError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:130
-  def initialize(cmd_sym)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#130
+  def initialize(cmd_sym); end
 end
 
 # Classes and constants for parsing load commands in Mach-O binaries.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:5
-module MachO::LoadCommands
-  ;
-end
+# source://ruby-macho//lib/macho/load_commands.rb#5
+module MachO::LoadCommands; end
 
 # A load command containing the minimum OS version on which
 # the binary was built for its platform.
 # Corresponds to LC_BUILD_VERSION.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1365
+# source://ruby-macho//lib/macho/load_commands.rb#1365
 class MachO::LoadCommands::BuildVersionCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [BuildVersionCommand] a new instance of BuildVersionCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1386
-  def initialize(view, cmd, cmdsize, platform, minos, sdk, ntools)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1386
+  def initialize(view, cmd, cmdsize, platform, minos, sdk, ntools); end
 
   # @return [Integer] the minimum OS version X.Y.Z packed as x16.y8.z8
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1369
+  # source://ruby-macho//lib/macho/load_commands.rb#1369
   def minos; end
 
   # A string representation of the binary's minimum OS version.
   #
   # @return [String] a string representing the minimum OS version.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1396
+  # source://ruby-macho//lib/macho/load_commands.rb#1396
   def minos_string; end
 
   # @return [Integer]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1366
+  # source://ruby-macho//lib/macho/load_commands.rb#1366
   def platform; end
 
   # @return [Integer] the SDK version X.Y.Z packed as x16.y8.z8
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1372
+  # source://ruby-macho//lib/macho/load_commands.rb#1372
   def sdk; end
 
   # A string representation of the binary's SDK version.
   #
   # @return [String] a string representing the SDK version.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1407
+  # source://ruby-macho//lib/macho/load_commands.rb#1407
   def sdk_string; end
 
   # @return [Hash] a hash representation of this {BuildVersionCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1417
+  # source://ruby-macho//lib/macho/load_commands.rb#1417
   def to_h; end
 
   # @return [ToolEntries] tool entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1375
+  # source://ruby-macho//lib/macho/load_commands.rb#1375
   def tool_entries; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1379
+# source://ruby-macho//lib/macho/load_commands.rb#1379
 MachO::LoadCommands::BuildVersionCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1383
+# source://ruby-macho//lib/macho/load_commands.rb#1383
 MachO::LoadCommands::BuildVersionCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A representation of the tool versions exposed
 # by a {BuildVersionCommand} (`LC_BUILD_VERSION`).
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1430
+# source://ruby-macho//lib/macho/load_commands.rb#1430
 class MachO::LoadCommands::BuildVersionCommand::ToolEntries
   # @api private
   # @param view [MachO::MachOView] the view into the current Mach-O
   # @param ntools [Integer] the number of tools
   # @return [ToolEntries] a new instance of ToolEntries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1437
-  def initialize(view, ntools)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1437
+  def initialize(view, ntools); end
 
   # @return [Array<Tool>] all tools
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1432
+  # source://ruby-macho//lib/macho/load_commands.rb#1432
   def tools; end
 end
 
 # An individual tool.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1446
+# source://ruby-macho//lib/macho/load_commands.rb#1446
 class MachO::LoadCommands::BuildVersionCommand::ToolEntries::Tool
   # @api private
   # @param tool [Integer] 32-bit integer
   # @param version [Integer] 32-bit integer
   # @return [Tool] a new instance of Tool
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1456
-  def initialize(tool, version)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1456
+  def initialize(tool, version); end
 
   # @return [Hash] a hash representation of this {Tool}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1462
+  # source://ruby-macho//lib/macho/load_commands.rb#1462
   def to_h; end
 
   # @return [Integer] the enum for the tool
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1448
+  # source://ruby-macho//lib/macho/load_commands.rb#1448
   def tool; end
 
   # @return [Integer] the tool's version number
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1451
+  # source://ruby-macho//lib/macho/load_commands.rb#1451
   def version; end
 end
 
@@ -1885,605 +1779,581 @@ end
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:86
+# source://ruby-macho//lib/macho/load_commands.rb#86
 MachO::LoadCommands::CREATABLE_LOAD_COMMANDS = T.let(T.unsafe(nil), Array)
 
 # load commands responsible for loading dylibs
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:76
+# source://ruby-macho//lib/macho/load_commands.rb#76
 MachO::LoadCommands::DYLIB_LOAD_COMMANDS = T.let(T.unsafe(nil), Array)
 
 # A load command containing the file offsets and sizes of the new
 # compressed form of the information dyld needs to load the image.
 # Corresponds to LC_DYLD_INFO and LC_DYLD_INFO_ONLY.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1476
+# source://ruby-macho//lib/macho/load_commands.rb#1476
 class MachO::LoadCommands::DyldInfoCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [DyldInfoCommand] a new instance of DyldInfoCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1515
-  def initialize(view, cmd, cmdsize, rebase_off, rebase_size, bind_off, bind_size, weak_bind_off, weak_bind_size, lazy_bind_off, lazy_bind_size, export_off, export_size)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1515
+  def initialize(view, cmd, cmdsize, rebase_off, rebase_size, bind_off, bind_size, weak_bind_off, weak_bind_size, lazy_bind_off, lazy_bind_size, export_off, export_size); end
 
   # @return [Integer] the file offset to the binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1483
+  # source://ruby-macho//lib/macho/load_commands.rb#1483
   def bind_off; end
 
   # @return [Integer] the size of the binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1486
+  # source://ruby-macho//lib/macho/load_commands.rb#1486
   def bind_size; end
 
   # @return [Integer] the file offset to the export information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1501
+  # source://ruby-macho//lib/macho/load_commands.rb#1501
   def export_off; end
 
   # @return [Integer] the size of the export information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1504
+  # source://ruby-macho//lib/macho/load_commands.rb#1504
   def export_size; end
 
   # @return [Integer] the file offset to the lazy binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1495
+  # source://ruby-macho//lib/macho/load_commands.rb#1495
   def lazy_bind_off; end
 
   # @return [Integer] the size of the lazy binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1498
+  # source://ruby-macho//lib/macho/load_commands.rb#1498
   def lazy_bind_size; end
 
   # @return [Integer] the file offset to the rebase information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1477
+  # source://ruby-macho//lib/macho/load_commands.rb#1477
   def rebase_off; end
 
   # @return [Integer] the size of the rebase information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1480
+  # source://ruby-macho//lib/macho/load_commands.rb#1480
   def rebase_size; end
 
   # @return [Hash] a hash representation of this {DyldInfoCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1532
+  # source://ruby-macho//lib/macho/load_commands.rb#1532
   def to_h; end
 
   # @return [Integer] the file offset to the weak binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1489
+  # source://ruby-macho//lib/macho/load_commands.rb#1489
   def weak_bind_off; end
 
   # @return [Integer] the size of the weak binding information
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1492
+  # source://ruby-macho//lib/macho/load_commands.rb#1492
   def weak_bind_size; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1508
+# source://ruby-macho//lib/macho/load_commands.rb#1508
 MachO::LoadCommands::DyldInfoCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1512
+# source://ruby-macho//lib/macho/load_commands.rb#1512
 MachO::LoadCommands::DyldInfoCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command representing some aspect of shared libraries, depending
 # on filetype. Corresponds to LC_ID_DYLIB, LC_LOAD_DYLIB,
 # LC_LOAD_WEAK_DYLIB, and LC_REEXPORT_DYLIB.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:549
+# source://ruby-macho//lib/macho/load_commands.rb#549
 class MachO::LoadCommands::DylibCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [DylibCommand] a new instance of DylibCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:570
-  def initialize(view, cmd, cmdsize, name, timestamp, current_version, compatibility_version)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#570
+  def initialize(view, cmd, cmdsize, name, timestamp, current_version, compatibility_version); end
 
   # @return [Integer] the library's compatibility version number
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:559
+  # source://ruby-macho//lib/macho/load_commands.rb#559
   def compatibility_version; end
 
   # @return [Integer] the library's current version number
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:556
+  # source://ruby-macho//lib/macho/load_commands.rb#556
   def current_version; end
 
   # @return [LCStr] the library's path
   #   name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:550
+  # source://ruby-macho//lib/macho/load_commands.rb#550
   def name; end
 
   # @api private
   # @param context [SerializationContext] the context
   # @return [String] the serialized fields of the load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:583
-  def serialize(context)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#583
+  def serialize(context); end
 
   # @return [Integer] the library's build time stamp
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:553
+  # source://ruby-macho//lib/macho/load_commands.rb#553
   def timestamp; end
 
   # @return [Hash] a hash representation of this {DylibCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:594
+  # source://ruby-macho//lib/macho/load_commands.rb#594
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:563
+# source://ruby-macho//lib/macho/load_commands.rb#563
 MachO::LoadCommands::DylibCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:567
+# source://ruby-macho//lib/macho/load_commands.rb#567
 MachO::LoadCommands::DylibCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command representing some aspect of the dynamic linker, depending
 # on filetype. Corresponds to LC_ID_DYLINKER, LC_LOAD_DYLINKER, and
 # LC_DYLD_ENVIRONMENT.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:609
+# source://ruby-macho//lib/macho/load_commands.rb#609
 class MachO::LoadCommands::DylinkerCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [DylinkerCommand] a new instance of DylinkerCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:621
-  def initialize(view, cmd, cmdsize, name)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#621
+  def initialize(view, cmd, cmdsize, name); end
 
   # @return [LCStr] the dynamic linker's
   #   path name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:610
+  # source://ruby-macho//lib/macho/load_commands.rb#610
   def name; end
 
   # @api private
   # @param context [SerializationContext] the context
   # @return [String] the serialized fields of the load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:630
-  def serialize(context)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#630
+  def serialize(context); end
 
   # @return [Hash] a hash representation of this {DylinkerCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:640
+  # source://ruby-macho//lib/macho/load_commands.rb#640
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:614
+# source://ruby-macho//lib/macho/load_commands.rb#614
 MachO::LoadCommands::DylinkerCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:618
+# source://ruby-macho//lib/macho/load_commands.rb#618
 MachO::LoadCommands::DylinkerCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing symbolic information needed to support data
 # structures used by the dynamic link editor. Corresponds to LC_DYSYMTAB.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:936
+# source://ruby-macho//lib/macho/load_commands.rb#936
 class MachO::LoadCommands::DysymtabCommand < ::MachO::LoadCommands::LoadCommand
   # ugh
   #
   # @api private
   # @return [DysymtabCommand] a new instance of DysymtabCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1000
-  def initialize(view, cmd, cmdsize, ilocalsym, nlocalsym, iextdefsym, nextdefsym, iundefsym, nundefsym, tocoff, ntoc, modtaboff, nmodtab, extrefsymoff, nextrefsyms, indirectsymoff, nindirectsyms, extreloff, nextrel, locreloff, nlocrel)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1000
+  def initialize(view, cmd, cmdsize, ilocalsym, nlocalsym, iextdefsym, nextdefsym, iundefsym, nundefsym, tocoff, ntoc, modtaboff, nmodtab, extrefsymoff, nextrefsyms, indirectsymoff, nindirectsyms, extreloff, nextrel, locreloff, nlocrel); end
 
   # @return [Integer] the file offset to the referenced symbol table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:967
+  # source://ruby-macho//lib/macho/load_commands.rb#967
   def extrefsymoff; end
 
   # @return [Integer] the file offset to the external relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:979
+  # source://ruby-macho//lib/macho/load_commands.rb#979
   def extreloff; end
 
   # @return [Integer] the index to externally defined symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:943
+  # source://ruby-macho//lib/macho/load_commands.rb#943
   def iextdefsym; end
 
   # @return [Integer] the index to local symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:937
+  # source://ruby-macho//lib/macho/load_commands.rb#937
   def ilocalsym; end
 
   # @return [Integer] the file offset to the indirect symbol table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:973
+  # source://ruby-macho//lib/macho/load_commands.rb#973
   def indirectsymoff; end
 
   # @return [Integer] the index to undefined symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:949
+  # source://ruby-macho//lib/macho/load_commands.rb#949
   def iundefsym; end
 
   # @return [Integer] the file offset to the local relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:985
+  # source://ruby-macho//lib/macho/load_commands.rb#985
   def locreloff; end
 
   # @return [Integer] the file offset to the module table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:961
+  # source://ruby-macho//lib/macho/load_commands.rb#961
   def modtaboff; end
 
   # @return [Integer] the number of externally defined symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:946
+  # source://ruby-macho//lib/macho/load_commands.rb#946
   def nextdefsym; end
 
   # @return [Integer] the number of entries in the referenced symbol table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:970
+  # source://ruby-macho//lib/macho/load_commands.rb#970
   def nextrefsyms; end
 
   # @return [Integer] the number of external relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:982
+  # source://ruby-macho//lib/macho/load_commands.rb#982
   def nextrel; end
 
   # @return [Integer] the number of entries in the indirect symbol table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:976
+  # source://ruby-macho//lib/macho/load_commands.rb#976
   def nindirectsyms; end
 
   # @return [Integer] the number of local symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:940
+  # source://ruby-macho//lib/macho/load_commands.rb#940
   def nlocalsym; end
 
   # @return [Integer] the number of local relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:988
+  # source://ruby-macho//lib/macho/load_commands.rb#988
   def nlocrel; end
 
   # @return [Integer] the number of entries in the module table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:964
+  # source://ruby-macho//lib/macho/load_commands.rb#964
   def nmodtab; end
 
   # @return [Integer] the number of entries in the table of contents
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:958
+  # source://ruby-macho//lib/macho/load_commands.rb#958
   def ntoc; end
 
   # @return [Integer] the number of undefined symbols
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:952
+  # source://ruby-macho//lib/macho/load_commands.rb#952
   def nundefsym; end
 
   # @return [Hash] a hash representation of this {DysymtabCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1026
+  # source://ruby-macho//lib/macho/load_commands.rb#1026
   def to_h; end
 
   # @return [Integer] the file offset to the table of contents
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:955
+  # source://ruby-macho//lib/macho/load_commands.rb#955
   def tocoff; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:992
+# source://ruby-macho//lib/macho/load_commands.rb#992
 MachO::LoadCommands::DysymtabCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:996
+# source://ruby-macho//lib/macho/load_commands.rb#996
 MachO::LoadCommands::DysymtabCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command representing the offset to and size of an encrypted
 # segment. Corresponds to LC_ENCRYPTION_INFO.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1240
+# source://ruby-macho//lib/macho/load_commands.rb#1240
 class MachO::LoadCommands::EncryptionInfoCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [EncryptionInfoCommand] a new instance of EncryptionInfoCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1258
-  def initialize(view, cmd, cmdsize, cryptoff, cryptsize, cryptid)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1258
+  def initialize(view, cmd, cmdsize, cryptoff, cryptsize, cryptid); end
 
   # @return [Integer] the encryption system, or 0 if not encrypted yet
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1247
+  # source://ruby-macho//lib/macho/load_commands.rb#1247
   def cryptid; end
 
   # @return [Integer] the offset to the encrypted segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1241
+  # source://ruby-macho//lib/macho/load_commands.rb#1241
   def cryptoff; end
 
   # @return [Integer] the size of the encrypted segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1244
+  # source://ruby-macho//lib/macho/load_commands.rb#1244
   def cryptsize; end
 
   # @return [Hash] a hash representation of this {EncryptionInfoCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1266
+  # source://ruby-macho//lib/macho/load_commands.rb#1266
   def to_h; end
 end
 
 # A load command representing the offset to and size of an encrypted
 # segment. Corresponds to LC_ENCRYPTION_INFO_64.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1278
+# source://ruby-macho//lib/macho/load_commands.rb#1278
 class MachO::LoadCommands::EncryptionInfoCommand64 < ::MachO::LoadCommands::EncryptionInfoCommand
   # @api private
   # @return [EncryptionInfoCommand64] a new instance of EncryptionInfoCommand64
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1290
-  def initialize(view, cmd, cmdsize, cryptoff, cryptsize, cryptid, pad)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1290
+  def initialize(view, cmd, cmdsize, cryptoff, cryptsize, cryptid, pad); end
 
   # @return [Integer] 64-bit padding value
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1279
+  # source://ruby-macho//lib/macho/load_commands.rb#1279
   def pad; end
 
   # @return [Hash] a hash representation of this {EncryptionInfoCommand64}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1296
+  # source://ruby-macho//lib/macho/load_commands.rb#1296
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1283
+# source://ruby-macho//lib/macho/load_commands.rb#1283
 MachO::LoadCommands::EncryptionInfoCommand64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1287
+# source://ruby-macho//lib/macho/load_commands.rb#1287
 MachO::LoadCommands::EncryptionInfoCommand64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1251
+# source://ruby-macho//lib/macho/load_commands.rb#1251
 MachO::LoadCommands::EncryptionInfoCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1255
+# source://ruby-macho//lib/macho/load_commands.rb#1255
 MachO::LoadCommands::EncryptionInfoCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command specifying the offset of main(). Corresponds to LC_MAIN.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1578
+# source://ruby-macho//lib/macho/load_commands.rb#1578
 class MachO::LoadCommands::EntryPointCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [EntryPointCommand] a new instance of EntryPointCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1593
-  def initialize(view, cmd, cmdsize, entryoff, stacksize)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1593
+  def initialize(view, cmd, cmdsize, entryoff, stacksize); end
 
   # @return [Integer] the file (__TEXT) offset of main()
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1579
+  # source://ruby-macho//lib/macho/load_commands.rb#1579
   def entryoff; end
 
   # @return [Integer] if not 0, the initial stack size.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1582
+  # source://ruby-macho//lib/macho/load_commands.rb#1582
   def stacksize; end
 
   # @return [Hash] a hash representation of this {EntryPointCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1600
+  # source://ruby-macho//lib/macho/load_commands.rb#1600
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1586
+# source://ruby-macho//lib/macho/load_commands.rb#1586
 MachO::LoadCommands::EntryPointCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1590
+# source://ruby-macho//lib/macho/load_commands.rb#1590
 MachO::LoadCommands::EntryPointCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing a description of a Mach-O that is a constituent of a fileset.
 # Each entry is further described by its own Mach header.
 # Corresponds to LC_FILESET_ENTRY.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1805
+# source://ruby-macho//lib/macho/load_commands.rb#1805
 class MachO::LoadCommands::FilesetEntryCommand < ::MachO::LoadCommands::LoadCommand
   # @return [FilesetEntryCommand] a new instance of FilesetEntryCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1825
-  def initialize(view, cmd, cmdsize, vmaddr, fileoff, entry_id, reserved)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1825
+  def initialize(view, cmd, cmdsize, vmaddr, fileoff, entry_id, reserved); end
 
   # @return [LCStr] the entry's ID
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1812
+  # source://ruby-macho//lib/macho/load_commands.rb#1812
   def entry_id; end
 
   # @return [Integer] the file offset of the entry
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1809
+  # source://ruby-macho//lib/macho/load_commands.rb#1809
   def fileoff; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1815
+  # source://ruby-macho//lib/macho/load_commands.rb#1815
   def reserved; end
 
   # @return [Hash] a hash representation of this {FilesetEntryCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1834
+  # source://ruby-macho//lib/macho/load_commands.rb#1834
   def to_h; end
 
   # @return [Integer] the virtual memory address of the entry
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1806
+  # source://ruby-macho//lib/macho/load_commands.rb#1806
   def vmaddr; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1819
+# source://ruby-macho//lib/macho/load_commands.rb#1819
 MachO::LoadCommands::FilesetEntryCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1823
+# source://ruby-macho//lib/macho/load_commands.rb#1823
 MachO::LoadCommands::FilesetEntryCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # An obsolete load command containing the path to a file to be loaded into
 # memory. Corresponds to LC_FVMFILE.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1698
+# source://ruby-macho//lib/macho/load_commands.rb#1698
 class MachO::LoadCommands::FvmfileCommand < ::MachO::LoadCommands::LoadCommand
   # @return [FvmfileCommand] a new instance of FvmfileCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1712
-  def initialize(view, cmd, cmdsize, name, header_addr)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1712
+  def initialize(view, cmd, cmdsize, name, header_addr); end
 
   # @return [Integer] the virtual address being loaded at
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1702
+  # source://ruby-macho//lib/macho/load_commands.rb#1702
   def header_addr; end
 
   # @return [LCStr] the pathname of the file being loaded
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1699
+  # source://ruby-macho//lib/macho/load_commands.rb#1699
   def name; end
 
   # @return [Hash] a hash representation of this {FvmfileCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1719
+  # source://ruby-macho//lib/macho/load_commands.rb#1719
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1706
+# source://ruby-macho//lib/macho/load_commands.rb#1706
 MachO::LoadCommands::FvmfileCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1710
+# source://ruby-macho//lib/macho/load_commands.rb#1710
 MachO::LoadCommands::FvmfileCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # An obsolete load command containing the path to a library to be loaded
 # into memory. Corresponds to LC_LOADFVMLIB and LC_IDFVMLIB.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1730
+# source://ruby-macho//lib/macho/load_commands.rb#1730
 class MachO::LoadCommands::FvmlibCommand < ::MachO::LoadCommands::LoadCommand
   # @return [FvmlibCommand] a new instance of FvmlibCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1747
-  def initialize(view, cmd, cmdsize, name, minor_version, header_addr)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1747
+  def initialize(view, cmd, cmdsize, name, minor_version, header_addr); end
 
   # @return [Integer] the library's header address
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1737
+  # source://ruby-macho//lib/macho/load_commands.rb#1737
   def header_addr; end
 
   # @return [Integer] the library's minor version number
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1734
+  # source://ruby-macho//lib/macho/load_commands.rb#1734
   def minor_version; end
 
   # @return [LCStr] the library's target pathname
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1731
+  # source://ruby-macho//lib/macho/load_commands.rb#1731
   def name; end
 
   # @return [Hash] a hash representation of this {FvmlibCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1755
+  # source://ruby-macho//lib/macho/load_commands.rb#1755
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1741
+# source://ruby-macho//lib/macho/load_commands.rb#1741
 MachO::LoadCommands::FvmlibCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1745
+# source://ruby-macho//lib/macho/load_commands.rb#1745
 MachO::LoadCommands::FvmlibCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # An obsolete load command containing a free format string table. Each
 # string is null-terminated and the command is zero-padded to a multiple of
 # 4. Corresponds to LC_IDENT.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1687
+# source://ruby-macho//lib/macho/load_commands.rb#1687
 class MachO::LoadCommands::IdentCommand < ::MachO::LoadCommands::LoadCommand; end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1688
+# source://ruby-macho//lib/macho/load_commands.rb#1688
 MachO::LoadCommands::IdentCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1692
+# source://ruby-macho//lib/macho/load_commands.rb#1692
 MachO::LoadCommands::IdentCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # load commands added after OS X 10.1 need to be bitwise ORed with
@@ -2491,28 +2361,28 @@ MachO::LoadCommands::IdentCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:9
+# source://ruby-macho//lib/macho/load_commands.rb#9
 MachO::LoadCommands::LC_REQ_DYLD = T.let(T.unsafe(nil), Integer)
 
 # association of load command symbols to string representations of classes
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:94
+# source://ruby-macho//lib/macho/load_commands.rb#94
 MachO::LoadCommands::LC_STRUCTURES = T.let(T.unsafe(nil), Hash)
 
 # association of load commands to symbol representations
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:13
+# source://ruby-macho//lib/macho/load_commands.rb#13
 MachO::LoadCommands::LOAD_COMMANDS = T.let(T.unsafe(nil), Hash)
 
 # association of symbol representations to load command constants
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:72
+# source://ruby-macho//lib/macho/load_commands.rb#72
 MachO::LoadCommands::LOAD_COMMAND_CONSTANTS = T.let(T.unsafe(nil), Hash)
 
 # A load command representing the offsets and sizes of a blob of data in
@@ -2521,78 +2391,74 @@ MachO::LoadCommands::LOAD_COMMAND_CONSTANTS = T.let(T.unsafe(nil), Hash)
 # LC_DYLIB_CODE_SIGN_DRS, LC_LINKER_OPTIMIZATION_HINT, LC_DYLD_EXPORTS_TRIE,
 # or LC_DYLD_CHAINED_FIXUPS.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1207
+# source://ruby-macho//lib/macho/load_commands.rb#1207
 class MachO::LoadCommands::LinkeditDataCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [LinkeditDataCommand] a new instance of LinkeditDataCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1222
-  def initialize(view, cmd, cmdsize, dataoff, datasize)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1222
+  def initialize(view, cmd, cmdsize, dataoff, datasize); end
 
   # @return [Integer] offset to the data in the __LINKEDIT segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1208
+  # source://ruby-macho//lib/macho/load_commands.rb#1208
   def dataoff; end
 
   # @return [Integer] size of the data in the __LINKEDIT segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1211
+  # source://ruby-macho//lib/macho/load_commands.rb#1211
   def datasize; end
 
   # @return [Hash] a hash representation of this {LinkeditDataCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1229
+  # source://ruby-macho//lib/macho/load_commands.rb#1229
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1215
+# source://ruby-macho//lib/macho/load_commands.rb#1215
 MachO::LoadCommands::LinkeditDataCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1219
+# source://ruby-macho//lib/macho/load_commands.rb#1219
 MachO::LoadCommands::LinkeditDataCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing linker options embedded in object files.
 # Corresponds to LC_LINKER_OPTION.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1551
+# source://ruby-macho//lib/macho/load_commands.rb#1551
 class MachO::LoadCommands::LinkerOptionCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [LinkerOptionCommand] a new instance of LinkerOptionCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1563
-  def initialize(view, cmd, cmdsize, count)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1563
+  def initialize(view, cmd, cmdsize, count); end
 
   # @return [Integer] the number of strings
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1552
+  # source://ruby-macho//lib/macho/load_commands.rb#1552
   def count; end
 
   # @return [Hash] a hash representation of this {LinkerOptionCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1569
+  # source://ruby-macho//lib/macho/load_commands.rb#1569
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1556
+# source://ruby-macho//lib/macho/load_commands.rb#1556
 MachO::LoadCommands::LinkerOptionCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1560
+# source://ruby-macho//lib/macho/load_commands.rb#1560
 MachO::LoadCommands::LinkerOptionCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # The top-level Mach-O load command structure.
@@ -2600,7 +2466,7 @@ MachO::LoadCommands::LinkerOptionCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 # This is the most generic load command -- only the type ID and size are
 # represented. Used when a more specific class isn't available or isn't implemented.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:187
+# source://ruby-macho//lib/macho/load_commands.rb#187
 class MachO::LoadCommands::LoadCommand < ::MachO::MachOStructure
   # @api private
   # @param view [MachO::MachOView] the load command's raw view
@@ -2608,30 +2474,28 @@ class MachO::LoadCommands::LoadCommand < ::MachO::MachOStructure
   # @param cmdsize [Integer] the size of the load command in bytes
   # @return [LoadCommand] a new instance of LoadCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:236
-  def initialize(view, cmd, cmdsize)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#236
+  def initialize(view, cmd, cmdsize); end
 
   # @return [Integer] the load command's type ID
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:191
+  # source://ruby-macho//lib/macho/load_commands.rb#191
   def cmd; end
 
   # @return [Integer] the size of the load command, in bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:194
+  # source://ruby-macho//lib/macho/load_commands.rb#194
   def cmdsize; end
 
   # @deprecated use {#view} instead
   # @return [Integer] the load command's offset in the source file
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:262
+  # source://ruby-macho//lib/macho/load_commands.rb#262
   def offset; end
 
   # @return [Boolean] whether the load command can be serialized
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:244
+  # source://ruby-macho//lib/macho/load_commands.rb#244
   def serializable?; end
 
   # @api private
@@ -2641,39 +2505,37 @@ class MachO::LoadCommands::LoadCommand < ::MachO::MachOStructure
   # @return [String, nil] the serialized fields of the load command, or nil
   #   if the load command can't be serialized
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:253
-  def serialize(context)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#253
+  def serialize(context); end
 
   # @note Children should override this to include additional information.
   # @return [Hash] a hash representation of this load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:282
+  # source://ruby-macho//lib/macho/load_commands.rb#282
   def to_h; end
 
   # @return [String] a string representation of the load command's
   #   identifying number
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:276
+  # source://ruby-macho//lib/macho/load_commands.rb#276
   def to_s; end
 
   # @return [Symbol, nil] a symbol representation of the load command's
   #   type ID, or nil if the ID doesn't correspond to a known load command class
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:268
+  # source://ruby-macho//lib/macho/load_commands.rb#268
   def to_sym; end
 
   # @return [Symbol, nil] a symbol representation of the load command's
   #   type ID, or nil if the ID doesn't correspond to a known load command class
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:268
+  # source://ruby-macho//lib/macho/load_commands.rb#268
   def type; end
 
   # @return [MachO::MachOView, nil] the raw view associated with the load command,
   #   or nil if the load command was created via {create}.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:188
+  # source://ruby-macho//lib/macho/load_commands.rb#188
   def view; end
 
   class << self
@@ -2683,10 +2545,8 @@ class MachO::LoadCommands::LoadCommand < ::MachO::MachOStructure
     # @param args [Array] the arguments for the load command being created
     # @raise [LoadCommandNotCreatableError]
     #
-    # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:218
-    def create(cmd_sym, *args)
-      ;
-    end
+    # source://ruby-macho//lib/macho/load_commands.rb#218
+    def create(cmd_sym, *args); end
 
     # Instantiates a new LoadCommand given a view into its origin Mach-O
     #
@@ -2694,17 +2554,15 @@ class MachO::LoadCommands::LoadCommand < ::MachO::MachOStructure
     # @param view [MachO::MachOView] the load command's raw view
     # @return [LoadCommand] the new load command
     #
-    # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:208
-    def new_from_bin(view)
-      ;
-    end
+    # source://ruby-macho//lib/macho/load_commands.rb#208
+    def new_from_bin(view); end
   end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:198
+# source://ruby-macho//lib/macho/load_commands.rb#198
 MachO::LoadCommands::LoadCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # Represents a Load Command string. A rough analogue to the lc_str
@@ -2712,7 +2570,7 @@ MachO::LoadCommands::LoadCommand::FORMAT = T.let(T.unsafe(nil), String)
 # pretend that strings stored in LCs are immediately available without
 # explicit operations on the raw Mach-O data.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:295
+# source://ruby-macho//lib/macho/load_commands.rb#295
 class MachO::LoadCommands::LoadCommand::LCStr
   # @api private
   # @param lc [LoadCommand] the load command
@@ -2724,58 +2582,54 @@ class MachO::LoadCommands::LoadCommand::LCStr
   #   interpreted differently depending on `lc.view`. The current behavior
   #   is a hack to allow viewless load command creation.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:304
-  def initialize(lc, lc_str)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#304
+  def initialize(lc, lc_str); end
 
   # @return [Hash] a hash representation of this {LCStr}.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:334
+  # source://ruby-macho//lib/macho/load_commands.rb#334
   def to_h; end
 
   # @return [Integer] the offset to the beginning of the string in the
   #   load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:329
+  # source://ruby-macho//lib/macho/load_commands.rb#329
   def to_i; end
 
   # @return [String] a string representation of the LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:323
+  # source://ruby-macho//lib/macho/load_commands.rb#323
   def to_s; end
 end
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:202
+# source://ruby-macho//lib/macho/load_commands.rb#202
 MachO::LoadCommands::LoadCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # Represents the contextual information needed by a load command to
 # serialize itself correctly into a binary string.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:344
+# source://ruby-macho//lib/macho/load_commands.rb#344
 class MachO::LoadCommands::LoadCommand::SerializationContext
   # @api private
   # @param endianness [Symbol] the endianness of the context
   # @param alignment [Integer] the alignment of the context
   # @return [SerializationContext] a new instance of SerializationContext
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:362
-  def initialize(endianness, alignment)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#362
+  def initialize(endianness, alignment); end
 
   # @return [Integer] the constant alignment value used to pad the
   #   serialized load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:350
+  # source://ruby-macho//lib/macho/load_commands.rb#350
   def alignment; end
 
   # @return [Symbol] the endianness of the serialized load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:346
+  # source://ruby-macho//lib/macho/load_commands.rb#346
   def endianness; end
 
   class << self
@@ -2783,199 +2637,189 @@ class MachO::LoadCommands::LoadCommand::SerializationContext
     # @return [SerializationContext] the
     #   resulting context
     #
-    # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:355
-    def context_for(macho)
-      ;
-    end
+    # source://ruby-macho//lib/macho/load_commands.rb#355
+    def context_for(macho); end
   end
 end
 
 # A load command containing an owner name and offset/size for an arbitrary data region.
 # Corresponds to LC_NOTE.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1767
+# source://ruby-macho//lib/macho/load_commands.rb#1767
 class MachO::LoadCommands::NoteCommand < ::MachO::LoadCommands::LoadCommand
   # @return [NoteCommand] a new instance of NoteCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1784
-  def initialize(view, cmd, cmdsize, data_owner, offset, size)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1784
+  def initialize(view, cmd, cmdsize, data_owner, offset, size); end
 
   # @return [String] the name of the owner for this note
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1768
+  # source://ruby-macho//lib/macho/load_commands.rb#1768
   def data_owner; end
 
   # @return [Integer] the offset, within the file, of the note
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1771
+  # source://ruby-macho//lib/macho/load_commands.rb#1771
   def offset; end
 
   # @return [Integer] the size, in bytes, of the note
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1774
+  # source://ruby-macho//lib/macho/load_commands.rb#1774
   def size; end
 
   # @return [Hash] a hash representation of this {NoteCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1792
+  # source://ruby-macho//lib/macho/load_commands.rb#1792
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1778
+# source://ruby-macho//lib/macho/load_commands.rb#1778
 MachO::LoadCommands::NoteCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1782
+# source://ruby-macho//lib/macho/load_commands.rb#1782
 MachO::LoadCommands::NoteCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing the value of the original checksum for prebound
 # files, or zero. Corresponds to LC_PREBIND_CKSUM.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1135
+# source://ruby-macho//lib/macho/load_commands.rb#1135
 class MachO::LoadCommands::PrebindCksumCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [PrebindCksumCommand] a new instance of PrebindCksumCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1147
-  def initialize(view, cmd, cmdsize, cksum)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1147
+  def initialize(view, cmd, cmdsize, cksum); end
 
   # @return [Integer] the checksum or 0
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1136
+  # source://ruby-macho//lib/macho/load_commands.rb#1136
   def cksum; end
 
   # @return [Hash] a hash representation of this {PrebindCksumCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1153
+  # source://ruby-macho//lib/macho/load_commands.rb#1153
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1140
+# source://ruby-macho//lib/macho/load_commands.rb#1140
 MachO::LoadCommands::PrebindCksumCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1144
+# source://ruby-macho//lib/macho/load_commands.rb#1144
 MachO::LoadCommands::PrebindCksumCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command used to indicate dynamic libraries used in prebinding.
 # Corresponds to LC_PREBOUND_DYLIB.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:651
+# source://ruby-macho//lib/macho/load_commands.rb#651
 class MachO::LoadCommands::PreboundDylibCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [PreboundDylibCommand] a new instance of PreboundDylibCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:669
-  def initialize(view, cmd, cmdsize, name, nmodules, linked_modules)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#669
+  def initialize(view, cmd, cmdsize, name, nmodules, linked_modules); end
 
   # @return [Integer] a bit vector of linked modules
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:658
+  # source://ruby-macho//lib/macho/load_commands.rb#658
   def linked_modules; end
 
   # @return [LCStr] the library's path
   #   name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:652
+  # source://ruby-macho//lib/macho/load_commands.rb#652
   def name; end
 
   # @return [Integer] the number of modules in the library
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:655
+  # source://ruby-macho//lib/macho/load_commands.rb#655
   def nmodules; end
 
   # @return [Hash] a hash representation of this {PreboundDylibCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:677
+  # source://ruby-macho//lib/macho/load_commands.rb#677
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:662
+# source://ruby-macho//lib/macho/load_commands.rb#662
 MachO::LoadCommands::PreboundDylibCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:666
+# source://ruby-macho//lib/macho/load_commands.rb#666
 MachO::LoadCommands::PreboundDylibCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing the address of the dynamic shared library
 # initialization routine and an index into the module table for the module
 # that defines the routine. Corresponds to LC_ROUTINES.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:703
+# source://ruby-macho//lib/macho/load_commands.rb#703
 class MachO::LoadCommands::RoutinesCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [RoutinesCommand] a new instance of RoutinesCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:737
-  def initialize(view, cmd, cmdsize, init_address, init_module, reserved1, reserved2, reserved3, reserved4, reserved5, reserved6)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#737
+  def initialize(view, cmd, cmdsize, init_address, init_module, reserved1, reserved2, reserved3, reserved4, reserved5, reserved6); end
 
   # @return [Integer] the address of the initialization routine
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:704
+  # source://ruby-macho//lib/macho/load_commands.rb#704
   def init_address; end
 
   # @return [Integer] the index into the module table that the init routine
   #   is defined in
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:708
+  # source://ruby-macho//lib/macho/load_commands.rb#708
   def init_module; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:711
+  # source://ruby-macho//lib/macho/load_commands.rb#711
   def reserved1; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:714
+  # source://ruby-macho//lib/macho/load_commands.rb#714
   def reserved2; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:717
+  # source://ruby-macho//lib/macho/load_commands.rb#717
   def reserved3; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:720
+  # source://ruby-macho//lib/macho/load_commands.rb#720
   def reserved4; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:723
+  # source://ruby-macho//lib/macho/load_commands.rb#723
   def reserved5; end
 
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:726
+  # source://ruby-macho//lib/macho/load_commands.rb#726
   def reserved6; end
 
   # @return [Hash] a hash representation of this {RoutinesCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:751
+  # source://ruby-macho//lib/macho/load_commands.rb#751
   def to_h; end
 end
 
@@ -2983,114 +2827,108 @@ end
 # initialization routine and an index into the module table for the module
 # that defines the routine. Corresponds to LC_ROUTINES_64.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:770
+# source://ruby-macho//lib/macho/load_commands.rb#770
 class MachO::LoadCommands::RoutinesCommand64 < ::MachO::LoadCommands::RoutinesCommand; end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:771
+# source://ruby-macho//lib/macho/load_commands.rb#771
 MachO::LoadCommands::RoutinesCommand64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:775
+# source://ruby-macho//lib/macho/load_commands.rb#775
 MachO::LoadCommands::RoutinesCommand64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:730
+# source://ruby-macho//lib/macho/load_commands.rb#730
 MachO::LoadCommands::RoutinesCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:734
+# source://ruby-macho//lib/macho/load_commands.rb#734
 MachO::LoadCommands::RoutinesCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command representing an rpath, which specifies a path that should
 # be added to the current run path used to find @rpath prefixed dylibs.
 # Corresponds to LC_RPATH.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1164
+# source://ruby-macho//lib/macho/load_commands.rb#1164
 class MachO::LoadCommands::RpathCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [RpathCommand] a new instance of RpathCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1176
-  def initialize(view, cmd, cmdsize, path)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1176
+  def initialize(view, cmd, cmdsize, path); end
 
   # @return [LCStr] the path to add to the run path as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1165
+  # source://ruby-macho//lib/macho/load_commands.rb#1165
   def path; end
 
   # @api private
   # @param context [SerializationContext] the context
   # @return [String] the serialized fields of the load command
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1184
-  def serialize(context)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1184
+  def serialize(context); end
 
   # @return [Hash] a hash representation of this {RpathCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1194
+  # source://ruby-macho//lib/macho/load_commands.rb#1194
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1169
+# source://ruby-macho//lib/macho/load_commands.rb#1169
 MachO::LoadCommands::RpathCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1173
+# source://ruby-macho//lib/macho/load_commands.rb#1173
 MachO::LoadCommands::RpathCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # association of segment flag symbols to values
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:173
+# source://ruby-macho//lib/macho/load_commands.rb#173
 MachO::LoadCommands::SEGMENT_FLAGS = T.let(T.unsafe(nil), Hash)
 
 # association of segment name symbols to names
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:160
+# source://ruby-macho//lib/macho/load_commands.rb#160
 MachO::LoadCommands::SEGMENT_NAMES = T.let(T.unsafe(nil), Hash)
 
 # A load command indicating that part of this file is to be mapped into
 # the task's address space. Corresponds to LC_SEGMENT.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:413
+# source://ruby-macho//lib/macho/load_commands.rb#413
 class MachO::LoadCommands::SegmentCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SegmentCommand] a new instance of SegmentCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:449
-  def initialize(view, cmd, cmdsize, segname, vmaddr, vmsize, fileoff, filesize, maxprot, initprot, nsects, flags)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#449
+  def initialize(view, cmd, cmdsize, segname, vmaddr, vmsize, fileoff, filesize, maxprot, initprot, nsects, flags); end
 
   # @return [Integer] the file offset of the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:423
+  # source://ruby-macho//lib/macho/load_commands.rb#423
   def fileoff; end
 
   # @return [Integer] the amount to map from the file
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:426
+  # source://ruby-macho//lib/macho/load_commands.rb#426
   def filesize; end
 
   # @example
@@ -3098,14 +2936,12 @@ class MachO::LoadCommands::SegmentCommand < ::MachO::LoadCommands::LoadCommand
   # @param flag [Symbol] a segment flag symbol
   # @return [Boolean] true if `flag` is present in the segment's flag field
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:487
-  def flag?(flag)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#487
+  def flag?(flag); end
 
   # @return [Integer] any flags associated with the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:438
+  # source://ruby-macho//lib/macho/load_commands.rb#438
   def flags; end
 
   # Guesses the alignment of the segment.
@@ -3113,22 +2949,22 @@ class MachO::LoadCommands::SegmentCommand < ::MachO::LoadCommands::LoadCommand
   # @note See `guess_align` in `cctools/misc/lipo.c`
   # @return [Integer] the guessed alignment, as a power of 2
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:498
+  # source://ruby-macho//lib/macho/load_commands.rb#498
   def guess_align; end
 
   # @return [Integer] the initial VM protection
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:432
+  # source://ruby-macho//lib/macho/load_commands.rb#432
   def initprot; end
 
   # @return [Integer] the maximum VM protection
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:429
+  # source://ruby-macho//lib/macho/load_commands.rb#429
   def maxprot; end
 
   # @return [Integer] the number of sections in the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:435
+  # source://ruby-macho//lib/macho/load_commands.rb#435
   def nsects; end
 
   # All sections referenced within this segment.
@@ -3136,337 +2972,323 @@ class MachO::LoadCommands::SegmentCommand < ::MachO::LoadCommands::LoadCommand
   # @return [Array<MachO::Sections::Section>] if the Mach-O is 32-bit
   # @return [Array<MachO::Sections::Section64>] if the Mach-O is 64-bit
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:466
+  # source://ruby-macho//lib/macho/load_commands.rb#466
   def sections; end
 
   # @return [String] the name of the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:414
+  # source://ruby-macho//lib/macho/load_commands.rb#414
   def segname; end
 
   # @return [Hash] a hash representation of this {SegmentCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:516
+  # source://ruby-macho//lib/macho/load_commands.rb#516
   def to_h; end
 
   # @return [Integer] the memory address of the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:417
+  # source://ruby-macho//lib/macho/load_commands.rb#417
   def vmaddr; end
 
   # @return [Integer] the memory size of the segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:420
+  # source://ruby-macho//lib/macho/load_commands.rb#420
   def vmsize; end
 end
 
 # A load command indicating that part of this file is to be mapped into
 # the task's address space. Corresponds to LC_SEGMENT_64.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:536
+# source://ruby-macho//lib/macho/load_commands.rb#536
 class MachO::LoadCommands::SegmentCommand64 < ::MachO::LoadCommands::SegmentCommand; end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:537
+# source://ruby-macho//lib/macho/load_commands.rb#537
 MachO::LoadCommands::SegmentCommand64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:541
+# source://ruby-macho//lib/macho/load_commands.rb#541
 MachO::LoadCommands::SegmentCommand64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:442
+# source://ruby-macho//lib/macho/load_commands.rb#442
 MachO::LoadCommands::SegmentCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:446
+# source://ruby-macho//lib/macho/load_commands.rb#446
 MachO::LoadCommands::SegmentCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command specifying the version of the sources used to build the
 # binary. Corresponds to LC_SOURCE_VERSION.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1611
+# source://ruby-macho//lib/macho/load_commands.rb#1611
 class MachO::LoadCommands::SourceVersionCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SourceVersionCommand] a new instance of SourceVersionCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1623
-  def initialize(view, cmd, cmdsize, version)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1623
+  def initialize(view, cmd, cmdsize, version); end
 
   # @return [Hash] a hash representation of this {SourceVersionCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1641
+  # source://ruby-macho//lib/macho/load_commands.rb#1641
   def to_h; end
 
   # @return [Integer] the version packed as a24.b10.c10.d10.e10
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1612
+  # source://ruby-macho//lib/macho/load_commands.rb#1612
   def version; end
 
   # A string representation of the sources used to build the binary.
   #
   # @return [String] a string representation of the version
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1630
+  # source://ruby-macho//lib/macho/load_commands.rb#1630
   def version_string; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1616
+# source://ruby-macho//lib/macho/load_commands.rb#1616
 MachO::LoadCommands::SourceVersionCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1620
+# source://ruby-macho//lib/macho/load_commands.rb#1620
 MachO::LoadCommands::SourceVersionCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command signifying a shared library that is a subframework of
 # an umbrella framework. Corresponds to LC_SUB_CLIENT.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:865
+# source://ruby-macho//lib/macho/load_commands.rb#865
 class MachO::LoadCommands::SubClientCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SubClientCommand] a new instance of SubClientCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:877
-  def initialize(view, cmd, cmdsize, sub_client)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#877
+  def initialize(view, cmd, cmdsize, sub_client); end
 
   # @return [LCStr] the subclient name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:866
+  # source://ruby-macho//lib/macho/load_commands.rb#866
   def sub_client; end
 
   # @return [Hash] a hash representation of this {SubClientCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:883
+  # source://ruby-macho//lib/macho/load_commands.rb#883
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:870
+# source://ruby-macho//lib/macho/load_commands.rb#870
 MachO::LoadCommands::SubClientCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:874
+# source://ruby-macho//lib/macho/load_commands.rb#874
 MachO::LoadCommands::SubClientCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command signifying membership of a subframework containing the name
 # of an umbrella framework. Corresponds to LC_SUB_FRAMEWORK.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:781
+# source://ruby-macho//lib/macho/load_commands.rb#781
 class MachO::LoadCommands::SubFrameworkCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SubFrameworkCommand] a new instance of SubFrameworkCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:793
-  def initialize(view, cmd, cmdsize, umbrella)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#793
+  def initialize(view, cmd, cmdsize, umbrella); end
 
   # @return [Hash] a hash representation of this {SubFrameworkCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:799
+  # source://ruby-macho//lib/macho/load_commands.rb#799
   def to_h; end
 
   # @return [LCStr] the umbrella framework name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:782
+  # source://ruby-macho//lib/macho/load_commands.rb#782
   def umbrella; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:786
+# source://ruby-macho//lib/macho/load_commands.rb#786
 MachO::LoadCommands::SubFrameworkCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:790
+# source://ruby-macho//lib/macho/load_commands.rb#790
 MachO::LoadCommands::SubFrameworkCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command signifying a sublibrary of a shared library. Corresponds
 # to LC_SUB_LIBRARY.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:837
+# source://ruby-macho//lib/macho/load_commands.rb#837
 class MachO::LoadCommands::SubLibraryCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SubLibraryCommand] a new instance of SubLibraryCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:849
-  def initialize(view, cmd, cmdsize, sub_library)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#849
+  def initialize(view, cmd, cmdsize, sub_library); end
 
   # @return [LCStr] the sublibrary name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:838
+  # source://ruby-macho//lib/macho/load_commands.rb#838
   def sub_library; end
 
   # @return [Hash] a hash representation of this {SubLibraryCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:855
+  # source://ruby-macho//lib/macho/load_commands.rb#855
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:842
+# source://ruby-macho//lib/macho/load_commands.rb#842
 MachO::LoadCommands::SubLibraryCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:846
+# source://ruby-macho//lib/macho/load_commands.rb#846
 MachO::LoadCommands::SubLibraryCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command signifying membership of a subumbrella containing the name
 # of an umbrella framework. Corresponds to LC_SUB_UMBRELLA.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:809
+# source://ruby-macho//lib/macho/load_commands.rb#809
 class MachO::LoadCommands::SubUmbrellaCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SubUmbrellaCommand] a new instance of SubUmbrellaCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:821
-  def initialize(view, cmd, cmdsize, sub_umbrella)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#821
+  def initialize(view, cmd, cmdsize, sub_umbrella); end
 
   # @return [LCStr] the subumbrella framework name as an LCStr
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:810
+  # source://ruby-macho//lib/macho/load_commands.rb#810
   def sub_umbrella; end
 
   # @return [Hash] a hash representation of this {SubUmbrellaCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:827
+  # source://ruby-macho//lib/macho/load_commands.rb#827
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:814
+# source://ruby-macho//lib/macho/load_commands.rb#814
 MachO::LoadCommands::SubUmbrellaCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:818
+# source://ruby-macho//lib/macho/load_commands.rb#818
 MachO::LoadCommands::SubUmbrellaCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # An obsolete load command containing the offset and size of the (GNU style)
 # symbol table information. Corresponds to LC_SYMSEG.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1652
+# source://ruby-macho//lib/macho/load_commands.rb#1652
 class MachO::LoadCommands::SymsegCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SymsegCommand] a new instance of SymsegCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1667
-  def initialize(view, cmd, cmdsize, offset, size)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1667
+  def initialize(view, cmd, cmdsize, offset, size); end
 
   # @return [Integer] the offset to the symbol segment
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1653
+  # source://ruby-macho//lib/macho/load_commands.rb#1653
   def offset; end
 
   # @return [Integer] the size of the symbol segment in bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1656
+  # source://ruby-macho//lib/macho/load_commands.rb#1656
   def size; end
 
   # @return [Hash] a hash representation of this {SymsegCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1674
+  # source://ruby-macho//lib/macho/load_commands.rb#1674
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1660
+# source://ruby-macho//lib/macho/load_commands.rb#1660
 MachO::LoadCommands::SymsegCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1664
+# source://ruby-macho//lib/macho/load_commands.rb#1664
 MachO::LoadCommands::SymsegCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing the offsets and sizes of the link-edit 4.3BSD
 # "stab" style symbol table information. Corresponds to LC_SYMTAB.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:893
+# source://ruby-macho//lib/macho/load_commands.rb#893
 class MachO::LoadCommands::SymtabCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [SymtabCommand] a new instance of SymtabCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:914
-  def initialize(view, cmd, cmdsize, symoff, nsyms, stroff, strsize)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#914
+  def initialize(view, cmd, cmdsize, symoff, nsyms, stroff, strsize); end
 
   # @return [Integer] the number of symbol table entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:897
+  # source://ruby-macho//lib/macho/load_commands.rb#897
   def nsyms; end
 
   # @return [Integer] the string table's offset
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:900
+  # source://ruby-macho//lib/macho/load_commands.rb#900
   def stroff; end
 
   # @return [Integer] the string table size in bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:903
+  # source://ruby-macho//lib/macho/load_commands.rb#903
   def strsize; end
 
   # @return [Integer] the symbol table's offset
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:894
+  # source://ruby-macho//lib/macho/load_commands.rb#894
   def symoff; end
 
   # @return [Hash] a hash representation of this {SymtabCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:923
+  # source://ruby-macho//lib/macho/load_commands.rb#923
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:907
+# source://ruby-macho//lib/macho/load_commands.rb#907
 MachO::LoadCommands::SymtabCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:911
+# source://ruby-macho//lib/macho/load_commands.rb#911
 MachO::LoadCommands::SymtabCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command used to represent threads.
@@ -3474,71 +3296,69 @@ MachO::LoadCommands::SymtabCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 #
 # @note cctools-870 and onwards have all fields of thread_command commented
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:691
+# source://ruby-macho//lib/macho/load_commands.rb#691
 class MachO::LoadCommands::ThreadCommand < ::MachO::LoadCommands::LoadCommand; end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:692
+# source://ruby-macho//lib/macho/load_commands.rb#692
 MachO::LoadCommands::ThreadCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:696
+# source://ruby-macho//lib/macho/load_commands.rb#696
 MachO::LoadCommands::ThreadCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing the offset and number of hints in the two-level
 # namespace lookup hints table. Corresponds to LC_TWOLEVEL_HINTS.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1053
+# source://ruby-macho//lib/macho/load_commands.rb#1053
 class MachO::LoadCommands::TwolevelHintsCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [TwolevelHintsCommand] a new instance of TwolevelHintsCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1072
-  def initialize(view, cmd, cmdsize, htoffset, nhints)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1072
+  def initialize(view, cmd, cmdsize, htoffset, nhints); end
 
   # @return [Integer] the offset to the hint table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1054
+  # source://ruby-macho//lib/macho/load_commands.rb#1054
   def htoffset; end
 
   # @return [Integer] the number of hints in the hint table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1057
+  # source://ruby-macho//lib/macho/load_commands.rb#1057
   def nhints; end
 
   # @return [TwolevelHintsTable] the hint table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1061
+  # source://ruby-macho//lib/macho/load_commands.rb#1061
   def table; end
 
   # @return [Hash] a hash representation of this {TwolevelHintsCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1080
+  # source://ruby-macho//lib/macho/load_commands.rb#1080
   def to_h; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1065
+# source://ruby-macho//lib/macho/load_commands.rb#1065
 MachO::LoadCommands::TwolevelHintsCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1069
+# source://ruby-macho//lib/macho/load_commands.rb#1069
 MachO::LoadCommands::TwolevelHintsCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A representation of the two-level namespace lookup hints table exposed
 # by a {TwolevelHintsCommand} (`LC_TWOLEVEL_HINTS`).
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1090
+# source://ruby-macho//lib/macho/load_commands.rb#1090
 class MachO::LoadCommands::TwolevelHintsCommand::TwolevelHintsTable
   # @api private
   # @param view [MachO::MachOView] the view into the current Mach-O
@@ -3546,43 +3366,39 @@ class MachO::LoadCommands::TwolevelHintsCommand::TwolevelHintsTable
   # @param nhints [Integer] the number of two-level hints in the table
   # @return [TwolevelHintsTable] a new instance of TwolevelHintsTable
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1098
-  def initialize(view, htoffset, nhints)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1098
+  def initialize(view, htoffset, nhints); end
 
   # @return [Array<TwolevelHint>] all hints in the table
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1092
+  # source://ruby-macho//lib/macho/load_commands.rb#1092
   def hints; end
 end
 
 # An individual two-level namespace lookup hint.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1107
+# source://ruby-macho//lib/macho/load_commands.rb#1107
 class MachO::LoadCommands::TwolevelHintsCommand::TwolevelHintsTable::TwolevelHint
   # @api private
   # @param blob [Integer] the 32-bit number containing the lookup hint
   # @return [TwolevelHint] a new instance of TwolevelHint
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1116
-  def initialize(blob)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1116
+  def initialize(blob); end
 
   # @return [Integer] the index into the sub-images
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1109
+  # source://ruby-macho//lib/macho/load_commands.rb#1109
   def isub_image; end
 
   # @return [Integer] the index into the table of contents
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1112
+  # source://ruby-macho//lib/macho/load_commands.rb#1112
   def itoc; end
 
   # @return [Hash] a hash representation of this {TwolevelHint}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1122
+  # source://ruby-macho//lib/macho/load_commands.rb#1122
   def to_h; end
 end
 
@@ -3590,113 +3406,109 @@ end
 # identifying an object produced by static link editor. Corresponds to
 # LC_UUID.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:373
+# source://ruby-macho//lib/macho/load_commands.rb#373
 class MachO::LoadCommands::UUIDCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [UUIDCommand] a new instance of UUIDCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:385
-  def initialize(view, cmd, cmdsize, uuid)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#385
+  def initialize(view, cmd, cmdsize, uuid); end
 
   # @return [Hash] returns a hash representation of this {UUIDCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:402
+  # source://ruby-macho//lib/macho/load_commands.rb#402
   def to_h; end
 
   # @return [Array<Integer>] the UUID
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:374
+  # source://ruby-macho//lib/macho/load_commands.rb#374
   def uuid; end
 
   # @return [String] a string representation of the UUID
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:391
+  # source://ruby-macho//lib/macho/load_commands.rb#391
   def uuid_string; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:378
+# source://ruby-macho//lib/macho/load_commands.rb#378
 MachO::LoadCommands::UUIDCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:382
+# source://ruby-macho//lib/macho/load_commands.rb#382
 MachO::LoadCommands::UUIDCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A load command containing the minimum OS version on which the binary
 # was built to run. Corresponds to LC_VERSION_MIN_MACOSX and
 # LC_VERSION_MIN_IPHONEOS.
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1307
+# source://ruby-macho//lib/macho/load_commands.rb#1307
 class MachO::LoadCommands::VersionMinCommand < ::MachO::LoadCommands::LoadCommand
   # @api private
   # @return [VersionMinCommand] a new instance of VersionMinCommand
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1322
-  def initialize(view, cmd, cmdsize, version, sdk)
-    ;
-  end
+  # source://ruby-macho//lib/macho/load_commands.rb#1322
+  def initialize(view, cmd, cmdsize, version, sdk); end
 
   # @return [Integer] the SDK version X.Y.Z packed as x16.y8.z8
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1311
+  # source://ruby-macho//lib/macho/load_commands.rb#1311
   def sdk; end
 
   # A string representation of the binary's SDK version.
   #
   # @return [String] a string representing the SDK version.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1341
+  # source://ruby-macho//lib/macho/load_commands.rb#1341
   def sdk_string; end
 
   # @return [Hash] a hash representation of this {VersionMinCommand}
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1351
+  # source://ruby-macho//lib/macho/load_commands.rb#1351
   def to_h; end
 
   # @return [Integer] the version X.Y.Z packed as x16.y8.z8
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1308
+  # source://ruby-macho//lib/macho/load_commands.rb#1308
   def version; end
 
   # A string representation of the binary's minimum OS version.
   #
   # @return [String] a string representing the minimum OS version.
   #
-  # source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1330
+  # source://ruby-macho//lib/macho/load_commands.rb#1330
   def version_string; end
 end
 
 # @api private
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1315
+# source://ruby-macho//lib/macho/load_commands.rb#1315
 MachO::LoadCommands::VersionMinCommand::FORMAT = T.let(T.unsafe(nil), String)
 
 # @api private
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/load_commands.rb:1319
+# source://ruby-macho//lib/macho/load_commands.rb#1319
 MachO::LoadCommands::VersionMinCommand::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # Raised when a Mach-O is loaded with FatFile.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:67
+# source://ruby-macho//lib/macho/exceptions.rb#67
 class MachO::MachOBinaryError < ::MachO::MachOError
   # @return [MachOBinaryError] a new instance of MachOBinaryError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:68
+  # source://ruby-macho//lib/macho/exceptions.rb#68
   def initialize; end
 end
 
 # A generic Mach-O error in execution.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:5
+# source://ruby-macho//lib/macho/exceptions.rb#5
 class MachO::MachOError < ::RuntimeError; end
 
 # Represents a Mach-O file, which contains a header and load commands
@@ -3706,7 +3518,7 @@ class MachO::MachOError < ::RuntimeError; end
 # @see https://en.wikipedia.org/wiki/Mach-O
 # @see FatFile
 #
-# source://ruby-macho-3.0.0/lib/macho/macho_file.rb:11
+# source://ruby-macho//lib/macho/macho_file.rb#11
 class MachO::MachOFile
   extend ::Forwardable
 
@@ -3722,10 +3534,8 @@ class MachO::MachOFile
   # @raise [ArgumentError] if the given file does not exist
   # @return [MachOFile] a new instance of MachOFile
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:58
-  def initialize(filename, **opts)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#58
+  def initialize(filename, **opts); end
 
   # All load commands of a given name.
   #
@@ -3736,10 +3546,8 @@ class MachO::MachOFile
   # @return [Array<LoadCommands::LoadCommand>] an array of load commands
   #   corresponding to `name`
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:149
-  def [](name)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#149
+  def [](name); end
 
   # Appends a new load command to the Mach-O.
   #
@@ -3754,10 +3562,8 @@ class MachO::MachOFile
   # @return [void]
   # @see #insert_command
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:215
-  def add_command(lc, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#215
+  def add_command(lc, options = T.unsafe(nil)); end
 
   # Add the given runtime path to the Mach-O.
   #
@@ -3772,24 +3578,18 @@ class MachO::MachOFile
   # @raise [RpathExistsError] if the runtime path already exists
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:407
-  def add_rpath(path, _options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#407
+  def add_rpath(path, _options = T.unsafe(nil)); end
 
   # @return [Integer] the file's internal alignment
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def alignment(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def alignment(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_BUNDLE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def bundle?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def bundle?(*args, **_arg1, &block); end
 
   # Changes the shared library `old_name` to `new_name`
   #
@@ -3803,10 +3603,8 @@ class MachO::MachOFile
   # @raise [DylibUnknownError] if no shared library has the old name
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:354
-  def change_dylib(old_name, new_name, _options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#354
+  def change_dylib(old_name, new_name, _options = T.unsafe(nil)); end
 
   # Changes the Mach-O's dylib ID to `new_id`. Does nothing if not a dylib.
   #
@@ -3819,10 +3617,8 @@ class MachO::MachOFile
   # @raise [ArgumentError] if `new_id` is not a String
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:317
-  def change_dylib_id(new_id, _options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#317
+  def change_dylib_id(new_id, _options = T.unsafe(nil)); end
 
   # Changes the shared library `old_name` to `new_name`
   #
@@ -3836,10 +3632,8 @@ class MachO::MachOFile
   # @raise [DylibUnknownError] if no shared library has the old name
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:354
-  def change_install_name(old_name, new_name, _options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#354
+  def change_install_name(old_name, new_name, _options = T.unsafe(nil)); end
 
   # Changes the runtime path `old_path` to `new_path`
   #
@@ -3853,10 +3647,8 @@ class MachO::MachOFile
   # @raise [RpathExistsError] if the new runtime path already exists
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:385
-  def change_rpath(old_path, new_path, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#385
+  def change_rpath(old_path, new_path, options = T.unsafe(nil)); end
 
   # All load commands of a given name.
   #
@@ -3867,26 +3659,22 @@ class MachO::MachOFile
   # @return [Array<LoadCommands::LoadCommand>] an array of load commands
   #   corresponding to `name`
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:149
-  def command(name)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#149
+  def command(name); end
 
   # @return [Boolean] whether or not the file is of type `MH_CORE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def core?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def core?(*args, **_arg1, &block); end
 
   # @return [Symbol] a symbol representation of the Mach-O's CPU subtype
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:138
+  # source://ruby-macho//lib/macho/macho_file.rb#138
   def cpusubtype; end
 
   # @return [Symbol] a symbol representation of the Mach-O's CPU type
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:133
+  # source://ruby-macho//lib/macho/macho_file.rb#133
   def cputype; end
 
   # Delete a load command from the Mach-O.
@@ -3900,10 +3688,8 @@ class MachO::MachOFile
   # @param options [Hash]
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:229
-  def delete_command(lc, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#229
+  def delete_command(lc, options = T.unsafe(nil)); end
 
   # Delete the given runtime path from the Mach-O.
   #
@@ -3917,24 +3703,18 @@ class MachO::MachOFile
   # @raise [RpathUnknownError] if no such runtime path exists
   # @return void
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:426
-  def delete_rpath(path, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#426
+  def delete_rpath(path, options = T.unsafe(nil)); end
 
   # @return [Boolean] whether or not the file is of type `MH_DSYM`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dsym?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dsym?(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLIB`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dylib?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dylib?(*args, **_arg1, &block); end
 
   # The Mach-O's dylib ID, or `nil` if not a dylib.
   #
@@ -3942,7 +3722,7 @@ class MachO::MachOFile
   #   file.dylib_id # => 'libBar.dylib'
   # @return [String, nil] the Mach-O's dylib ID
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:300
+  # source://ruby-macho//lib/macho/macho_file.rb#300
   def dylib_id; end
 
   # Changes the Mach-O's dylib ID to `new_id`. Does nothing if not a dylib.
@@ -3956,74 +3736,62 @@ class MachO::MachOFile
   # @raise [ArgumentError] if `new_id` is not a String
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:317
-  def dylib_id=(new_id, _options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#317
+  def dylib_id=(new_id, _options = T.unsafe(nil)); end
 
   # All load commands responsible for loading dylibs.
   #
   # @return [Array<LoadCommands::DylibCommand>] an array of DylibCommands
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:254
+  # source://ruby-macho//lib/macho/macho_file.rb#254
   def dylib_load_commands; end
 
   # @return [Boolean] whether or not the file is of type `MH_DYLINKER`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def dylinker?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dylinker?(*args, **_arg1, &block); end
 
   # @return [Symbol] the endianness of the file, :big or :little
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:22
+  # source://ruby-macho//lib/macho/macho_file.rb#22
   def endianness; end
 
   # @return [Boolean] whether or not the file is of type `MH_EXECUTE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def executable?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def executable?(*args, **_arg1, &block); end
 
   # @return [String, nil] the filename loaded from, or nil if loaded from a binary
   #   string
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:16
+  # source://ruby-macho//lib/macho/macho_file.rb#16
   def filename; end
 
   # @return [String, nil] the filename loaded from, or nil if loaded from a binary
   #   string
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:16
-  def filename=(_arg0)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#16
+  def filename=(_arg0); end
 
   # @return [Symbol] a string representation of the Mach-O's filetype
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:128
+  # source://ruby-macho//lib/macho/macho_file.rb#128
   def filetype; end
 
   # @return [Integer] the header flags associated with the Mach-O
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def flags(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def flags(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_FVMLIB`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def fvmlib?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def fvmlib?(*args, **_arg1, &block); end
 
   # @return [Headers::MachHeader] if the Mach-O is 32-bit
   # @return [Headers::MachHeader64] if the Mach-O is 64-bit
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:26
+  # source://ruby-macho//lib/macho/macho_file.rb#26
   def header; end
 
   # Initializes a new MachOFile instance from a binary string with the given options.
@@ -4031,10 +3799,8 @@ class MachO::MachOFile
   # @api private
   # @see MachO::MachOFile.new_from_bin
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:70
-  def initialize_from_bin(bin, opts)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#70
+  def initialize_from_bin(bin, opts); end
 
   # Inserts a load command at the given offset.
   # **will leave the object in an inconsistent state**.
@@ -4047,75 +3813,61 @@ class MachO::MachOFile
   # @raise [OffsetInsertionError] if the offset is not in the load command region
   # @raise [HeaderPadError] if the new command exceeds the header pad buffer
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:165
-  def insert_command(offset, lc, options = T.unsafe(nil))
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#165
+  def insert_command(offset, lc, options = T.unsafe(nil)); end
 
   # @return [Boolean] whether or not the file is of type `MH_KEXT_BUNDLE`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def kext?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def kext?(*args, **_arg1, &block); end
 
   # All shared libraries linked to the Mach-O.
   #
   # @return [Array<String>] an array of all shared libraries
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:336
+  # source://ruby-macho//lib/macho/macho_file.rb#336
   def linked_dylibs; end
 
   # @note load commands are provided in order of ascending offset.
   # @return [Array<LoadCommands::LoadCommand>] an array of the file's load
   #   commands
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:31
+  # source://ruby-macho//lib/macho/macho_file.rb#31
   def load_commands; end
 
   # @return [Integer] the magic number
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def magic(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def magic(*args, **_arg1, &block); end
 
   # @return [Boolean] true if the Mach-O has 32-bit magic, false otherwise
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def magic32?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def magic32?(*args, **_arg1, &block); end
 
   # @return [Boolean] true if the Mach-O has 64-bit magic, false otherwise
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def magic64?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def magic64?(*args, **_arg1, &block); end
 
   # @return [String] a string representation of the file's magic number
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:123
+  # source://ruby-macho//lib/macho/macho_file.rb#123
   def magic_string; end
 
   # @return [Integer] the number of load commands in the Mach-O
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def ncmds(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def ncmds(*args, **_arg1, &block); end
 
   # @return [Boolean] whether or not the file is of type `MH_OBJECT`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def object?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def object?(*args, **_arg1, &block); end
 
   # @return [Hash] any parser options that the instance was created with
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:19
+  # source://ruby-macho//lib/macho/macho_file.rb#19
   def options; end
 
   # Populate the instance's fields with the raw Mach-O data.
@@ -4125,15 +3877,13 @@ class MachO::MachOFile
   #   {#delete_command} have been called with `repopulate = false`.
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:247
+  # source://ruby-macho//lib/macho/macho_file.rb#247
   def populate_fields; end
 
   # @return [Boolean] whether or not the file is of type `MH_PRELOAD`
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def preload?(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def preload?(*args, **_arg1, &block); end
 
   # Replace a load command with another command in the Mach-O, preserving location.
   #
@@ -4144,16 +3894,14 @@ class MachO::MachOFile
   # @return [void]
   # @see #insert_command
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:193
-  def replace_command(old_lc, new_lc)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#193
+  def replace_command(old_lc, new_lc); end
 
   # All runtime paths searched by the dynamic linker for the Mach-O.
   #
   # @return [Array<String>] an array of all runtime paths
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:370
+  # source://ruby-macho//lib/macho/macho_file.rb#370
   def rpaths; end
 
   # The segment alignment for the Mach-O. Guesses conservatively.
@@ -4162,7 +3910,7 @@ class MachO::MachOFile
   # @note See `get_align` and `get_align_64` in `cctools/misc/lipo.c`
   # @return [Integer] the alignment, as a power of 2
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:273
+  # source://ruby-macho//lib/macho/macho_file.rb#273
   def segment_alignment; end
 
   # All segment load commands in the Mach-O.
@@ -4170,26 +3918,24 @@ class MachO::MachOFile
   # @return [Array<LoadCommands::SegmentCommand>] if the Mach-O is 32-bit
   # @return [Array<LoadCommands::SegmentCommand64>] if the Mach-O is 64-bit
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:261
+  # source://ruby-macho//lib/macho/macho_file.rb#261
   def segments; end
 
   # The file's raw Mach-O data.
   #
   # @return [String] the raw Mach-O data
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:79
+  # source://ruby-macho//lib/macho/macho_file.rb#79
   def serialize; end
 
   # @return [Integer] the size of all load commands, in bytes, in the Mach-O
   #
-  # source://RUBY_ROOT/forwardable.rb:229
-  def sizeofcmds(*args, **_arg1, &block)
-    ;
-  end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def sizeofcmds(*args, **_arg1, &block); end
 
   # @return [Hash] a hash representation of this {MachOFile}
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:456
+  # source://ruby-macho//lib/macho/macho_file.rb#456
   def to_h; end
 
   # Write all Mach-O data to the given filename.
@@ -4197,10 +3943,8 @@ class MachO::MachOFile
   # @param filename [String] the file to write to
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:441
-  def write(filename)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#441
+  def write(filename); end
 
   # Write all Mach-O data to the file used to initialize the instance.
   #
@@ -4208,7 +3952,7 @@ class MachO::MachOFile
   # @raise [MachOError] if the instance was initialized without a file
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:449
+  # source://ruby-macho//lib/macho/macho_file.rb#449
   def write!; end
 
   private
@@ -4219,10 +3963,8 @@ class MachO::MachOFile
   # @param cpusubtype [Integer] the CPU subtype
   # @raise [CPUSubtypeError] if the CPU sub-type is unknown
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:558
-  def check_cpusubtype(cputype, cpusubtype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#558
+  def check_cpusubtype(cputype, cpusubtype); end
 
   # Check the file's CPU type.
   #
@@ -4230,10 +3972,8 @@ class MachO::MachOFile
   # @param cputype [Integer] the CPU type
   # @raise [CPUTypeError] if the CPU type is unknown
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:550
-  def check_cputype(cputype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#550
+  def check_cputype(cputype); end
 
   # Check the file's type.
   #
@@ -4241,10 +3981,8 @@ class MachO::MachOFile
   # @param filetype [Integer] the file type
   # @raise [FiletypeError] if the file type is unknown
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:567
-  def check_filetype(filetype)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#567
+  def check_filetype(filetype); end
 
   # Attempt to decompress a Mach-O file from the data specified in a prelinked kernel header.
   #
@@ -4254,7 +3992,7 @@ class MachO::MachOFile
   # @raise [DecompressionError] if decompression is impossible or fails
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:511
+  # source://ruby-macho//lib/macho/macho_file.rb#511
   def decompress_macho_lzvn; end
 
   # The low file offset (offset to first section data).
@@ -4262,7 +4000,7 @@ class MachO::MachOFile
   # @api private
   # @return [Integer] the offset
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:608
+  # source://ruby-macho//lib/macho/macho_file.rb#608
   def low_fileoff; end
 
   # Read just the file's magic number and check its validity.
@@ -4272,7 +4010,7 @@ class MachO::MachOFile
   # @raise [FatBinaryError] if the magic is for a Fat file
   # @return [Integer] the magic
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:535
+  # source://ruby-macho//lib/macho/macho_file.rb#535
   def populate_and_check_magic; end
 
   # All load commands in the file.
@@ -4281,7 +4019,7 @@ class MachO::MachOFile
   # @raise [LoadCommandError] if an unknown load command is encountered
   # @return [Array<LoadCommands::LoadCommand>] an array of load commands
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:575
+  # source://ruby-macho//lib/macho/macho_file.rb#575
   def populate_load_commands; end
 
   # The file's Mach-O header structure.
@@ -4291,7 +4029,7 @@ class MachO::MachOFile
   # @return [Headers::MachHeader] if the Mach-O is 32-bit
   # @return [Headers::MachHeader64] if the Mach-O is 64-bit
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:470
+  # source://ruby-macho//lib/macho/macho_file.rb#470
   def populate_mach_header; end
 
   # Read a compressed Mach-O header and check its validity, as well as whether we're able
@@ -4302,7 +4040,7 @@ class MachO::MachOFile
   # @raise [DecompressionError] if decompression is impossible or fails
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:494
+  # source://ruby-macho//lib/macho/macho_file.rb#494
   def populate_prelinked_kernel_header; end
 
   # Updates the number of load commands in the raw data.
@@ -4311,10 +4049,8 @@ class MachO::MachOFile
   # @param ncmds [Integer] the new number of commands
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:629
-  def update_ncmds(ncmds)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#629
+  def update_ncmds(ncmds); end
 
   # Updates the size of all load commands in the raw data.
   #
@@ -4322,10 +4058,8 @@ class MachO::MachOFile
   # @param size [Integer] the new size, in bytes
   # @return [void]
   #
-  # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:639
-  def update_sizeofcmds(size)
-    ;
-  end
+  # source://ruby-macho//lib/macho/macho_file.rb#639
+  def update_sizeofcmds(size); end
 
   class << self
     # Creates a new instance from a binary string.
@@ -4339,10 +4073,8 @@ class MachO::MachOFile
     # @param opts [Hash] options to control the parser with
     # @return [MachOFile] a new MachOFile
     #
-    # source://ruby-macho-3.0.0/lib/macho/macho_file.rb:42
-    def new_from_bin(bin, **opts)
-      ;
-    end
+    # source://ruby-macho//lib/macho/macho_file.rb#42
+    def new_from_bin(bin, **opts); end
   end
 end
 
@@ -4350,17 +4082,17 @@ end
 #
 # @abstract
 #
-# source://ruby-macho-3.0.0/lib/macho/structure.rb:6
+# source://ruby-macho//lib/macho/structure.rb#6
 class MachO::MachOStructure
   # @return [Hash] a hash representation of this {MachOStructure}.
   #
-  # source://ruby-macho-3.0.0/lib/macho/structure.rb:33
+  # source://ruby-macho//lib/macho/structure.rb#33
   def to_h; end
 
   class << self
     # @return [Integer] the size, in bytes, of the represented structure.
     #
-    # source://ruby-macho-3.0.0/lib/macho/structure.rb:18
+    # source://ruby-macho//lib/macho/structure.rb#18
     def bytesize; end
 
     # @api private
@@ -4368,10 +4100,8 @@ class MachO::MachOStructure
     # @param bin [String] the string to be unpacked into the new structure
     # @return [MachO::MachOStructure] the resulting structure
     #
-    # source://ruby-macho-3.0.0/lib/macho/structure.rb:26
-    def new_from_bin(endianness, bin)
-      ;
-    end
+    # source://ruby-macho//lib/macho/structure.rb#26
+    def new_from_bin(endianness, bin); end
   end
 end
 
@@ -4380,7 +4110,7 @@ end
 # @api private
 # @return [String] the unpacking format
 #
-# source://ruby-macho-3.0.0/lib/macho/structure.rb:10
+# source://ruby-macho//lib/macho/structure.rb#10
 MachO::MachOStructure::FORMAT = T.let(T.unsafe(nil), String)
 
 # The size of the data structure, in bytes.
@@ -4388,12 +4118,12 @@ MachO::MachOStructure::FORMAT = T.let(T.unsafe(nil), String)
 # @api private
 # @return [Integer] the size, in bytes
 #
-# source://ruby-macho-3.0.0/lib/macho/structure.rb:15
+# source://ruby-macho//lib/macho/structure.rb#15
 MachO::MachOStructure::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A representation of some unspecified Mach-O data.
 #
-# source://ruby-macho-3.0.0/lib/macho/view.rb:5
+# source://ruby-macho//lib/macho/view.rb#5
 class MachO::MachOView
   # Creates a new MachOView.
   #
@@ -4402,203 +4132,187 @@ class MachO::MachOView
   # @param offset [Integer] the offset of the relevant data
   # @return [MachOView] a new instance of MachOView
   #
-  # source://ruby-macho-3.0.0/lib/macho/view.rb:19
-  def initialize(raw_data, endianness, offset)
-    ;
-  end
+  # source://ruby-macho//lib/macho/view.rb#19
+  def initialize(raw_data, endianness, offset); end
 
   # @return [Symbol] the endianness of the data (`:big` or `:little`)
   #
-  # source://ruby-macho-3.0.0/lib/macho/view.rb:10
+  # source://ruby-macho//lib/macho/view.rb#10
   def endianness; end
 
   # @return [Integer] the offset of the relevant data (in {#raw_data})
   #
-  # source://ruby-macho-3.0.0/lib/macho/view.rb:13
+  # source://ruby-macho//lib/macho/view.rb#13
   def offset; end
 
   # @return [String] the raw Mach-O data
   #
-  # source://ruby-macho-3.0.0/lib/macho/view.rb:7
+  # source://ruby-macho//lib/macho/view.rb#7
   def raw_data; end
 
   # @return [Hash] a hash representation of this {MachOView}.
   #
-  # source://ruby-macho-3.0.0/lib/macho/view.rb:26
+  # source://ruby-macho//lib/macho/view.rb#26
   def to_h; end
 end
 
 # Raised when a file's magic bytes are not valid Mach-O magic.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:46
+# source://ruby-macho//lib/macho/exceptions.rb#46
 class MachO::MagicError < ::MachO::NotAMachOError
   # @param num [Integer] the unknown number
   # @return [MagicError] a new instance of MagicError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:47
-  def initialize(magic)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#47
+  def initialize(magic); end
 end
 
 # Raised when a Mach-O file modification fails.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:9
+# source://ruby-macho//lib/macho/exceptions.rb#9
 class MachO::ModificationError < ::MachO::MachOError; end
 
 # Raised when a file is not a Mach-O.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:34
+# source://ruby-macho//lib/macho/exceptions.rb#34
 class MachO::NotAMachOError < ::MachO::MachOError; end
 
 # Raised when a change at an offset is not valid.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:146
+# source://ruby-macho//lib/macho/exceptions.rb#146
 class MachO::OffsetInsertionError < ::MachO::ModificationError
   # @param offset [Integer] the invalid offset
   # @return [OffsetInsertionError] a new instance of OffsetInsertionError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:147
-  def initialize(offset)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#147
+  def initialize(offset); end
 end
 
 # Raised when a Mach-O file modification fails but can be recovered when
 # operating on multiple Mach-O slices of a fat binary in non-strict mode.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:22
+# source://ruby-macho//lib/macho/exceptions.rb#22
 class MachO::RecoverableModificationError < ::MachO::ModificationError
   # @return [Integer, nil] The index of the Mach-O slice of a fat binary for
   #   which modification failed or `nil` if not a fat binary. This is used to
   #   make the error message more useful.
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:23
+  # source://ruby-macho//lib/macho/exceptions.rb#23
   def macho_slice; end
 
   # @return [Integer, nil] The index of the Mach-O slice of a fat binary for
   #   which modification failed or `nil` if not a fat binary. This is used to
   #   make the error message more useful.
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:23
-  def macho_slice=(_arg0)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#23
+  def macho_slice=(_arg0); end
 
   # @return [String] The exception message.
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:26
+  # source://ruby-macho//lib/macho/exceptions.rb#26
   def to_s; end
 end
 
 # Raised when attempting to add an rpath that already exists.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:187
+# source://ruby-macho//lib/macho/exceptions.rb#187
 class MachO::RpathExistsError < ::MachO::RecoverableModificationError
   # @param path [String] the extant path
   # @return [RpathExistsError] a new instance of RpathExistsError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:188
-  def initialize(path)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#188
+  def initialize(path); end
 end
 
 # Raised when attempting to change an rpath that doesn't exist.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:179
+# source://ruby-macho//lib/macho/exceptions.rb#179
 class MachO::RpathUnknownError < ::MachO::RecoverableModificationError
   # @param path [String] the unknown runtime path
   # @return [RpathUnknownError] a new instance of RpathUnknownError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:180
-  def initialize(path)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#180
+  def initialize(path); end
 end
 
 # Classes and constants for parsing sections in Mach-O binaries.
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:5
-module MachO::Sections
-  ;
-end
+# source://ruby-macho//lib/macho/sections.rb#5
+module MachO::Sections; end
 
 # maximum specifiable section alignment, as a power of 2
 #
 # @note see `MAXSECTALIGN` macro in `cctools/misc/lipo.c`
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:20
+# source://ruby-macho//lib/macho/sections.rb#20
 MachO::Sections::MAX_SECT_ALIGN = T.let(T.unsafe(nil), Integer)
 
 # association of section attribute symbols to values
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:52
+# source://ruby-macho//lib/macho/sections.rb#52
 MachO::Sections::SECTION_ATTRIBUTES = T.let(T.unsafe(nil), Hash)
 
 # attributes mask
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:10
+# source://ruby-macho//lib/macho/sections.rb#10
 MachO::Sections::SECTION_ATTRIBUTES_MASK = T.let(T.unsafe(nil), Integer)
 
 # system settable attributes mask
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:16
+# source://ruby-macho//lib/macho/sections.rb#16
 MachO::Sections::SECTION_ATTRIBUTES_SYS_MASK = T.let(T.unsafe(nil), Integer)
 
 # user settable attributes mask
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:13
+# source://ruby-macho//lib/macho/sections.rb#13
 MachO::Sections::SECTION_ATTRIBUTES_USR_MASK = T.let(T.unsafe(nil), Integer)
 
 # association of section flag symbols to values
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:67
+# source://ruby-macho//lib/macho/sections.rb#67
 MachO::Sections::SECTION_FLAGS = T.let(T.unsafe(nil), Hash)
 
 # association of section name symbols to names
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:74
+# source://ruby-macho//lib/macho/sections.rb#74
 MachO::Sections::SECTION_NAMES = T.let(T.unsafe(nil), Hash)
 
 # association of section type symbols to values
 #
 # @api private
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:24
+# source://ruby-macho//lib/macho/sections.rb#24
 MachO::Sections::SECTION_TYPES = T.let(T.unsafe(nil), Hash)
 
 # type mask
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:7
+# source://ruby-macho//lib/macho/sections.rb#7
 MachO::Sections::SECTION_TYPE_MASK = T.let(T.unsafe(nil), Integer)
 
 # Represents a section of a segment for 32-bit architectures.
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:91
+# source://ruby-macho//lib/macho/sections.rb#91
 class MachO::Sections::Section < ::MachO::MachOStructure
   # @api private
   # @return [Section] a new instance of Section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:132
-  def initialize(sectname, segname, addr, size, offset, align, reloff, nreloc, flags, reserved1, reserved2)
-    ;
-  end
+  # source://ruby-macho//lib/macho/sections.rb#132
+  def initialize(sectname, segname, addr, size, offset, align, reloff, nreloc, flags, reserved1, reserved2); end
 
   # @return [Integer] the memory address of the section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:99
+  # source://ruby-macho//lib/macho/sections.rb#99
   def addr; end
 
   # @return [Integer] the section alignment (power of 2) of the section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:108
+  # source://ruby-macho//lib/macho/sections.rb#108
   def align; end
 
   # @example
@@ -4606,19 +4320,17 @@ class MachO::Sections::Section < ::MachO::MachOStructure
   # @param attr_sym [Symbol] a section attribute symbol
   # @return [Boolean] whether this section is of the given type
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:185
-  def attribute?(attr_sym)
-    ;
-  end
+  # source://ruby-macho//lib/macho/sections.rb#185
+  def attribute?(attr_sym); end
 
   # @return [Integer] the raw numeric attributes of this section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:177
+  # source://ruby-macho//lib/macho/sections.rb#177
   def attributes; end
 
   # @return [Boolean] whether the section is empty (i.e, {size} is 0)
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:159
+  # source://ruby-macho//lib/macho/sections.rb#159
   def empty?; end
 
   # @deprecated Use {#type?} or {#attribute?} instead.
@@ -4627,75 +4339,73 @@ class MachO::Sections::Section < ::MachO::MachOStructure
   # @param flag [Symbol] a section flag symbol
   # @return [Boolean] whether the flag is present in the section's {flags}
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:194
-  def flag?(flag)
-    ;
-  end
+  # source://ruby-macho//lib/macho/sections.rb#194
+  def flag?(flag); end
 
   # @return [Integer] flags for type and attributes of the section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:117
+  # source://ruby-macho//lib/macho/sections.rb#117
   def flags; end
 
   # @return [Integer] the number of relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:114
+  # source://ruby-macho//lib/macho/sections.rb#114
   def nreloc; end
 
   # @return [Integer] the file offset of the section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:105
+  # source://ruby-macho//lib/macho/sections.rb#105
   def offset; end
 
   # @return [Integer] the file offset of the section's relocation entries
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:111
+  # source://ruby-macho//lib/macho/sections.rb#111
   def reloff; end
 
   # @return [void] reserved (for offset or index)
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:120
+  # source://ruby-macho//lib/macho/sections.rb#120
   def reserved1; end
 
   # @return [void] reserved (for count or sizeof)
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:123
+  # source://ruby-macho//lib/macho/sections.rb#123
   def reserved2; end
 
   # @return [String] the section's name
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:149
+  # source://ruby-macho//lib/macho/sections.rb#149
   def section_name; end
 
   # @return [String] the name of the section, including null pad bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:92
+  # source://ruby-macho//lib/macho/sections.rb#92
   def sectname; end
 
   # @return [String] the parent segment's name
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:154
+  # source://ruby-macho//lib/macho/sections.rb#154
   def segment_name; end
 
   # @return [String] the name of the segment's section, including null
   #   pad bytes
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:96
+  # source://ruby-macho//lib/macho/sections.rb#96
   def segname; end
 
   # @return [Integer] the size, in bytes, of the section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:102
+  # source://ruby-macho//lib/macho/sections.rb#102
   def size; end
 
   # @return [Hash] a hash representation of this {Section}
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:203
+  # source://ruby-macho//lib/macho/sections.rb#203
   def to_h; end
 
   # @return [Integer] the raw numeric type of this section
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:164
+  # source://ruby-macho//lib/macho/sections.rb#164
   def type; end
 
   # @example
@@ -4703,59 +4413,55 @@ class MachO::Sections::Section < ::MachO::MachOStructure
   # @param type_sym [Symbol] a section type symbol
   # @return [Boolean] whether this section is of the given type
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:172
-  def type?(type_sym)
-    ;
-  end
+  # source://ruby-macho//lib/macho/sections.rb#172
+  def type?(type_sym); end
 end
 
 # Represents a section of a segment for 64-bit architectures.
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:222
+# source://ruby-macho//lib/macho/sections.rb#222
 class MachO::Sections::Section64 < ::MachO::Sections::Section
   # @api private
   # @return [Section64] a new instance of Section64
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:232
-  def initialize(sectname, segname, addr, size, offset, align, reloff, nreloc, flags, reserved1, reserved2, reserved3)
-    ;
-  end
+  # source://ruby-macho//lib/macho/sections.rb#232
+  def initialize(sectname, segname, addr, size, offset, align, reloff, nreloc, flags, reserved1, reserved2, reserved3); end
 
   # @return [void] reserved
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:223
+  # source://ruby-macho//lib/macho/sections.rb#223
   def reserved3; end
 
   # @return [Hash] a hash representation of this {Section64}
   #
-  # source://ruby-macho-3.0.0/lib/macho/sections.rb:240
+  # source://ruby-macho//lib/macho/sections.rb#240
   def to_h; end
 end
 
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:226
+# source://ruby-macho//lib/macho/sections.rb#226
 MachO::Sections::Section64::FORMAT = T.let(T.unsafe(nil), String)
 
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:229
+# source://ruby-macho//lib/macho/sections.rb#229
 MachO::Sections::Section64::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # @see MachOStructure::FORMAT
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:126
+# source://ruby-macho//lib/macho/sections.rb#126
 MachO::Sections::Section::FORMAT = T.let(T.unsafe(nil), String)
 
 # @see MachOStructure::SIZEOF
 #
-# source://ruby-macho-3.0.0/lib/macho/sections.rb:129
+# source://ruby-macho//lib/macho/sections.rb#129
 MachO::Sections::Section::SIZEOF = T.let(T.unsafe(nil), Integer)
 
 # A collection of convenient methods for common operations on Mach-O and Fat
 # binaries.
 #
-# source://ruby-macho-3.0.0/lib/macho/tools.rb:6
+# source://ruby-macho//lib/macho/tools.rb#6
 module MachO::Tools
   class << self
     # Add a runtime path to a Mach-O or Fat binary, overwriting the source file.
@@ -4766,10 +4472,8 @@ module MachO::Tools
     # @param options [Hash]
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:71
-    def add_rpath(filename, new_path, options = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#71
+    def add_rpath(filename, new_path, options = T.unsafe(nil)); end
 
     # Changes the dylib ID of a Mach-O or Fat binary, overwriting the source
     #  file.
@@ -4780,10 +4484,8 @@ module MachO::Tools
     # @param options [Hash]
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:23
-    def change_dylib_id(filename, new_id, options = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#23
+    def change_dylib_id(filename, new_id, options = T.unsafe(nil)); end
 
     # Changes a shared library install name in a Mach-O or Fat binary,
     #  overwriting the source file.
@@ -4795,10 +4497,8 @@ module MachO::Tools
     # @param options [Hash]
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:39
-    def change_install_name(filename, old_name, new_name, options = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#39
+    def change_install_name(filename, old_name, new_name, options = T.unsafe(nil)); end
 
     # Changes a runtime path in a Mach-O or Fat binary, overwriting the source
     #  file.
@@ -4811,10 +4511,8 @@ module MachO::Tools
     # @param options [Hash]
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:57
-    def change_rpath(filename, old_path, new_path, options = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#57
+    def change_rpath(filename, old_path, new_path, options = T.unsafe(nil)); end
 
     # Delete a runtime path from a Mach-O or Fat binary, overwriting the source
     #  file.
@@ -4826,18 +4524,14 @@ module MachO::Tools
     # @param options [Hash]
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:88
-    def delete_rpath(filename, old_path, options = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#88
+    def delete_rpath(filename, old_path, options = T.unsafe(nil)); end
 
     # @param filename [String] the Mach-O or Fat binary being read
     # @return [Array<String>] an array of all dylibs linked to the binary
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:9
-    def dylibs(filename)
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#9
+    def dylibs(filename); end
 
     # Merge multiple Mach-Os into one universal (Fat) binary.
     #
@@ -4846,39 +4540,35 @@ module MachO::Tools
     # @param fat64 [Boolean] whether to use {Headers::FatArch64}s to represent each slice
     # @return [void]
     #
-    # source://ruby-macho-3.0.0/lib/macho/tools.rb:100
-    def merge_machos(filename, *files, fat64: T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/tools.rb#100
+    def merge_machos(filename, *files, fat64: T.unsafe(nil)); end
   end
 end
 
 # Raised when a file is too short to be a valid Mach-O file.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:38
+# source://ruby-macho//lib/macho/exceptions.rb#38
 class MachO::TruncatedFileError < ::MachO::NotAMachOError
   # @return [TruncatedFileError] a new instance of TruncatedFileError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:39
+  # source://ruby-macho//lib/macho/exceptions.rb#39
   def initialize; end
 end
 
 # Raised whenever unfinished code is called.
 #
-# source://ruby-macho-3.0.0/lib/macho/exceptions.rb:195
+# source://ruby-macho//lib/macho/exceptions.rb#195
 class MachO::UnimplementedError < ::MachO::MachOError
   # @param thing [String] the thing that is unimplemented
   # @return [UnimplementedError] a new instance of UnimplementedError
   #
-  # source://ruby-macho-3.0.0/lib/macho/exceptions.rb:196
-  def initialize(thing)
-    ;
-  end
+  # source://ruby-macho//lib/macho/exceptions.rb#196
+  def initialize(thing); end
 end
 
 # A collection of utility functions used throughout ruby-macho.
 #
-# source://ruby-macho-3.0.0/lib/macho/utils.rb:5
+# source://ruby-macho//lib/macho/utils.rb#5
 module MachO::Utils
   class << self
     # Compares the given number to valid big-endian magic numbers.
@@ -4886,90 +4576,72 @@ module MachO::Utils
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid big-endian magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:121
-    def big_magic?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#121
+    def big_magic?(num); end
 
     # Compares the given number to the known magic number for a compressed Mach-O slice.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid compressed header magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:128
-    def compressed_magic?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#128
+    def compressed_magic?(num); end
 
     # Compares the given number to valid 32-bit Fat magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid 32-bit fat magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:86
-    def fat_magic32?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#86
+    def fat_magic32?(num); end
 
     # Compares the given number to valid 64-bit Fat magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid 64-bit fat magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:93
-    def fat_magic64?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#93
+    def fat_magic64?(num); end
 
     # Compares the given number to valid Fat magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid Fat magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:79
-    def fat_magic?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#79
+    def fat_magic?(num); end
 
     # Compares the given number to valid little-endian magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid little-endian magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:114
-    def little_magic?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#114
+    def little_magic?(num); end
 
     # Compares the given number to valid 32-bit Mach-O magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid 32-bit magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:100
-    def magic32?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#100
+    def magic32?(num); end
 
     # Compares the given number to valid 64-bit Mach-O magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid 64-bit magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:107
-    def magic64?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#107
+    def magic64?(num); end
 
     # Compares the given number to valid Mach-O magic numbers.
     #
     # @param num [Integer] the number being checked
     # @return [Boolean] whether `num` is a valid Mach-O magic number
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:72
-    def magic?(num)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#72
+    def magic?(num); end
 
     # Returns a string of null bytes of the requested (non-negative) size
     #
@@ -4977,10 +4649,8 @@ module MachO::Utils
     # @raise [ArgumentError] if a non-positive nullpad is requested
     # @return [String] the null string (or empty string, for `size = 0`)
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:31
-    def nullpad(size)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#31
+    def nullpad(size); end
 
     # Packs tagged strings into an aligned payload.
     #
@@ -4990,10 +4660,8 @@ module MachO::Utils
     # @param strings [Hash] the labeled strings to pack
     # @return [Array<String, Hash>] the packed string and labeled offsets
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:53
-    def pack_strings(fixed_offset, alignment, strings = T.unsafe(nil))
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#53
+    def pack_strings(fixed_offset, alignment, strings = T.unsafe(nil)); end
 
     # Returns the number of bytes needed to pad the given size to the given
     #  alignment.
@@ -5002,10 +4670,8 @@ module MachO::Utils
     # @param alignment [Integer] the number to alignment the size with
     # @return [Integer] the number of pad bytes required
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:23
-    def padding_for(size, alignment)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#23
+    def padding_for(size, alignment); end
 
     # Rounds a value to the next multiple of the given round.
     #
@@ -5014,10 +4680,8 @@ module MachO::Utils
     # @return [Integer] the rounded value
     # @see http://www.opensource.apple.com/source/cctools/cctools-870/libstuff/rnd.c
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:11
-    def round(value, round)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#11
+    def round(value, round); end
 
     # Converts an abstract (native-endian) String#unpack format to big or
     #  little.
@@ -5026,14 +4690,12 @@ module MachO::Utils
     # @param endianness [Symbol] either `:big` or `:little`
     # @return [String] the converted string
     #
-    # source://ruby-macho-3.0.0/lib/macho/utils.rb:42
-    def specialize_format(format, endianness)
-      ;
-    end
+    # source://ruby-macho//lib/macho/utils.rb#42
+    def specialize_format(format, endianness); end
   end
 end
 
 # release version
 #
-# source://ruby-macho-3.0.0/lib/macho.rb:19
+# source://ruby-macho//lib/macho.rb#19
 MachO::VERSION = T.let(T.unsafe(nil), String)

@@ -11,11 +11,11 @@ class Integer
   # @return [Integer] the aligned integer
   sig { params(alignment: T.nilable(Integer)).returns(Integer) }
   def align(alignment = nil)
-    alignment ||= Integer.size
+    alignment ||= 4
 
-    return self if alignment < 2
+    return self if T.must(alignment) < 2
 
-    alignment -= 1
+    alignment = T.must(alignment) - 1
 
     if (self & alignment).zero?
       self

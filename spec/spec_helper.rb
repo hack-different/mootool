@@ -1,8 +1,10 @@
+# typed: strict
 # frozen_string_literal: true
 
 require 'bundler/setup'
 require 'sorbet-runtime'
 require 'mootool'
+require 'rspec/core'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

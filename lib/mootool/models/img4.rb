@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 require 'openssl'
@@ -26,7 +27,7 @@ module MooTool
           raise "Unknown IMG4 type #{@data.first.value}"
         end
 
-        @manifest = Manifest.new(@payload) if @payload.start_with?('IM4M')
+        @manifest = Digest.new(@payload) if @payload.start_with?('IM4M')
       end
 
       def payload?
