@@ -6,7 +6,7 @@ module MooTool
       attr_reader :value
       attr_accessor :hint
 
-      DEVICE_TREE = IOReg.new `ioreg -a -p IODeviceTree -l`
+      DEVICE_TREE = IOReg.create
 
       def initialize(value, hint = nil)
         @hint = hint
@@ -161,8 +161,8 @@ module MooTool
           if object.integer?
             colorize(object.inspect, :integer)
           elsif object.hint
-            properties = object.properties.any? ? object.properties.join(', ') : " "
-            "#{colorize(object.hint, :class)} #{properties} #{colorize(object.inspect, :digest)}"
+            properties = object.properties.any? ? " (#{object.properties.join(',')})" : ""
+            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
           else
             colorize(object.inspect, :digest)
           end

@@ -25,6 +25,11 @@ module MooTool
 
         ap indexer.index
       end
+
+      desc 'manifest', 'Prints the manifest of an img4/DER'
+      def manifest()
+        ap Models::IOReg.create.manifests
+      end
     end
   end
 end

@@ -141,9 +141,9 @@ module MooTool
 
         @value = @value.first if @value.is_a?(Array)
 
-        @value = SPLAT_SENINEL if @value.nil?
-        @value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-        # @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value == nil
+        #@value = SPLAT_SENINEL if @value.nil?
+        #@value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
+        @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value == nil
 
         return if @value == SPLAT_SENINEL
 
