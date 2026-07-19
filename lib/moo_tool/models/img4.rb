@@ -4,6 +4,7 @@
 require 'openssl'
 require 'amazing_print'
 require_relative 'decompressor'
+require 'cfpropertylist'
 
 module MooTool
   module Models
@@ -46,13 +47,15 @@ module MooTool
           @content
         end
 
+
+
         def initialize(der, filename = nil)
           @file_index = Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
           @filename = filename
 
           raw_data = der.is_a?(Models::Digest) ? der.value : der
 
-          @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data))]
+          @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data)), Models::Digest.create(::Digest::SHA256.digest(raw_data))]
           @data = OpenSSL::ASN1.decode(raw_data)
           @value = construct(@data)
           @type = @value.first
@@ -101,7 +104,7 @@ module MooTool
               when 'rvok'
                 { entry[0].to_sym => entry[1] }
               when 'trpk'
-                { entry[0].to_sym => entry.drop(1).map { |e| construct(OpenSSL::ASN1.decode(e)) } }
+                { entry[0].to_sym => entry.drop(1).map { |e| Certificate::ECCPublicKey.new e } }
               end
             end.reduce(&:merge)
           when 'comb'

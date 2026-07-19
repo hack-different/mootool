@@ -3,9 +3,9 @@
 module MooTool
   module Commands
     class IMG4 < Thor
-      desc 'print', 'Parses and prints pretty versions of an img4/DER'
-      option :friendly, type: :boolean, default: true
 
+      method_option :friendly, type: :boolean, default: true
+      desc 'print', 'Parses and prints pretty versions of an img4/DER'
       def print(filename)
         file = Models::IMG4::File.load(filename)
         file.print(options[:friendly])

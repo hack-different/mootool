@@ -6,6 +6,8 @@ module MooTool
       attr_reader :value
       attr_accessor :hint
 
+      DEVICE_TREE = IOReg.new `ioreg -a -p IODeviceTree -l`
+
       def initialize(value, hint = nil)
         @hint = hint
 
@@ -56,6 +58,10 @@ module MooTool
         to_s.unpack1('H*').upcase
       end
 
+      def properties
+        DEVICE_TREE.properties_with_hash(shasum)
+      end
+
       def as_json(*_options)
         shasum
       end
@@ -81,7 +87,8 @@ module MooTool
               file_index.files_with_hash(shasum).map { |f| f.to_ref(shasum) }.uniq }
         else
           self
-        end
+                end
+
       end
 
       def inspect
@@ -110,6 +117,8 @@ module MooTool
             cast = :point
           when Certificate::ECCSignature
             cast = :ecc_signature
+          when Certificate::ECCMQVEncryption
+            cast = :ecc_encryption
           when :ALLOW_ANY_VALUE
             cast = :any_value
           end
@@ -118,6 +127,11 @@ module MooTool
 
         def awesome_any_value(input)
           colorize('*** SPLAT ***', :trueclass)
+        end
+
+        def awesome_ecc_encryption(input)
+          values  = input.to_h
+          "#{colorize('ECCEncryption', :class)} e0x=#{colorize(values[:e_x], :integer)}, e0y=#{colorize(values[:e_y], :integer)}, e1x=#{colorize(values[:n], :integer)}"
         end
 
         def awesome_ecc_signature(signature)
@@ -147,7 +161,8 @@ module MooTool
           if object.integer?
             colorize(object.inspect, :integer)
           elsif object.hint
-            "#{colorize(object.hint, :class)} #{colorize(object.inspect, :digest)}"
+            properties = object.properties.any? ? object.properties.join(', ') : " "
+            "#{colorize(object.hint, :class)} #{properties} #{colorize(object.inspect, :digest)}"
           else
             colorize(object.inspect, :digest)
           end

@@ -11,5 +11,6 @@ module MooTool
     autoload :FileIndex
     autoload :RemoteRequest
     autoload :RemoteResponse
+    autoload :IOReg
   end
 end

@@ -43,7 +43,7 @@ module MooTool
           @hashes = begin
             IMG4::File.load("#{@location}/#{filename}").hashes
           rescue StandardError
-            [Models::Digest.create(::Digest::SHA384.digest(@filename))]
+            [Models::Digest.create(::Digest::SHA384.digest(@filename)), Models::Digest.create(::Digest::SHA256.digest(@filename))]
           end
         end
 
@@ -95,7 +95,7 @@ module MooTool
 
       FILE_KINDS = %w[
         kernelcache* kernel sep-patches* imutablekernel *.der *.im4m *.aea.* ftab.*
-        *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.* *.plist
+        *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
       ].freeze
 
       def initialize(index = nil)

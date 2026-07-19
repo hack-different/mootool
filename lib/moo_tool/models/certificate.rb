@@ -110,7 +110,7 @@ module MooTool
       end
 
       def to_h
-        { certificate: @certificate, extensions: @extensions }
+        { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s, extensions: @extensions }
       end
 
       def inspect
@@ -142,6 +142,24 @@ module MooTool
         end
       end
 
+      class ECCPublicKey
+        include Helpers::IMG4
+        def initialize(key)
+          @value = OpenSSL::ASN1.decode(key)
+
+          @curve = OpenSSL::PKey::EC::Group.new @value.value[0].value[1].value
+          @point = OpenSSL::PKey::EC::Point.new @curve, @value.value[1].value
+        end
+
+        def to_h
+          @point
+        end
+
+        def inspect
+          to_h.ai
+        end
+      end
+
       class ECCMQVEncryption
         include Helpers::IMG4
         def initialize(input)
@@ -153,7 +171,7 @@ module MooTool
         end
 
         def to_h
-          { e_x: @e_x, e_y: @e_y, n: @n }
+          { e_x: @e_x.shasum, e_y: @e_y.shasum, n: @n.shasum }
         end
 
         def inspect
