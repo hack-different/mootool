@@ -45,6 +45,29 @@ module MooTool
                   construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
                   extension.value
+                when :appleDeviceAttestationKeyUsageProperties
+                  result = construct(OpenSSL::ASN1.decode(extension.value_der))
+
+                  result.map do |item|
+                    if item.is_a?(Hash)
+                      item.to_h do |key, value|
+                        tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
+                        tag = tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
+                        [tag, value.first]
+                      end
+                    else
+                      item
+                    end
+                  end
+                when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning, :appleDeviceAttestationHardwareProperties
+                  resequence(construct(OpenSSL::ASN1.decode(extension.value_der))).transform_keys do |key|
+                    if key.is_a?(Symbol)
+                      key
+                    else
+                      tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
+                      tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
+                    end
+                  end.transform_values(&:first)
                 else
                   case oid_properties[:type]
                   when :img4

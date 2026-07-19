@@ -170,7 +170,7 @@ module MooTool
 
             output.deep_transform_keys! do |key|
               new_key = mappings.dig(key.to_s, 'title') || mappings.dig(key.to_s, 'description') || key
-              new_key.to_sym
+              new_key.respond_to?(:to_sym) ? new_key.to_sym : new_key
             end
 
             output.deep_transform_values! do |value|

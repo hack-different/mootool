@@ -114,8 +114,15 @@ module MooTool
         def awesome_point(point)
           point_data = point.to_octet_string(:uncompressed)
           x = point_data[0..(point_data.length / 2)].unpack1('H*').upcase
-          y = point_data[(point_data.length / 2)..-1].unpack1('H*').upcase
-          "#{colorize('ECCPoint', :class)} #{colorize(point.group.curve_name, :symbol)} #{colorize('x=', :args)}#{colorize(x, :integer)}, #{colorize('y=', :args)}#{colorize(y, :integer)}"
+          y = point_data[(point_data.length / 2)..].unpack1('H*').upcase
+          "#{colorize('ECCPoint',
+                      :class)} #{colorize(point.group.curve_name,
+                                          :symbol)} #{colorize('x=',
+                                                               :args)}#{colorize(x,
+                                                                                 :integer)}, #{colorize('y=',
+                                                                                                        :args)}#{colorize(
+                                                                                                          y, :integer
+                                                                                                        )}"
         end
 
         def awesome_certificate(object)
@@ -125,9 +132,10 @@ module MooTool
         def awesome_digest(object)
           if object.integer?
             colorize(object.inspect, :integer)
+          elsif object.hint
+            "#{colorize(object.hint, :class)} #{colorize(object.inspect, :digest)}"
           else
-            object.hint ? "#{colorize(object.hint, :class)} #{colorize(object.inspect, :digest)}" :
-             colorize(object.inspect, :digest)
+            colorize(object.inspect, :digest)
           end
         end
 

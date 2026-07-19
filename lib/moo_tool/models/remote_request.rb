@@ -11,14 +11,14 @@ module MooTool
 
       PRIME_CURVE = OpenSSL::PKey::EC::Group.new('prime256v1')
 
-      ALGORITHMS = { 0 => :RSA, 1 => :ECC_MQV, 2 => :ECC_HMQV }
+      ALGORITHMS = { 0 => :RSA, 1 => :ECC_MQV, 2 => :ECC_HMQV }.freeze
 
       PUBLIC_KEY_PROPERTIES = {
         UIKPub: :prime256v1,
         RKSigningPub: :prime256v1,
         SIKPub: :secp384r1,
-        RKCertificationPub: :secp384r1,
-      }
+        RKCertificationPub: :secp384r1
+      }.freeze
 
       MANIFEST_PROPERTIES = %i[
         Cryptex1Image4Manifest
@@ -85,9 +85,9 @@ module MooTool
 
         PUBLIC_KEY_PROPERTIES.each do |prop, curve|
           next unless properties.key? prop
+
           properties[prop] = parse_point(properties[prop], curve)
         end
-
 
         properties
       end
@@ -101,9 +101,7 @@ module MooTool
       def parse_certification(certification)
         # certification[:"Ap,RemotePolicyNonceHash"] = Models::Digest.create(certification[:"Ap,RemotePolicyNonceHash"])
 
-
         data = construct OpenSSL::ASN1.decode(certification)
-
 
         data[1][4].hint ||= 'ECCEncryptedData'
 
@@ -114,7 +112,7 @@ module MooTool
             ecc_point: parse_point(data[1][1]),
             vuid: data[1][2],
             kuid: data[1][3],
-            encrypted_data: data[1][4],
+            encrypted_data: data[1][4]
           }
         }
       end

@@ -31,8 +31,6 @@ module MooTool
                       IMG4::File.load("#{@location}/#{filename}").hashes
                     when /.*\.im4p/
                       IMG4::File.load("#{@location}/#{filename}").hashes
-                    when %r{.*/kernelcache(.*)}
-                      IMG4::File.load("#{@location}/#{filename}").hashes
                     else
                       [Models::Digest.create(::Digest::SHA384.digest(@filename))]
                     end
@@ -106,6 +104,8 @@ module MooTool
         end
 
         new index_data
+      rescue StandardError
+        new([])
       end
 
       def mounts
@@ -125,11 +125,17 @@ module MooTool
         search_names = mounts.flat_map do |path|
           Dir.glob("**/{#{FILE_KINDS.join(',')}}", base: path).map do |file|
             FileLocation.new(path, file)
+          rescue StandardError
+            next
           end
         end
 
         @index = flat_names + search_names
-        @index.reject! { |e| File.directory? e.fullname }
+        @index.reject! do |e|
+          File.directory? e.fullname
+        rescue Errno::EACCES, Errno::EPERM
+          true
+        end
       end
 
       def as_json(options = {})
