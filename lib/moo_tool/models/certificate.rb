@@ -45,6 +45,8 @@ module MooTool
                   construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
                   extension.value
+                when :"1.2.840.113635.100.6.16"
+                  construct(OpenSSL::ASN1.decode(extension.value_der)).split(';')
                 when :appleDeviceAttestationKeyUsageProperties
                   result = construct(OpenSSL::ASN1.decode(extension.value_der))
 
@@ -114,6 +116,27 @@ module MooTool
       def inspect
         to_h
       end
+
+      class ECCMQVEncryption
+        include Helpers::IMG4
+        def initialize(input)
+          @values = construct(OpenSSL::ASN1::decode(input.value))
+          @values.each do |v|
+            v.hint = 'ECCDH'
+          end
+          @e_x, @e_y, @n = @values
+        end
+
+        def to_h
+          { e_x: @e_x, e_y: @e_y, n: @n }
+        end
+
+        def inspect
+          to_h.ai
+        end
+      end
     end
+
+
   end
 end

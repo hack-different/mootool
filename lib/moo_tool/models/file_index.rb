@@ -25,15 +25,26 @@ module MooTool
           File.join(@location, @filename)
         end
 
+
+        def hashes_from_build_identity(path)
+          parsed = CFPropertyList.native_types(CFPropertyList::List.new(file: path).value).deep_symbolize_keys
+
+          results = parsed[:BuildIdentities].flat_map do |identity|
+            identity[:Manifest].map do |_key, value|
+              value[:Digest]
+            end
+          end
+
+          results.uniq.map { |h| Models::Digest.create(h) }
+        end
+
         def generate_hashes
-          @hashes = case @filename
-                    when /.*\.img4/
-                      IMG4::File.load("#{@location}/#{filename}").hashes
-                    when /.*\.im4p/
-                      IMG4::File.load("#{@location}/#{filename}").hashes
-                    else
-                      [Models::Digest.create(::Digest::SHA384.digest(@filename))]
-                    end
+
+          @hashes = begin
+            IMG4::File.load("#{@location}/#{filename}").hashes
+          rescue StandardError
+            [Models::Digest.create(::Digest::SHA384.digest(@filename))]
+          end
         end
 
         def to_h
@@ -83,8 +94,8 @@ module MooTool
       ].freeze
 
       FILE_KINDS = %w[
-        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m root_hash
-        *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
+        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m *.aea.* ftab.*
+        *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.* *.plist
       ].freeze
 
       def initialize(index = nil)

@@ -21,6 +21,8 @@ module MooTool
       new File.binread(filename)
     end
 
+    include Helpers::IMG4
+
     def initialize(data)
       data = data.value if data.is_a? Models::Digest
       @hash = Models::Digest.create(::Digest::SHA384.digest(data))
@@ -41,7 +43,13 @@ module MooTool
                  @compression = :raw
                  data
                end
-      @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
+      begin
+        @parsed =  construct(OpenSSL::ASN1.decode(@value))
+        @compression = :asn1
+      rescue
+        @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
+      end
+
     end
 
     def hashes
@@ -51,7 +59,8 @@ module MooTool
     def inspect
       result = { length: @value.size, hash: @hash }
       result[:compression] = @compression if @compression != :raw
-      result[:decompressed_hash] = @decompressed_hash if @decompressed_hash != @hash
+      result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
+      result[:parsed] = @parsed if @parsed
       result.ai
     end
   end

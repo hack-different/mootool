@@ -15,6 +15,8 @@ module MooTool
         end
       end
 
+      HASH_FILENAME = /(?<hash>\h{96})/
+
       # An instance of a IMG4 file
       class File
         attr_reader :payload, :manifest, :file_index
@@ -25,7 +27,7 @@ module MooTool
 
         def self.load(path)
           data = ::File.binread(path)
-          File.new(data)
+          File.new(data, path)
         end
 
         def parse_signature(signature)
@@ -54,14 +56,20 @@ module MooTool
           @content
         end
 
-        def initialize(der)
+        def initialize(der, filename = nil)
           @file_index = Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
+          @filename = filename
 
-          @hash = Models::Digest.create(::Digest::SHA384.digest(der))
-          @data = OpenSSL::ASN1.decode(der)
+          raw_data = der.is_a?(Models::Digest) ? der.value : der
+
+          @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data))]
+          @data = OpenSSL::ASN1.decode(raw_data)
           @value = construct(@data)
           @type = @value.first
           @content = {}
+
+          filename_match = HASH_FILENAME.match(@filename)
+          @hashes << Models::Digest.new([filename_match[:hash]].pack('H*')) if filename_match
 
           case @type
           when 'IM4P'
@@ -103,19 +111,15 @@ module MooTool
               when 'rvok'
                 { entry[0].to_sym => entry[1] }
               when 'trpk'
-                { entry[0].to_sym => entry.drop(1).map { |e| Models::Digest.create(e) } }
+                { entry[0].to_sym => entry.drop(1).map { |e| construct(OpenSSL::ASN1.decode(e)) } }
               end
             end.reduce(&:merge)
           when 'comb'
             @content[:comb] = @value.drop(1).map do |entry|
-              case entry[0]
-              when 'fdrd'
-                { entry[0] => File.new(entry[1]).print_value }
-              end
-            end
+              { entry[0] => File.new(entry[1]) }
+            end.reduce(&:merge)
           else
             @content = @value.map(&:to_h).reduce(&:merge)
-
           end
         end
 
@@ -153,12 +157,20 @@ module MooTool
         end
 
         def print_value
-          @content.merge(hashes: hashes).to_h
+          result = @content.merge(hashes: hashes).to_h
+          if result[:comb]
+            result[:comb] = result[:comb].map { |k,v| [k, v.print_value] }.to_h
+          end
+          result
         end
 
         def hashes
-          result = [@hash]
+          result = @hashes.dup
           result += @payload.hashes if @payload
+
+          if @content[:comb]
+            result += @content[:comb].flat_map { |k,v| v.hashes }
+          end
 
           result.uniq(&:value)
         end
@@ -201,7 +213,7 @@ module MooTool
           payload_data = data_path.value[3].value
           @payload = MooTool::Decompressor.new(payload_data)
 
-          @content[:im4p] = {
+          @content[:IM4P] = {
             im4p_type: entry[1],
             version: entry[2],
             payload: @payload

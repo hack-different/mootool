@@ -7,6 +7,7 @@ gemspec
 
 group :development, :test do
   gem 'overcommit'
+  gem 'pry'
   gem 'rake'
   gem 'rbs'
   gem 'rbs-inline'

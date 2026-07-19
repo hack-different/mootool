@@ -21,7 +21,7 @@ module MooTool
 
         indexer.hash if options[:hash]
 
-        File.write options[:save_file], JSON.dump(indexer.index) if options[:save_file]
+        File.write options[:save_file], JSON.pretty_generate(indexer.index) if options[:save_file]
 
         ap indexer.index
       end
