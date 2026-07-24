@@ -35,7 +35,7 @@ class RuboCop::AST::RegexpNode < ::RuboCop::AST::Node
   include ::RuboCop::Ext::RegexpNode
 end
 
-# This is a class that reads optional command line arguments to rubocop from environment variable.
+# This is a class that reads optional commands line arguments to rubocop from environment variable.
 #
 # @api private
 #
@@ -49,7 +49,7 @@ class RuboCop::ArgumentsEnv
   end
 end
 
-# This is a class that reads optional command line arguments to rubocop from .rubocop file.
+# This is a class that reads optional commands line arguments to rubocop from .rubocop file.
 #
 # @api private
 #
@@ -63,7 +63,7 @@ class RuboCop::ArgumentsFile
   end
 end
 
-# The CLI is a class responsible of handling all the command line interface
+# The CLI is a class responsible of handling all the commands line interface
 # logic.
 #
 # source://rubocop//lib/rubocop/cli.rb#8
@@ -84,12 +84,12 @@ class RuboCop::CLI
   def options; end
 
   # Entry point for the application logic. Here we
-  # do the command line arguments processing and inspect
+  # do the commands line arguments processing and inspect
   # the target files.
   #
   #
   # @api public
-  # @param args [Array<String>] command line arguments
+  # @param args [Array<String>] commands line arguments
   # @return [Integer] UNIX exit code
   #
   # source://rubocop//lib/rubocop/cli.rb#39
@@ -139,21 +139,21 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command.rb#7
+# source://rubocop//lib/rubocop/cli/commands.rb#7
 module RuboCop::CLI::Command
   class << self
-    # Find the command with a given name and run it in an environment.
+    # Find the commands with a given name and run it in an environment.
     #
     # @api private
     #
-    # source://rubocop//lib/rubocop/cli/command.rb#10
+    # source://rubocop//lib/rubocop/cli/commands.rb#10
     def run(env, name); end
 
     private
 
     # @api private
     #
-    # source://rubocop//lib/rubocop/cli/command.rb#16
+    # source://rubocop//lib/rubocop/cli/commands.rb#16
     def class_for(name); end
   end
 end
@@ -162,81 +162,81 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#8
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#8
 class RuboCop::CLI::Command::AutoGenerateConfig < ::RuboCop::CLI::Command::Base
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#22
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#22
   def run; end
 
   private
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#98
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#98
   def add_formatter; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#106
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#106
   def add_inheritance_from_auto_generated_file(config_file); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#102
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#102
   def execute_runner; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#127
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#127
   def existing_configuration(config_file); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#60
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#60
   def line_length_cop(config); end
 
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#48
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#48
   def line_length_enabled?(config); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#56
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#56
   def max_line_length(config); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#31
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#31
   def maybe_run_line_length_cop; end
 
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#153
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#153
   def options_config_in_root?; end
 
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#64
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#64
   def options_has_only_flag?; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#144
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#144
   def relative_path_to_todo_from_options_config; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#91
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#91
   def reset_config_and_auto_gen_file; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#82
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#82
   def run_all_cops(line_length_contents); end
 
   # Do an initial run with only Layout/LineLength so that cops that
@@ -245,103 +245,103 @@ class RuboCop::CLI::Command::AutoGenerateConfig < ::RuboCop::CLI::Command::Base
   #
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#71
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#71
   def run_line_length_cop; end
 
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#52
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#52
   def same_max_line_length?(config1, config2); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#43
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#43
   def skip_line_length_cop(reason); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#133
+  # source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#133
   def write_config_file(file_name, file_string, rubocop_yml_contents); end
 end
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#11
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#11
 RuboCop::CLI::Command::AutoGenerateConfig::AUTO_GENERATED_FILE = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#15
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#15
 RuboCop::CLI::Command::AutoGenerateConfig::PHASE_1 = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#19
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#19
 RuboCop::CLI::Command::AutoGenerateConfig::PHASE_1_DISABLED = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#18
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#18
 RuboCop::CLI::Command::AutoGenerateConfig::PHASE_1_OVERRIDDEN = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#20
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#20
 RuboCop::CLI::Command::AutoGenerateConfig::PHASE_1_SKIPPED = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#16
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#16
 RuboCop::CLI::Command::AutoGenerateConfig::PHASE_2 = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#13
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#13
 RuboCop::CLI::Command::AutoGenerateConfig::PLACEHOLDER = T.let(T.unsafe(nil), String)
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/auto_generate_config.rb#12
+# source://rubocop//lib/rubocop/cli/commands/auto_generate_config.rb#12
 RuboCop::CLI::Command::AutoGenerateConfig::YAML_OPTIONAL_DOC_START = T.let(T.unsafe(nil), Regexp)
 
 # A subcommand in the CLI.
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/base.rb#8
+# source://rubocop//lib/rubocop/cli/commands/base.rb#8
 class RuboCop::CLI::Command::Base
   # @api private
   # @return [Base] a new instance of Base
   #
-  # source://rubocop//lib/rubocop/cli/command/base.rb#26
+  # source://rubocop//lib/rubocop/cli/commands/base.rb#26
   def initialize(env); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/base.rb#9
+  # source://rubocop//lib/rubocop/cli/commands/base.rb#9
   def env; end
 
   class << self
     # @api private
     #
-    # source://rubocop//lib/rubocop/cli/command/base.rb#21
+    # source://rubocop//lib/rubocop/cli/commands/base.rb#21
     def by_command_name(name); end
 
     # @api private
     #
-    # source://rubocop//lib/rubocop/cli/command/base.rb#14
+    # source://rubocop//lib/rubocop/cli/commands/base.rb#14
     def command_name; end
 
     # @api private
     #
-    # source://rubocop//lib/rubocop/cli/command/base.rb#14
+    # source://rubocop//lib/rubocop/cli/commands/base.rb#14
     def command_name=(_arg0); end
 
     # @api private
     # @private
     #
-    # source://rubocop//lib/rubocop/cli/command/base.rb#16
+    # source://rubocop//lib/rubocop/cli/commands/base.rb#16
     def inherited(subclass); end
   end
 end
@@ -350,50 +350,50 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/execute_runner.rb#8
+# source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#8
 class RuboCop::CLI::Command::ExecuteRunner < ::RuboCop::CLI::Command::Base
   include ::RuboCop::Formatter::TextUtil
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#16
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#16
   def run; end
 
   private
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#85
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#85
   def bug_tracker_uri; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#69
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#69
   def display_error_summary(errors); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#56
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#56
   def display_summary(runner); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#61
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#61
   def display_warning_summary(warnings); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#22
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#22
   def execute_runner(paths); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#91
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#91
   def maybe_print_corrected_source; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/execute_runner.rb#42
+  # source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#42
   def with_redirect; end
 end
 
@@ -401,35 +401,35 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/execute_runner.rb#12
+# source://rubocop//lib/rubocop/cli/commands/execute_runner.rb#12
 RuboCop::CLI::Command::ExecuteRunner::INTEGRATION_FORMATTERS = T.let(T.unsafe(nil), Array)
 
 # Generate a .rubocop.yml file in the current directory.
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/init_dotfile.rb#8
+# source://rubocop//lib/rubocop/cli/commands/init_dotfile.rb#8
 class RuboCop::CLI::Command::InitDotfile < ::RuboCop::CLI::Command::Base
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/init_dotfile.rb#13
+  # source://rubocop//lib/rubocop/cli/commands/init_dotfile.rb#13
   def run; end
 end
 
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/init_dotfile.rb#9
+# source://rubocop//lib/rubocop/cli/commands/init_dotfile.rb#9
 RuboCop::CLI::Command::InitDotfile::DOTFILE = T.let(T.unsafe(nil), String)
 
 # Start Language Server Protocol of RuboCop.
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/lsp.rb#10
+# source://rubocop//lib/rubocop/cli/commands/lsp.rb#10
 class RuboCop::CLI::Command::Lsp < ::RuboCop::CLI::Command::Base
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/lsp.rb#13
+  # source://rubocop//lib/rubocop/cli/commands/lsp.rb#13
   def run; end
 end
 
@@ -438,49 +438,49 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/show_cops.rb#9
+# source://rubocop//lib/rubocop/cli/commands/show_cops.rb#9
 class RuboCop::CLI::Command::ShowCops < ::RuboCop::CLI::Command::Base
   # @api private
   # @return [ShowCops] a new instance of ShowCops
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#12
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#12
   def initialize(env); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#19
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#19
   def run; end
 
   private
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#67
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#67
   def config_lines(cop); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#63
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#63
   def cops_of_department(cops, department); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#25
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#25
   def print_available_cops; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#48
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#48
   def print_cop_details(cops); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#36
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#36
   def print_cops_of_department(registry, department, show_all); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_cops.rb#57
+  # source://rubocop//lib/rubocop/cli/commands/show_cops.rb#57
   def selected_cops_of_department(cops, department); end
 end
 
@@ -489,34 +489,34 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#9
+# source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#9
 class RuboCop::CLI::Command::ShowDocsUrl < ::RuboCop::CLI::Command::Base
   # @api private
   # @return [ShowDocsUrl] a new instance of ShowDocsUrl
   #
-  # source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#12
+  # source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#12
   def initialize(env); end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#18
+  # source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#18
   def run; end
 
   private
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#38
+  # source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#38
   def cops_array; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#24
+  # source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#24
   def print_documentation_url; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/show_docs_url.rb#42
+  # source://rubocop//lib/rubocop/cli/commands/show_docs_url.rb#42
   def registry_hash; end
 end
 
@@ -527,89 +527,89 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#12
+# source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#12
 class RuboCop::CLI::Command::SuggestExtensions < ::RuboCop::CLI::Command::Base
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#17
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#17
   def run; end
 
   private
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#73
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#73
   def all_extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#69
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#69
   def current_formatter; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#111
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#111
   def dependent_gems; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#87
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#87
   def extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#103
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#103
   def installed_and_not_loaded_extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#91
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#91
   def installed_extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#115
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#115
   def installed_gems; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#99
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#99
   def loaded_extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#107
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#107
   def lockfile; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#95
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#95
   def not_installed_extensions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#41
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#41
   def print_install_suggestions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#51
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#51
   def print_load_suggestions; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#60
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#60
   def print_opt_out_instruction; end
 
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#119
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#119
   def puts(*args); end
 
   # @api private
   # @return [Boolean]
   #
-  # source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#30
+  # source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#30
   def skip?; end
 end
 
@@ -617,25 +617,25 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#13
+# source://rubocop//lib/rubocop/cli/commands/suggest_extensions.rb#13
 RuboCop::CLI::Command::SuggestExtensions::INCLUDED_FORMATTERS = T.let(T.unsafe(nil), Array)
 
 # Display version.
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/version.rb#8
+# source://rubocop//lib/rubocop/cli/commands/version.rb#8
 class RuboCop::CLI::Command::Version < ::RuboCop::CLI::Command::Base
   # @api private
   #
-  # source://rubocop//lib/rubocop/cli/command/version.rb#11
+  # source://rubocop//lib/rubocop/cli/commands/version.rb#11
   def run; end
 end
 
 # source://rubocop//lib/rubocop/cli.rb#13
 RuboCop::CLI::DEFAULT_PARALLEL_OPTIONS = T.let(T.unsafe(nil), Array)
 
-# Execution environment for a CLI command.
+# Execution environment for a CLI commands.
 #
 # @api private
 #
@@ -662,7 +662,7 @@ class RuboCop::CLI::Environment
   # source://rubocop//lib/rubocop/cli/environment.rb#8
   def paths; end
 
-  # Run a command in this environment.
+  # Run a commands in this environment.
   #
   # @api private
   #
@@ -29782,7 +29782,7 @@ RuboCop::Cop::Security::Eval::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
 #
 # If argument starts with a pipe character (`'|'`) and the receiver is the `IO` class,
 # a subprocess is created in the same way as `Kernel#open`, and its output is returned.
-# `Kernel#open` may allow unintentional command injection, which is the reason these
+# `Kernel#open` may allow unintentional commands injection, which is the reason these
 # `IO` methods are a security risk.
 # Consider to use `File.read` to disable the behavior of subprocess invocation.
 #
@@ -29795,7 +29795,7 @@ RuboCop::Cop::Security::Eval::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
 #   # good
 #   File.read(path)
 #   File.read('path')
-#   IO.read('| command') # Allow intentional command invocation.
+#   IO.read('| commands') # Allow intentional commands invocation.
 #
 # source://rubocop//lib/rubocop/cop/security/io_methods.rb#30
 class RuboCop::Cop::Security::IoMethods < ::RuboCop::Cop::Base
@@ -32775,7 +32775,7 @@ end
 # source://rubocop//lib/rubocop/cop/style/combinable_loops.rb#64
 RuboCop::Cop::Style::CombinableLoops::MSG = T.let(T.unsafe(nil), String)
 
-# Enforces using `` or %x around command literals.
+# Enforces using `` or %x around commands literals.
 #
 # @example EnforcedStyle: backticks (default)
 #   # bad
@@ -32833,7 +32833,7 @@ RuboCop::Cop::Style::CombinableLoops::MSG = T.let(T.unsafe(nil), String)
 #   )
 # @example AllowInnerBackticks: false (default)
 #   # If `false`, the cop will always recommend using `%x` if one or more
-#   # backticks are found in the command string.
+#   # backticks are found in the commands string.
 #
 #   # bad
 #   `echo \`ls\``
@@ -53438,7 +53438,7 @@ class RuboCop::Ext::RegexpParser::Map < ::Parser::Source::Map
 end
 
 # This class handles loading files (a.k.a. features in Ruby) specified
-# by `--require` command line option and `require` directive in the config.
+# by `--require` commands line option and `require` directive in the config.
 #
 # Normally, the given string is directly passed to `require`. If a string
 # beginning with `.` is given, it is assumed to be relative to the given
@@ -53618,7 +53618,7 @@ end
 # You can tell RuboCop to use your custom formatter with a combination of
 # `--format` and `--require` option.
 # For example, when you have defined `MyCustomFormatter` in
-# `./path/to/my_custom_formatter.rb`, you would type this command:
+# `./path/to/my_custom_formatter.rb`, you would type this commands:
 #
 #     rubocop --require ./path/to/my_custom_formatter --format MyCustomFormatter
 #
@@ -55308,7 +55308,7 @@ RuboCop::NodePattern = RuboCop::AST::NodePattern
 # source://rubocop//lib/rubocop/options.rb#10
 class RuboCop::OptionArgumentError < ::StandardError; end
 
-# This class handles command line options.
+# This class handles commands line options.
 #
 # @api private
 #
@@ -55332,7 +55332,7 @@ class RuboCop::Options
   # source://rubocop//lib/rubocop/options.rb#228
   def add_additional_modes(opts); end
 
-  # the autocorrect command-line arguments map to the autocorrect @options values like so:
+  # the autocorrect commands-line arguments map to the autocorrect @options values like so:
   #                            :fix_layout  :autocorrect  :safe_autocorrect  :autocorrect_all
   # -x, --fix-layout           true         true          -                  -
   # -a, --auto-correct         -            true          true               -
@@ -55454,7 +55454,7 @@ RuboCop::Options::EXITING_OPTIONS = T.let(T.unsafe(nil), Array)
 # source://rubocop//lib/rubocop/options.rb#15
 RuboCop::Options::E_STDIN_NO_PATH = T.let(T.unsafe(nil), String)
 
-# This module contains help texts for command line options.
+# This module contains help texts for commands line options.
 #
 # @api private
 #

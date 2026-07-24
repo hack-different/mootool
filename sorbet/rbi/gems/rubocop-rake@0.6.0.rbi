@@ -55,7 +55,7 @@ RuboCop::Cop::Rake::ClassDefinitionInTask::MSG = T.let(T.unsafe(nil), String)
 # task that does not have `desc` by `rake -T`.
 #
 # Note: This cop does not require description for the default task,
-#       because the default task is executed with `rake` without command.
+#       because the default task is executed with `rake` without commands.
 #
 # @example
 #   # bad

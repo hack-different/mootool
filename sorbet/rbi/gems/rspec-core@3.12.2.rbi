@@ -355,7 +355,7 @@ end
 # Stores runtime configuration information.
 #
 # Configuration options are loaded from multiple files and joined together
-# with command-line switches and the `SPEC_OPTS` environment variable.
+# with commands-line switches and the `SPEC_OPTS` environment variable.
 #
 # Precedence order (where later entries overwrite earlier entries on
 # conflicts):
@@ -371,7 +371,7 @@ end
 # in your global file.
 #
 # The global, project-specific and local files can all be overridden with a
-# separate custom file using the --options command-line parameter.
+# separate custom file using the --options commands-line parameter.
 #
 # @example Standard settings
 #   RSpec.configure do |c|
@@ -637,7 +637,7 @@ class RSpec::Core::Configuration
   # You can modify the list via the getter, or replace it with the setter.
   #
   # To override this behaviour and display a full backtrace, use
-  # `--backtrace` on the command line, in a `.rspec` file, or in the
+  # `--backtrace` on the commands line, in a `.rspec` file, or in the
   # `rspec_options` attribute of RSpec's rake task.
   #
   # @return [Array<Regexp>]
@@ -836,7 +836,7 @@ class RSpec::Core::Configuration
   # source://rspec-core//lib/rspec/core/configuration.rb#993
   def default_formatter=(value); end
 
-  # Path to use if no path is provided to the `rspec` command (default:
+  # Path to use if no path is provided to the `rspec` commands (default:
   # `"spec"`). Allows you to just type `rspec` instead of `rspec spec` to
   # run all the examples in the `spec` directory.
   #
@@ -847,7 +847,7 @@ class RSpec::Core::Configuration
   # source://rspec-core//lib/rspec/core/configuration.rb#66
   def default_path; end
 
-  # Path to use if no path is provided to the `rspec` command (default:
+  # Path to use if no path is provided to the `rspec` commands (default:
   # `"spec"`). Allows you to just type `rspec` instead of `rspec spec` to
   # run all the examples in the `spec` directory.
   #
@@ -1082,7 +1082,7 @@ class RSpec::Core::Configuration
   #
   # ### Warning
   #
-  # This overrides any exclusion filters/tags set on the command line or in
+  # This overrides any exclusion filters/tags set on the commands line or in
   # configuration files.
   #
   # source://rspec-core//lib/rspec/core/configuration.rb#1341
@@ -1302,7 +1302,7 @@ class RSpec::Core::Configuration
   #
   # ### Warning
   #
-  # This overrides any inclusion filters/tags set on the command line or in
+  # This overrides any inclusion filters/tags set on the commands line or in
   # configuration files.
   #
   # source://rspec-core//lib/rspec/core/configuration.rb#1283
@@ -1342,7 +1342,7 @@ class RSpec::Core::Configuration
   #
   # ### Note
   #
-  # Filters set using this method can be overridden from the command line
+  # Filters set using this method can be overridden from the commands line
   # or config files (e.g. `.rspec`).
   #
   # @example
@@ -1376,7 +1376,7 @@ class RSpec::Core::Configuration
   #
   # ### Note
   #
-  # Filters set using this method can be overridden from the command line
+  # Filters set using this method can be overridden from the commands line
   # or config files (e.g. `.rspec`).
   #
   # @example
@@ -1410,7 +1410,7 @@ class RSpec::Core::Configuration
   #
   # ### Note
   #
-  # Filters set using this method can be overridden from the command line
+  # Filters set using this method can be overridden from the commands line
   # or config files (e.g. `.rspec`).
   #
   # @example
@@ -1472,7 +1472,7 @@ class RSpec::Core::Configuration
   # source://rspec-core//lib/rspec/core/configuration.rb#78
   def fixed_color?; end
 
-  # Used to set higher priority option values from the command line.
+  # Used to set higher priority option values from the commands line.
   #
   # @private
   #
@@ -1676,7 +1676,7 @@ class RSpec::Core::Configuration
   #
   # ### Warning
   #
-  # This overrides any inclusion filters/tags set on the command line or in
+  # This overrides any inclusion filters/tags set on the commands line or in
   # configuration files.
   #
   # source://rspec-core//lib/rspec/core/configuration.rb#1283
@@ -1688,7 +1688,7 @@ class RSpec::Core::Configuration
   def last_run_statuses; end
 
   # Returns dirs that have been prepended to the load path by the `-I`
-  # command line option.
+  # commands line option.
   #
   # @return [Array<String>]
   #
@@ -2108,10 +2108,10 @@ class RSpec::Core::Configuration
   # for the randomization and prints it to the `output_stream` (assuming
   # you're using RSpec's built-in formatters). If you discover an ordering
   # dependency (i.e. examples fail intermittently depending on order), set
-  # this (on Configuration or on the command line with `--seed`) to run
+  # this (on Configuration or on the commands line with `--seed`) to run
   # using the same seed while you debug the issue.
   #
-  # We recommend, actually, that you use the command line approach so you
+  # We recommend, actually, that you use the commands line approach so you
   # don't accidentally leave the seed encoded.
   #
   # source://rspec-core//lib/rspec/core/configuration.rb#1647
@@ -2637,19 +2637,19 @@ RSpec::Core::Configuration::UNKNOWN_STATUS = T.let(T.unsafe(nil), String)
 RSpec::Core::Configuration::VALID_STATUSES = T.let(T.unsafe(nil), Array)
 
 # Responsible for utilizing externally provided configuration options,
-# whether via the command line, `.rspec`, `~/.rspec`,
+# whether via the commands line, `.rspec`, `~/.rspec`,
 # `$XDG_CONFIG_HOME/rspec/options`, `.rspec-local` or a custom options
 # file.
 #
 # source://rspec-core//lib/rspec/core/configuration_options.rb#10
 class RSpec::Core::ConfigurationOptions
-  # @param args [Array<String>] command line arguments
+  # @param args [Array<String>] commands line arguments
   # @return [ConfigurationOptions] a new instance of ConfigurationOptions
   #
   # source://rspec-core//lib/rspec/core/configuration_options.rb#12
   def initialize(args); end
 
-  # @return [Array<String>] the original command-line arguments
+  # @return [Array<String>] the original commands-line arguments
   #
   # source://rspec-core//lib/rspec/core/configuration_options.rb#40
   def args; end
@@ -3031,7 +3031,7 @@ class RSpec::Core::Example
   def full_description; end
 
   # @return [String] the unique id of this example. Pass
-  #   this at the command line to re-run this exact example.
+  #   this at the commands line to re-run this exact example.
   #
   # source://rspec-core//lib/rspec/core/example.rb#117
   def id; end
@@ -3057,7 +3057,7 @@ class RSpec::Core::Example
   # source://rspec-core//lib/rspec/core/example.rb#49
   def location; end
 
-  # Returns the location-based argument that can be passed to the `rspec` command to rerun this example.
+  # Returns the location-based argument that can be passed to the `rspec` commands to rerun this example.
   #
   # source://rspec-core//lib/rspec/core/example.rb#96
   def location_rerun_argument; end
@@ -3086,7 +3086,7 @@ class RSpec::Core::Example
   # source://rspec-core//lib/rspec/core/example.rb#226
   def reporter; end
 
-  # Returns the location-based argument that can be passed to the `rspec` command to rerun this example.
+  # Returns the location-based argument that can be passed to the `rspec` commands to rerun this example.
   #
   # @deprecated Use {#location_rerun_argument} instead.
   # @note If there are multiple examples identified by this location, they will use {#id}
@@ -3854,7 +3854,7 @@ class RSpec::Core::ExampleGroup
     def fspecify(*all_args, &block); end
 
     # @return [String] the unique id of this example group. Pass
-    #   this at the command line to re-run this exact example group.
+    #   this at the commands line to re-run this exact example group.
     #
     # source://rspec-core//lib/rspec/core/example_group.rb#675
     def id; end
@@ -4698,7 +4698,7 @@ end
 #
 # The progress formatter is the default, but you can choose any one or more of
 # the other formatters by passing with the `--format` (or `-f` for short)
-# command-line option, e.g.
+# commands-line option, e.g.
 #
 #     rspec --format documentation
 #
@@ -4712,8 +4712,8 @@ end
 # ## Custom Formatters
 #
 # You can tell RSpec to use a custom formatter by passing its path and name to
-# the `rspec` command. For example, if you define MyCustomFormatter in
-# path/to/my_custom_formatter.rb, you would type this command:
+# the `rspec` commands. For example, if you define MyCustomFormatter in
+# path/to/my_custom_formatter.rb, you would type this commands:
 #
 #     rspec --require path/to/my_custom_formatter.rb --format MyCustomFormatter
 #
@@ -7880,7 +7880,7 @@ end
 # `:type => :ui` is stored in the Metadata owned by the example group, and
 # `:slow => true` is stored in the Metadata owned by the example. These can
 # then be used to select which examples are run using the `--tag` option on
-# the command line, or several methods on `Configuration` used to filter a
+# the commands line, or several methods on `Configuration` used to filter a
 # run (e.g. `filter_run_including`, `filter_run_excluding`, etc).
 #
 # @see Example#metadata
@@ -8768,7 +8768,7 @@ end
 class RSpec::Core::Notifications::SummaryNotification < ::Struct
   include ::RSpec::Core::ShellEscape
 
-  # Formats failures into a rerunable command format.
+  # Formats failures into a rerunable commands format.
   #
   # @api public
   # @param colorizer [#wrap] An object which supports wrapping text with
@@ -9822,10 +9822,10 @@ class RSpec::Core::Runner
   class << self
     # Register an `at_exit` hook that runs the suite when the process exits.
     #
-    # @note This is not generally needed. The `rspec` command takes care
+    # @note This is not generally needed. The `rspec` commands takes care
     #   of running examples for you without involving an `at_exit`
     #   hook. This is only needed if you are running specs using
-    #   the `ruby` command, and even then, the normal way to invoke
+    #   the `ruby` commands, and even then, the normal way to invoke
     #   this is by requiring `rspec/autorun`.
     #
     # source://rspec-core//lib/rspec/core/runner.rb#16
@@ -9873,7 +9873,7 @@ class RSpec::Core::Runner
     # want files like `spec_helper.rb` to be reloaded, be sure to load `load`
     # instead of `require`.
     #
-    # @param args [Array] command-line-supported arguments
+    # @param args [Array] commands-line-supported arguments
     # @param err [IO] error stream
     # @param out [IO] output stream
     # @return [Fixnum] exit status code. 0 if all specs passed,

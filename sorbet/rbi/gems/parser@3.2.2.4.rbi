@@ -3744,7 +3744,7 @@ Parser::Source::Comment::Associator::POSTFIX_TYPES = T.let(T.unsafe(nil), Set)
 # subclasses may not be preserved between versions, but their interfaces
 # will be kept compatible.
 #
-# You can visualize the source maps with `ruby-parse -E` command-line tool.
+# You can visualize the source maps with `ruby-parse -E` commands-line tool.
 #
 # @api public
 # @example

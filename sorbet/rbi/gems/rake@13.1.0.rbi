@@ -31,7 +31,7 @@ module FileUtils
   # source://rake//lib/rake/file_utils.rb#110
   def safe_ln(*args, **options); end
 
-  # Run the system command +cmd+.  If multiple arguments are given the command
+  # Run the system commands +cmd+.  If multiple arguments are given the commands
   # is run directly (without the shell, same semantics as Kernel::exec and
   # Kernel::system).
   #
@@ -42,9 +42,9 @@ module FileUtils
   # tasks are not vulnerable to users providing an argument like
   # <code>; rm # -rf /</code>.
   #
-  # If a block is given, upon command completion the block is called with an
+  # If a block is given, upon commands completion the block is called with an
   # OK flag (true on a zero exit status) and a Process::Status object.
-  # Without a block a RuntimeError is raised when the command exits non-zero.
+  # Without a block a RuntimeError is raised when the commands exits non-zero.
   #
   # Examples:
   #
@@ -52,7 +52,7 @@ module FileUtils
   #
   #   sh 'ls', 'file with spaces'
   #
-  #   # check exit status after command runs
+  #   # check exit status after commands runs
   #   sh %{grep pattern file} do |ok, res|
   #     if !ok
   #       puts "pattern not found (status = #{res.exitstatus})"
@@ -179,7 +179,7 @@ module Rake
 end
 
 # Rake main application object.  When invoking +rake+ from the
-# command line, a Rake::Application object is created and run.
+# commands line, a Rake::Application object is created and run.
 #
 # source://rake//lib/rake/application.rb#19
 class Rake::Application
@@ -204,13 +204,13 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#161
   def add_loader(ext, loader); end
 
-  # Collect the list of tasks on the command line.  If no tasks are
+  # Collect the list of tasks on the commands line.  If no tasks are
   # given, return a list containing only the default task.
   # Environmental assignments are processed at this time as well.
   #
   # `args` is the list of arguments to peruse to get the list of tasks.
-  # It should be the command line that was given to rake, less any
-  # recognised command-line options, which OptionParser.parse will
+  # It should be the commands line that was given to rake, less any
+  # recognised commands-line options, which OptionParser.parse will
   # have taken care of already.
   #
   # source://rake//lib/rake/application.rb#782
@@ -280,7 +280,7 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#702
   def find_rakefile_location; end
 
-  # Read and handle the command line options.  Returns the command line
+  # Read and handle the commands line options.  Returns the commands line
   # arguments that we didn't understand, which should (in theory) be just
   # task names and env vars.
   #
@@ -298,7 +298,7 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#298
   def have_rakefile; end
 
-  # Initialize the command line parameters and app name.
+  # Initialize the commands line parameters and app name.
   #
   # source://rake//lib/rake/application.rb#88
   def init(app_name = T.unsafe(nil), argv = T.unsafe(nil)); end
@@ -323,7 +323,7 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#24
   def name; end
 
-  # Application options from the command line
+  # Application options from the commands line
   #
   # source://rake//lib/rake/application.rb#167
   def options; end
@@ -339,7 +339,7 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#714
   def print_rakefile_directory(location); end
 
-  # Similar to the regular Ruby +require+ command, but will check
+  # Similar to the regular Ruby +require+ commands, but will check
   # for *.rake files in addition to *.rb files.
   #
   # source://rake//lib/rake/application.rb#688
@@ -359,11 +359,11 @@ class Rake::Application
   # Run the Rake application.  The run method performs the following
   # three steps:
   #
-  # * Initialize the command line options (+init+).
+  # * Initialize the commands line options (+init+).
   # * Define the tasks (+load_rakefile+).
   # * Run the top level tasks (+top_level+).
   #
-  # If you wish to build a custom rake command, you should call
+  # If you wish to build a custom rake commands, you should call
   # +init+ on your application.  Then define any tasks.  Finally,
   # call +top_level+ to run your top level tasks.
   #
@@ -417,7 +417,7 @@ class Rake::Application
   # source://rake//lib/rake/application.rb#131
   def top_level; end
 
-  # List of the top level task names (task names from the command line).
+  # List of the top level task names (task names from the commands line).
   #
   # source://rake//lib/rake/application.rb#36
   def top_level_tasks; end
@@ -547,7 +547,7 @@ end
 # DSL is a module that provides #task, #desc, #namespace, etc.  Use this
 # when you'd like to use rake outside the top level scope.
 #
-# For a Rakefile you run from the command line this module is automatically
+# For a Rakefile you run from the commands line this module is automatically
 # included.
 #
 # source://rake//lib/rake/dsl_definition.rb#14
@@ -597,7 +597,7 @@ module Rake::DSL
   def file(*args, &block); end
 
   # Declare a file creation task.
-  # (Mainly used for the directory command).
+  # (Mainly used for the directory commands).
   #
   # source://rake//lib/rake/dsl_definition.rb#82
   def file_create(*args, &block); end
@@ -611,7 +611,7 @@ module Rake::DSL
   # A common use of the import statement is to include files
   # containing dependency declarations.
   #
-  # See also the --rakelibdir command line option.
+  # See also the --rakelibdir commands line option.
   #
   # Example:
   #   import ".depend", "my_rules"
@@ -689,7 +689,7 @@ module Rake::DSL
   #     # ...
   #   end
   #
-  # To invoke this task from the command line:
+  # To invoke this task from the commands line:
   #
   #   $ rake package[1.2.3]
   #
@@ -1879,7 +1879,7 @@ class Rake::MultiTask < ::Rake::Task
 end
 
 # The NameSpace class will lookup task names in the scope defined by a
-# +namespace+ command.
+# +namespace+ commands.
 #
 # source://rake//lib/rake/name_space.rb#6
 class Rake::NameSpace

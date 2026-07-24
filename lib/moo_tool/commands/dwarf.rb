@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module MooTools
-  module Controllers
+  module Commands
     class DWARF < MooTool::ControllerBase
     end
   end

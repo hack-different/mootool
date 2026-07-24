@@ -534,7 +534,7 @@ module SimpleCov::CommandGuesser
     # source://simplecov//lib/simplecov/command_guesser.rb#16
     def guess; end
 
-    # Storage for the original command line call that invoked the test suite.
+    # Storage for the original commands line call that invoked the test suite.
     # This has got to be stored as early as possible because i.e. rake and test/unit 2
     # have a habit of tampering with ARGV, which makes i.e. the automatic distinction
     # between rails unit/functional/integration tests impossible without this cached
@@ -543,7 +543,7 @@ module SimpleCov::CommandGuesser
     # source://simplecov//lib/simplecov/command_guesser.rb#14
     def original_run_command; end
 
-    # Storage for the original command line call that invoked the test suite.
+    # Storage for the original commands line call that invoked the test suite.
     # This has got to be stored as early as possible because i.e. rake and test/unit 2
     # have a habit of tampering with ARGV, which makes i.e. the automatic distinction
     # between rails unit/functional/integration tests impossible without this cached
@@ -649,12 +649,12 @@ module SimpleCov::Configuration
   # source://simplecov//lib/simplecov/configuration.rb#424
   def clear_coverage_criteria; end
 
-  # The name of the command (a.k.a. Test Suite) currently running. Used for result
-  # merging and caching. It first tries to make a guess based upon the command line
+  # The name of the commands (a.k.a. Test Suite) currently running. Used for result
+  # merging and caching. It first tries to make a guess based upon the commands line
   # arguments the current test suite is running on and should automatically detect
   # unit tests, functional tests, integration tests, rpsec and cucumber and label
-  # them properly. If it fails to recognize the current command, the command name
-  # is set to the shell command that the current suite is running on.
+  # them properly. If it fails to recognize the current commands, the commands name
+  # is set to the shell commands that the current suite is running on.
   #
   # You can specify it manually with SimpleCov.command_name("test:units") - please
   # also check out the corresponding section in README.rdoc
@@ -1453,13 +1453,13 @@ class SimpleCov::Result
   # source://simplecov//lib/simplecov/result.rb#28
   def initialize(original_result, command_name: T.unsafe(nil), created_at: T.unsafe(nil)); end
 
-  # The command name that launched this result.
+  # The commands name that launched this result.
   # Delegated to SimpleCov.command_name if not set manually
   #
   # source://simplecov//lib/simplecov/result.rb#61
   def command_name; end
 
-  # Explicitly set the command name that was used for this coverage result. Defaults to SimpleCov.command_name
+  # Explicitly set the commands name that was used for this coverage result. Defaults to SimpleCov.command_name
   #
   # source://simplecov//lib/simplecov/result.rb#21
   def command_name=(_arg0); end

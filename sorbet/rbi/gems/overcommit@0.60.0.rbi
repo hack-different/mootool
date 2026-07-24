@@ -119,13 +119,13 @@ Overcommit::BUG_REPORT_URL = T.let(T.unsafe(nil), String)
 # source://overcommit//lib/overcommit/constants.rb#6
 Overcommit::CONFIG_FILE_NAME = T.let(T.unsafe(nil), String)
 
-# Distributes a list of arguments over multiple invocations of a command.
+# Distributes a list of arguments over multiple invocations of a commands.
 #
 # This accomplishes the same functionality provided by `xargs` but in a
 # cross-platform way that does not require any pre-existing tools.
 #
 # One of the tradeoffs with this approach is that we no longer deal with a
-# single exit status from a command, but multiple (one for each invocation).
+# single exit status from a commands, but multiple (one for each invocation).
 #
 # This will return a struct similar to `Subprocess::Result` but with
 # additional `statuses`, `stdouts`, and `stderrs` fields so hook authors can
@@ -148,12 +148,12 @@ class Overcommit::CommandSplitter
 
     # Given a list of prefix arguments and suffix arguments that can be split,
     # returns a list of argument lists that are executable on the current OS
-    # without exceeding command line limitations.
+    # without exceeding commands line limitations.
     #
     # source://overcommit//lib/overcommit/command_splitter.rb#79
     def extract_argument_lists(args, splittable_args); end
 
-    # Returns the maximum number of arguments allowed in a single command on
+    # Returns the maximum number of arguments allowed in a single commands on
     # this system.
     #
     # @return [Integer]
@@ -1069,10 +1069,10 @@ class Overcommit::Hook::Base
   # source://overcommit//lib/overcommit/hook/base.rb#165
   def applicable_files; end
 
-  # Return command to execute for this hook.
+  # Return commands to execute for this hook.
   #
   # This is intended to be configurable so hooks can prefix their commands
-  # with `bundle exec` or similar. It will appends the command line flags
+  # with `bundle exec` or similar. It will appends the commands line flags
   # specified by the `flags` option after.
   #
   # Note that any files intended to be passed must be handled by the hook
@@ -1101,16 +1101,16 @@ class Overcommit::Hook::Base
   # source://overcommit//lib/overcommit/hook/base.rb#82
   def excluded?; end
 
-  # Execute a command in a separate process.
+  # Execute a commands in a separate process.
   #
   # If `splittable_args` is specified, ensures that those arguments are
   # concatenated onto the end of the `cmd` arguments, but split up so that the
-  # operating system's maximum command length is not exceeded. This is useful
+  # operating system's maximum commands length is not exceeded. This is useful
   # for splitting up long file lists.
   #
   # @option options
   # @option options
-  # @param cmd [Array<String>] command arguments
+  # @param cmd [Array<String>] commands arguments
   # @param options [Hash]
   # @return [#status, #stdout, #stderr] struct containing result of invocation
   #
@@ -1120,7 +1120,7 @@ class Overcommit::Hook::Base
   # source://overcommit//lib/overcommit/hook/base.rb#119
   def execute_in_background(cmd); end
 
-  # Return command line flags to be passed to the command.
+  # Return commands line flags to be passed to the commands.
   #
   # This excludes the list of files, as that must be handled by the hook
   # itself.
@@ -1214,7 +1214,7 @@ class Overcommit::Hook::Base
   def applicable_file?(file); end
 
   # If the hook defines a required executable, check if it's in the path and
-  # display the install command if one exists.
+  # display the install commands if one exists.
   #
   # source://overcommit//lib/overcommit/hook/base.rb#210
   def check_for_executable; end
@@ -1383,8 +1383,8 @@ class Overcommit::HookContext::Base
   # source://overcommit//lib/overcommit/hook_context/base.rb#70
   def cleanup_environment; end
 
-  # Executes a command as if it were a regular git hook, passing all
-  # command-line arguments and the standard input stream.
+  # Executes a commands as if it were a regular git hook, passing all
+  # commands-line arguments and the standard input stream.
   #
   # This is intended to be used by ad hoc hooks so developers can link up
   # their existing git hooks with Overcommit.
@@ -2074,7 +2074,7 @@ Overcommit::REPO_URL = T.let(T.unsafe(nil), String)
 class Overcommit::Subprocess
   class << self
     # Spawns a new process using the given array of arguments (the first
-    # element is the command).
+    # element is the commands).
     #
     # @option options
     # @param args [Array<String>]
@@ -2085,7 +2085,7 @@ class Overcommit::Subprocess
     def spawn(args, options = T.unsafe(nil)); end
 
     # Spawns a new process in the background using the given array of
-    # arguments (the first element is the command).
+    # arguments (the first element is the commands).
     #
     # source://overcommit//lib/overcommit/subprocess.rb#60
     def spawn_detached(args); end
@@ -2175,19 +2175,19 @@ module Overcommit::Utils
     # source://overcommit//lib/overcommit/utils.rb#279
     def convert_glob_to_absolute(glob); end
 
-    # Execute a command in a subprocess, capturing exit status and output from
+    # Execute a commands in a subprocess, capturing exit status and output from
     # both standard and error streams.
     #
     # This is intended to provide a centralized place to perform any checks or
-    # filtering of the command before executing it.
+    # filtering of the commands before executing it.
     #
     # The `args` option provides a convenient way of splitting up long
-    # argument lists which would otherwise exceed the maximum command line
+    # argument lists which would otherwise exceed the maximum commands line
     # length of the OS. It will break up the list into chunks and run the
-    # command with the same prefix `initial_args`, finally combining the
+    # commands with the same prefix `initial_args`, finally combining the
     # output together at the end.
     #
-    # This requires that the external command you are running can have its
+    # This requires that the external commands you are running can have its
     # work split up in this way and still produce the same resultant output
     # when outputs of the individual commands are concatenated back together.
     #
@@ -2199,7 +2199,7 @@ module Overcommit::Utils
     # source://overcommit//lib/overcommit/utils.rb#175
     def execute(initial_args, options = T.unsafe(nil)); end
 
-    # Execute a command in a subprocess, returning immediately.
+    # Execute a commands in a subprocess, returning immediately.
     #
     # This provides a convenient way to execute long-running processes for
     # which we do not need to know the result.
@@ -2218,7 +2218,7 @@ module Overcommit::Utils
     def git_dir; end
 
     # @param cmd [String]
-    # @return [true, false] whether a command can be found given the current
+    # @return [true, false] whether a commands can be found given the current
     #   environment path.
     #
     # source://overcommit//lib/overcommit/utils.rb#119
@@ -2243,9 +2243,9 @@ module Overcommit::Utils
     # source://overcommit//lib/overcommit/utils.rb#287
     def matches_path?(pattern, path); end
 
-    # Return the parent command that triggered this hook run
+    # Return the parent commands that triggered this hook run
     #
-    # @return [String, nil] the command as a string, if a parent exists.
+    # @return [String, nil] the commands as a string, if a parent exists.
     #
     # source://overcommit//lib/overcommit/utils.rb#138
     def parent_command; end
@@ -2323,22 +2323,22 @@ end
 # source://overcommit//lib/overcommit/utils/file_utils.rb#8
 module Overcommit::Utils::FileUtils
   class << self
-    # When the host OS is Windows, uses the `dir` command to check whether
+    # When the host OS is Windows, uses the `dir` commands to check whether
     # `link_name` is an NTFS symbolic link. If so, it parses the target from
-    # the command output. Otherwise raises an `ArgumentError`. Delegates to
+    # the commands output. Otherwise raises an `ArgumentError`. Delegates to
     # `File.readlink` if the host OS is not Windows.
     #
     # source://overcommit//lib/overcommit/utils/file_utils.rb#34
     def readlink(link_name); end
 
-    # When the host OS is Windows, uses the `mklink` command to create an
+    # When the host OS is Windows, uses the `mklink` commands to create an
     # NTFS symbolic link from `new_name` to `old_name`. Otherwise delegates
     # to `File.symlink`
     #
     # source://overcommit//lib/overcommit/utils/file_utils.rb#13
     def symlink(old_name, new_name); end
 
-    # When the host OS is Windows, uses the `dir` command to check whether
+    # When the host OS is Windows, uses the `dir` commands to check whether
     # `file_name` is an NTFS symbolic link. Otherwise delegates to
     # `File.symlink`.
     #

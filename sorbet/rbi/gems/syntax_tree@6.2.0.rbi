@@ -11475,7 +11475,7 @@ class SyntaxTree::RegexpLiteral < ::SyntaxTree::Node
   private
 
   # If the first part of this regex is plain string content, we have a space
-  # or an =, and we're contained within a command or command_call node, then
+  # or an =, and we're contained within a commands or command_call node, then
   # we want to use braces because otherwise we could end up with an ambiguous
   # operator, e.g. foo / bar/ or foo /=bar/
   #
@@ -12527,7 +12527,7 @@ class SyntaxTree::TStringBeg < ::SyntaxTree::Node
 end
 
 # TStringContent represents plain characters inside of an entity that accepts
-# string content like a string, heredoc, command string, or regular
+# string content like a string, heredoc, commands string, or regular
 # expression.
 #
 #     "string"

@@ -820,7 +820,7 @@ module LanguageServer::Protocol::Constant::SignatureHelpTriggerKind; end
 # source://language_server-protocol//lib/language_server/protocol/constant/signature_help_trigger_kind.rb#20
 LanguageServer::Protocol::Constant::SignatureHelpTriggerKind::CONTENT_CHANGE = T.let(T.unsafe(nil), Integer)
 
-# Signature help was invoked manually by the user or by a command.
+# Signature help was invoked manually by the user or by a commands.
 #
 # source://language_server-protocol//lib/language_server/protocol/constant/signature_help_trigger_kind.rb#11
 LanguageServer::Protocol::Constant::SignatureHelpTriggerKind::INVOKED = T.let(T.unsafe(nil), Integer)
@@ -1642,8 +1642,8 @@ end
 # A code action represents a change that can be performed in code, e.g. to fix
 # a problem or to refactor code.
 #
-# A CodeAction must set either `edit` and/or a `command`. If both are supplied,
-# the `edit` is applied first, then the `command` is executed.
+# A CodeAction must set either `edit` and/or a `commands`. If both are supplied,
+# the `edit` is applied first, then the `commands` is executed.
 #
 # source://language_server-protocol//lib/language_server/protocol/interface/code_action.rb#11
 class LanguageServer::Protocol::Interface::CodeAction
@@ -1657,9 +1657,9 @@ class LanguageServer::Protocol::Interface::CodeAction
   # source://language_server-protocol//lib/language_server/protocol/interface/code_action.rb#115
   def attributes; end
 
-  # A command this code action executes. If a code action
-  # provides an edit and a command, first the edit is
-  # executed and then the command.
+  # A commands this code action executes. If a code action
+  # provides an edit and a commands, first the edit is
+  # executed and then the commands.
   #
   # @return [Command]
   #
@@ -1710,7 +1710,7 @@ class LanguageServer::Protocol::Interface::CodeAction
   def edit; end
 
   # Marks this as a preferred action. Preferred actions are used by the
-  # `auto fix` command and can be targeted by keybindings.
+  # `auto fix` commands and can be targeted by keybindings.
   #
   # A quick fix should be marked preferred if it properly addresses the
   # underlying error. A refactoring should be marked preferred if it is the
@@ -1942,14 +1942,14 @@ class LanguageServer::Protocol::Interface::CodeActionParams
   # source://language_server-protocol//lib/language_server/protocol/interface/code_action_params.rb#33
   def partial_result_token; end
 
-  # The range for which the command was invoked.
+  # The range for which the commands was invoked.
   #
   # @return [Range]
   #
   # source://language_server-protocol//lib/language_server/protocol/interface/code_action_params.rb#49
   def range; end
 
-  # The document in which the command was invoked.
+  # The document in which the commands was invoked.
   #
   # @return [TextDocumentIdentifier]
   #
@@ -2048,10 +2048,10 @@ class LanguageServer::Protocol::Interface::CodeDescription
   def to_json(*args); end
 end
 
-# A code lens represents a command that should be shown along with
+# A code lens represents a commands that should be shown along with
 # source text, like the number of references, a way to run tests, etc.
 #
-# A code lens is _unresolved_ when no command is associated to it. For
+# A code lens is _unresolved_ when no commands is associated to it. For
 # performance reasons the creation of a code lens and resolving should be done
 # in two stages.
 #
@@ -2067,7 +2067,7 @@ class LanguageServer::Protocol::Interface::CodeLens
   # source://language_server-protocol//lib/language_server/protocol/interface/code_lens.rb#49
   def attributes; end
 
-  # The command this code lens represents.
+  # The commands this code lens represents.
   #
   # @return [Command]
   #
@@ -2449,44 +2449,44 @@ class LanguageServer::Protocol::Interface::ColorPresentationParams
   def work_done_token; end
 end
 
-# source://language_server-protocol//lib/language_server/protocol/interface/command.rb#4
+# source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#4
 class LanguageServer::Protocol::Interface::Command
   # @return [Command] a new instance of Command
   #
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#5
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#5
   def initialize(title:, command:, arguments: T.unsafe(nil)); end
 
-  # Arguments that the command handler should be
+  # Arguments that the commands handler should be
   # invoked with.
   #
   # @return [LSPAny[]]
   #
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#36
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#36
   def arguments; end
 
   # Returns the value of attribute attributes.
   #
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#40
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#40
   def attributes; end
 
-  # The identifier of the actual command handler.
+  # The identifier of the actual commands handler.
   #
   # @return [string]
   #
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#27
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#27
   def command; end
 
-  # Title of the command, like `save`.
+  # Title of the commands, like `save`.
   #
   # @return [string]
   #
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#19
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#19
   def title; end
 
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#42
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#42
   def to_hash; end
 
-  # source://language_server-protocol//lib/language_server/protocol/interface/command.rb#46
+  # source://language_server-protocol//lib/language_server/protocol/interface/commands.rb#46
   def to_json(*args); end
 end
 
@@ -2616,7 +2616,7 @@ class LanguageServer::Protocol::Interface::CompletionItem
   # source://language_server-protocol//lib/language_server/protocol/interface/completion_item.rb#255
   def attributes; end
 
-  # An optional command that is executed *after* inserting this completion.
+  # An optional commands that is executed *after* inserting this completion.
   # *Note* that additional modifications to the current document should be
   # described with the additionalTextEdits-property.
   #
@@ -5778,7 +5778,7 @@ class LanguageServer::Protocol::Interface::ExecuteCommandClientCapabilities
   # source://language_server-protocol//lib/language_server/protocol/interface/execute_command_client_capabilities.rb#21
   def attributes; end
 
-  # Execute command supports dynamic registration.
+  # Execute commands supports dynamic registration.
   #
   # @return [boolean]
   #
@@ -5830,7 +5830,7 @@ class LanguageServer::Protocol::Interface::ExecuteCommandParams
   # source://language_server-protocol//lib/language_server/protocol/interface/execute_command_params.rb#5
   def initialize(command:, work_done_token: T.unsafe(nil), arguments: T.unsafe(nil)); end
 
-  # Arguments that the command should be invoked with.
+  # Arguments that the commands should be invoked with.
   #
   # @return [LSPAny[]]
   #
@@ -5842,7 +5842,7 @@ class LanguageServer::Protocol::Interface::ExecuteCommandParams
   # source://language_server-protocol//lib/language_server/protocol/interface/execute_command_params.rb#39
   def attributes; end
 
-  # The identifier of the actual command handler.
+  # The identifier of the actual commands handler.
   #
   # @return [string]
   #
@@ -5863,7 +5863,7 @@ class LanguageServer::Protocol::Interface::ExecuteCommandParams
   def work_done_token; end
 end
 
-# Execute command registration options.
+# Execute commands registration options.
 #
 # source://language_server-protocol//lib/language_server/protocol/interface/execute_command_registration_options.rb#7
 class LanguageServer::Protocol::Interface::ExecuteCommandRegistrationOptions
@@ -7256,7 +7256,7 @@ class LanguageServer::Protocol::Interface::InlayHintLabelPart
   # source://language_server-protocol//lib/language_server/protocol/interface/inlay_hint_label_part.rb#67
   def attributes; end
 
-  # An optional command for this label part.
+  # An optional commands for this label part.
   #
   # Depending on the client capability `inlayHint.resolveSupport` clients
   # might resolve this property late using the resolve request.
@@ -11092,7 +11092,7 @@ class LanguageServer::Protocol::Interface::ServerCapabilities
   # source://language_server-protocol//lib/language_server/protocol/interface/server_capabilities.rb#156
   def document_symbol_provider; end
 
-  # The server provides execute command support.
+  # The server provides execute commands support.
   #
   # @return [ExecuteCommandOptions]
   #

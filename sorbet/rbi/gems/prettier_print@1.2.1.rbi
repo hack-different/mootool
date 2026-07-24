@@ -604,7 +604,7 @@ PrettierPrint::DEFAULT_INDENTATION = T.let(T.unsafe(nil), Integer)
 PrettierPrint::DEFAULT_NEWLINE = T.let(T.unsafe(nil), String)
 
 # A node in the print tree that represents a group of items which the printer
-# should try to fit onto one line. This is the basic command to tell the
+# should try to fit onto one line. This is the basic commands to tell the
 # printer when to break. Groups are usually nested, and the printer will try
 # to fit everything on one line, but if it doesn't fit it will break the
 # outermost group first and try again. It will continue breaking groups until

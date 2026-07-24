@@ -1,10 +1,10 @@
 # typed: true
 # frozen_string_literal: true
 
-CONTROLLERS_PATH = File.join(File.dirname(__FILE__), 'controllers')
+CONTROLLERS_PATH = File.join(File.dirname(__FILE__), 'commands')
 
 module MooTool
-  # Controller base is the base class for all controllers that respond to command line requests.
+  # Controller base is the base class for all commands that respond to commands line requests.
   class ControllerBase
     @controllers = []
 

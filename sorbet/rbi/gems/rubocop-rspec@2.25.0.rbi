@@ -1192,7 +1192,7 @@ RuboCop::Cop::RSpec::DescribeSymbol::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Arr
 #   subject { MyClass.do_something }
 #   end
 # @example `SkipBlocks: true`
-#   # spec/controllers/.rubocop.yml
+#   # spec/commands/.rubocop.yml
 #   # RSpec/DescribedClass:
 #   #   SkipBlocks: true
 #

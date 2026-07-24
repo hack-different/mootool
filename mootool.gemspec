@@ -2,16 +2,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'mootool/version'
+require 'moo_tool/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'mootool'
+  spec.name = 'moo_tool'
   spec.version = MooTool::VERSION
   spec.authors = ['Rick Mark']
   spec.email = ['rickmark@outlook.com']
 
   spec.summary = "Mach-O's Other Tool"
-  spec.description = 'mootool is a swiss army knife for dealing with Apple Mach-O files'
+  spec.description = 'moo_tool is a swiss army knife for dealing with Apple Mach-O files'
   spec.homepage = 'https://github.com/hack-different/mootool'
   spec.license = 'MIT'
 
@@ -37,12 +37,17 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'lzfse'
-  spec.add_runtime_dependency 'lzss'
-  spec.add_runtime_dependency 'plist', '~> 3'
-  spec.add_runtime_dependency 'ruby-lzma'
-  spec.add_runtime_dependency 'ruby-macho', '~> 3'
-  spec.add_runtime_dependency 'rubyzip', '~> 2'
-  spec.add_runtime_dependency 'sorbet-runtime', '~> 0'
+  spec.add_dependency 'activemodel'
+  spec.add_dependency 'activesupport'
+  spec.add_dependency 'colorize'
+  spec.add_dependency 'lzfse'
+  spec.add_dependency 'lzss'
+  spec.add_dependency 'plist'
+  spec.add_dependency 'ruby-lzma'
+  spec.add_dependency 'ruby-macho'
+  spec.add_dependency 'rubyzip'
+  spec.add_dependency 'thor'
+  spec.add_dependency 'amazing_print'
+
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

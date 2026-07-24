@@ -357,13 +357,13 @@ end
 module Spoom::Context::Bundle
   requires_ancestor { Spoom::Context }
 
-  # Run a command with `bundle` in this context directory
+  # Run a commands with `bundle` in this context directory
   #
   # source://spoom//lib/spoom/context/bundle.rb#33
   sig { params(command: ::String, version: T.nilable(::String), capture_err: T::Boolean).returns(::Spoom::ExecResult) }
   def bundle(command, version: T.unsafe(nil), capture_err: T.unsafe(nil)); end
 
-  # Run a command `bundle exec` in this context directory
+  # Run a commands `bundle exec` in this context directory
   #
   # source://spoom//lib/spoom/context/bundle.rb#46
   sig { params(command: ::String, version: T.nilable(::String), capture_err: T::Boolean).returns(::Spoom::ExecResult) }
@@ -412,7 +412,7 @@ end
 module Spoom::Context::Exec
   requires_ancestor { Spoom::Context }
 
-  # Run a command in this context directory
+  # Run a commands in this context directory
   #
   # source://spoom//lib/spoom/context/exec.rb#35
   sig { params(command: ::String, capture_err: T::Boolean).returns(::Spoom::ExecResult) }
@@ -514,7 +514,7 @@ end
 module Spoom::Context::Git
   requires_ancestor { Spoom::Context }
 
-  # Run a command prefixed by `git` in this context directory
+  # Run a commands prefixed by `git` in this context directory
   #
   # source://spoom//lib/spoom/context/git.rb#43
   sig { params(command: ::String).returns(::Spoom::ExecResult) }

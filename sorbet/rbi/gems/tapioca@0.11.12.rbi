@@ -844,7 +844,7 @@ end
 
 # @abstract It cannot be directly instantiated. Subclasses must implement the `abstract` methods below.
 #
-# source://tapioca//lib/tapioca/commands/command.rb#6
+# source://tapioca//lib/tapioca/commands/commands.rb#6
 class Tapioca::Commands::Command
   include ::Thor::Base
   include ::Thor::Invocation
@@ -855,7 +855,7 @@ class Tapioca::Commands::Command
 
   abstract!
 
-  # source://tapioca//lib/tapioca/commands/command.rb#20
+  # source://tapioca//lib/tapioca/commands/commands.rb#20
   sig { void }
   def initialize; end
 
@@ -863,13 +863,13 @@ class Tapioca::Commands::Command
   sig { returns(::Thor::Actions) }
   def file_writer; end
 
-  # source://tapioca//lib/tapioca/commands/command.rb#25
+  # source://tapioca//lib/tapioca/commands/commands.rb#25
   sig(:final) { void }
   def run; end
 
   private
 
-  # source://tapioca//lib/tapioca/commands/command.rb#53
+  # source://tapioca//lib/tapioca/commands/commands.rb#53
   sig do
     params(
       path: T.any(::Pathname, ::String),
@@ -881,22 +881,22 @@ class Tapioca::Commands::Command
   end
   def create_file(path, content, force: T.unsafe(nil), skip: T.unsafe(nil), verbose: T.unsafe(nil)); end
 
-  # source://tapioca//lib/tapioca/commands/command.rb#37
+  # source://tapioca//lib/tapioca/commands/commands.rb#37
   sig { params(command: ::Symbol, args: ::String).returns(::String) }
   def default_command(command, *args); end
 
   # @abstract
   #
-  # source://tapioca//lib/tapioca/commands/command.rb#34
+  # source://tapioca//lib/tapioca/commands/commands.rb#34
   sig { abstract.void }
   def execute; end
 
-  # source://tapioca//lib/tapioca/commands/command.rb#63
+  # source://tapioca//lib/tapioca/commands/commands.rb#63
   sig { params(path: T.any(::Pathname, ::String), verbose: T::Boolean).void }
   def remove_file(path, verbose: T.unsafe(nil)); end
 end
 
-# source://tapioca//lib/tapioca/commands/command.rb#10
+# source://tapioca//lib/tapioca/commands/commands.rb#10
 class Tapioca::Commands::Command::FileWriter < ::Thor
   include ::Thor::Actions
   extend ::Thor::Actions::ClassMethods

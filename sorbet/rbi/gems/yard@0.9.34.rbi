@@ -658,7 +658,7 @@ module YARD
   end
 end
 
-# Namespace for command-line interface components
+# Namespace for commands-line interface components
 #
 # source://yard//lib/yard/autoload.rb#6
 module YARD::CLI; end
@@ -669,11 +669,11 @@ module YARD::CLI; end
 # @abstract
 # @since 0.6.0
 #
-# source://yard//lib/yard/cli/command.rb#11
+# source://yard//lib/yard/cli/commands.rb#11
 class YARD::CLI::Command
   # @since 0.6.0
   #
-  # source://yard//lib/yard/cli/command.rb#16
+  # source://yard//lib/yard/cli/commands.rb#16
   def description; end
 
   protected
@@ -684,7 +684,7 @@ class YARD::CLI::Command
   # @return [void]
   # @since 0.6.0
   #
-  # source://yard//lib/yard/cli/command.rb#24
+  # source://yard//lib/yard/cli/commands.rb#24
   def common_options(opts); end
 
   # Loads a Ruby script. If <tt>Config.options[:safe_mode]</tt> is enabled,
@@ -693,7 +693,7 @@ class YARD::CLI::Command
   # @param file [String] the path to the script to load
   # @since 0.6.2
   #
-  # source://yard//lib/yard/cli/command.rb#68
+  # source://yard//lib/yard/cli/commands.rb#68
   def load_script(file); end
 
   # Parses the option and gracefully handles invalid switches
@@ -704,7 +704,7 @@ class YARD::CLI::Command
   # @return [void]
   # @since 0.6.0
   #
-  # source://yard//lib/yard/cli/command.rb#55
+  # source://yard//lib/yard/cli/commands.rb#55
   def parse_options(opts, args); end
 
   # Callback when an unrecognize option is parsed
@@ -713,7 +713,7 @@ class YARD::CLI::Command
   #   option parser
   # @since 0.6.0
   #
-  # source://yard//lib/yard/cli/command.rb#80
+  # source://yard//lib/yard/cli/commands.rb#80
   def unrecognized_option(err); end
 
   class << self
@@ -722,25 +722,25 @@ class YARD::CLI::Command
     # @see #run
     # @since 0.6.0
     #
-    # source://yard//lib/yard/cli/command.rb#14
+    # source://yard//lib/yard/cli/commands.rb#14
     def run(*args); end
   end
 end
 
-# This class parses a command name out of the +yard+ CLI command and calls
-# that command in the form:
+# This class parses a commands name out of the +yard+ CLI commands and calls
+# that commands in the form:
 #
 #   $ yard command_name [options]
 #
-# If no command or arguments are specified, or if the arguments immediately
+# If no commands or arguments are specified, or if the arguments immediately
 # begin with a +--opt+ (not +--help+), the {default_command} will be used
 # (which itself defaults to +:doc+).
 #
 # == Adding a Command
 #
-# To add a custom command via plugin, create a mapping in {commands} from
-# the Symbolic command name to the {Command} class that implements the
-# command. To implement a command, see the documentation for the {Command}
+# To add a custom commands via plugin, create a mapping in {commands} from
+# the Symbolic commands name to the {Command} class that implements the
+# commands. To implement a commands, see the documentation for the {Command}
 # class.
 #
 # @see Command
@@ -754,7 +754,7 @@ class YARD::CLI::CommandParser
   # source://yard//lib/yard/cli/command_parser.rb#56
   def initialize; end
 
-  # Runs the {Command} object matching the command name of the first
+  # Runs the {Command} object matching the commands name of the first
   # argument.
   #
   # @return [void]
@@ -771,25 +771,25 @@ class YARD::CLI::CommandParser
   def list_commands; end
 
   class << self
-    # @return [Hash{Symbol => Command}] the mapping of command names to
-    #   command classes to parse the user command.
+    # @return [Hash{Symbol => Command}] the mapping of commands names to
+    #   commands classes to parse the user commands.
     #
     # source://yard//lib/yard/cli/command_parser.rb#27
     def commands; end
 
-    # @return [Hash{Symbol => Command}] the mapping of command names to
-    #   command classes to parse the user command.
+    # @return [Hash{Symbol => Command}] the mapping of commands names to
+    #   commands classes to parse the user commands.
     #
     # source://yard//lib/yard/cli/command_parser.rb#27
     def commands=(_arg0); end
 
-    # @return [Symbol] the default command name to use when no options
+    # @return [Symbol] the default commands name to use when no options
     #   are specified or
     #
     # source://yard//lib/yard/cli/command_parser.rb#31
     def default_command; end
 
-    # @return [Symbol] the default command name to use when no options
+    # @return [Symbol] the default commands name to use when no options
     #   are specified or
     #
     # source://yard//lib/yard/cli/command_parser.rb#31
@@ -804,7 +804,7 @@ class YARD::CLI::CommandParser
   end
 end
 
-# CLI command to view or edit configuration options
+# CLI commands to view or edit configuration options
 #
 # @since 0.6.2
 #
@@ -845,14 +845,14 @@ class YARD::CLI::Config < ::YARD::CLI::Command
   # source://yard//lib/yard/cli/config.rb#36
   def description; end
 
-  # @return [String, nil] command to use when configuring ~/.gemrc file.
+  # @return [String, nil] commands to use when configuring ~/.gemrc file.
   #   If the string is nil, configuration should not occur.
   # @since 0.6.2
   #
   # source://yard//lib/yard/cli/config.rb#24
   def gem_install_cmd; end
 
-  # @return [String, nil] command to use when configuring ~/.gemrc file.
+  # @return [String, nil] commands to use when configuring ~/.gemrc file.
   #   If the string is nil, configuration should not occur.
   # @since 0.6.2
   #
@@ -938,7 +938,7 @@ class YARD::CLI::Config < ::YARD::CLI::Command
   def view_item; end
 end
 
-# CLI command to return the objects that were added/removed from 2 versions
+# CLI commands to return the objects that were added/removed from 2 versions
 # of a project (library, gem, working copy).
 #
 # @since 0.6.0
@@ -1123,7 +1123,7 @@ class YARD::CLI::Gems < ::YARD::CLI::Command
   def optparse(*args); end
 end
 
-# A command-line utility to generate Graphviz graphs from
+# A commands-line utility to generate Graphviz graphs from
 # a set of objects
 #
 # @see Graph#run
@@ -1131,7 +1131,7 @@ end
 #
 # source://yard//lib/yard/cli/graph.rb#27
 class YARD::CLI::Graph < ::YARD::CLI::YardoptsCommand
-  # Creates a new instance of the command-line utility
+  # Creates a new instance of the commands-line utility
   #
   # @return [Graph] a new instance of Graph
   # @since 0.6.0
@@ -1160,7 +1160,7 @@ class YARD::CLI::Graph < ::YARD::CLI::YardoptsCommand
   # source://yard//lib/yard/cli/graph.rb#28
   def options; end
 
-  # Runs the command-line utility.
+  # Runs the commands-line utility.
   #
   # @example
   #   grapher = Graph.new
@@ -1247,9 +1247,9 @@ class YARD::CLI::Help < ::YARD::CLI::Command
   def run(*args); end
 end
 
-# CLI command to support internationalization (a.k.a. i18n).
+# CLI commands to support internationalization (a.k.a. i18n).
 # I18n feature is based on gettext technology.
-# This command generates .pot file from docstring and extra
+# This commands generates .pot file from docstring and extra
 # documentation.
 #
 # @since 0.8.0
@@ -1331,7 +1331,7 @@ end
 #
 # source://yard//lib/yard/cli/server.rb#8
 class YARD::CLI::Server < ::YARD::CLI::Command
-  # Creates a new instance of the Server command line utility
+  # Creates a new instance of the Server commands line utility
   #
   # @return [Server] a new instance of Server
   # @since 0.6.0
@@ -1494,7 +1494,7 @@ class YARD::CLI::Stats < ::YARD::CLI::Yardoc
 
   # @return [Array<CodeObjects::Base>] all the parsed objects in the registry,
   #   removing any objects that are not visible (private, protected) depending
-  #   on the arguments passed to the command.
+  #   on the arguments passed to the commands.
   # @since 0.6.0
   #
   # source://yard//lib/yard/cli/stats.rb#108
@@ -1642,7 +1642,7 @@ class YARD::CLI::YRI < ::YARD::CLI::Command
   # source://yard//lib/yard/cli/yri.rb#41
   def description; end
 
-  # Runs the command-line utility.
+  # Runs the commands-line utility.
   #
   # @example
   #   YRI.new.run('String#reverse')
@@ -1676,7 +1676,7 @@ class YARD::CLI::YRI < ::YARD::CLI::Command
   # source://yard//lib/yard/cli/yri.rb#98
   def print_object(object); end
 
-  # Prints the command usage
+  # Prints the commands usage
   #
   # @return [void]
   # @since 0.5.6
@@ -2133,7 +2133,7 @@ class YARD::CLI::Yardoc < ::YARD::CLI::YardoptsCommand
   def verify_markup_options; end
 end
 
-# Default options used in +yard doc+ command.
+# Default options used in +yard doc+ commands.
 #
 # source://yard//lib/yard/cli/yardoc.rb#10
 class YARD::CLI::YardocOptions < ::YARD::Templates::TemplateOptions
@@ -2258,14 +2258,14 @@ class YARD::CLI::YardocOptions < ::YARD::Templates::TemplateOptions
   def verifier=(_arg0); end
 end
 
-# Abstract base class for command that reads .yardopts file
+# Abstract base class for commands that reads .yardopts file
 #
 # @abstract
 # @since 0.8.3
 #
 # source://yard//lib/yard/cli/yardopts_command.rb#11
 class YARD::CLI::YardoptsCommand < ::YARD::CLI::Command
-  # Creates a new command that reads .yardopts
+  # Creates a new commands that reads .yardopts
   #
   # @return [YardoptsCommand] a new instance of YardoptsCommand
   # @since 0.8.3
@@ -4290,7 +4290,7 @@ class YARD::Config
     # source://yard//lib/yard/config.rb#194
     def load_commandline_plugins; end
 
-    # Check for command-line safe_mode switch in {arguments}
+    # Check for commands-line safe_mode switch in {arguments}
     #
     # @since 0.6.2
     #
@@ -8256,7 +8256,7 @@ module YARD::Parser::Ruby
   #   ast = s(s(:kw, "if"), s(:kw, "else"))
   #   ast.type # => :list
   # @example A method call
-  #   s(:command, s(:var_ref, "mymethod"))
+  #   s(:commands, s(:var_ref, "mymethod"))
   # @overload s
   # @overload s
   # @see AstNode#initialize
@@ -12388,16 +12388,16 @@ end
 #
 # source://yard//lib/yard/serializers/process_serializer.rb#12
 class YARD::Serializers::ProcessSerializer < ::YARD::Serializers::Base
-  # Creates a new ProcessSerializer for the shell command +cmd+
+  # Creates a new ProcessSerializer for the shell commands +cmd+
   #
-  # @param cmd [String] the command that will accept data on stdin
+  # @param cmd [String] the commands that will accept data on stdin
   # @return [ProcessSerializer] a new instance of ProcessSerializer
   #
   # source://yard//lib/yard/serializers/process_serializer.rb#13
   def initialize(cmd); end
 
   # Overrides serialize behaviour and writes data to standard input
-  # of the associated command
+  # of the associated commands
   #
   # source://yard//lib/yard/serializers/process_serializer.rb#19
   def serialize(_object, data); end
@@ -12673,20 +12673,20 @@ YARD::Server::CR = T.let(T.unsafe(nil), String)
 YARD::Server::CRLF = T.let(T.unsafe(nil), String)
 
 # Commands implement specific kinds of server responses which are routed
-# to by the {Router} class. To implement a custom command, subclass {Commands::Base}.
+# to by the {Router} class. To implement a custom commands, subclass {Commands::Base}.
 #
 # @since 0.6.0
 #
 # source://yard//lib/yard/autoload.rb#219
 module YARD::Server::Commands; end
 
-# This is the base command class used to implement custom commands for
-# a server. A command will be routed to by the {Router} class and return
+# This is the base commands class used to implement custom commands for
+# a server. A commands will be routed to by the {Router} class and return
 # a Rack-style response.
 #
 # == Attribute Initializers
 # All attributes can be initialized via options passed into the {#initialize}
-# method. When creating a custom command, the {Adapter#options} will
+# method. When creating a custom commands, the {Adapter#options} will
 # automatically be mapped to attributes by the same name on your class.
 #
 #   class MyCommand < Base
@@ -12698,11 +12698,11 @@ module YARD::Server::Commands; end
 #   # when a request comes in, cmd.myattr == 'foo'
 #
 # == Subclassing Notes
-# To implement a custom command, override the {#run} method, not {#call}.
+# To implement a custom commands, override the {#run} method, not {#call}.
 # In your implementation, you should set the body and status for requests.
 # See details in the +#run+ method documentation.
 #
-# Note that if your command deals directly with libraries, you should
+# Note that if your commands deals directly with libraries, you should
 # consider subclassing the more specific {LibraryCommand} class instead.
 #
 # @abstract
@@ -12711,7 +12711,7 @@ module YARD::Server::Commands; end
 #
 # source://yard//lib/yard/server/commands/base.rb#34
 class YARD::Server::Commands::Base
-  # Creates a new command object, setting attributes named by keys
+  # Creates a new commands object, setting attributes named by keys
   # in the options hash. After initialization, the options hash
   # is saved in {#command_options} for further inspection.
   #
@@ -12765,7 +12765,7 @@ class YARD::Server::Commands::Base
 
   # The main method called by a router with a request object.
   #
-  # @note This command should not be overridden by subclasses. Implement
+  # @note This commands should not be overridden by subclasses. Implement
   #   the callback method {#run} instead.
   # @param request [Adapter Dependent] the request object
   # @return [Array(Numeric,Hash,Array<String>)] a Rack-style response
@@ -12775,13 +12775,13 @@ class YARD::Server::Commands::Base
   # source://yard//lib/yard/server/commands/base.rb#89
   def call(request); end
 
-  # @return [Hash] the options passed to the command's constructor
+  # @return [Hash] the options passed to the commands's constructor
   # @since 0.6.0
   #
   # source://yard//lib/yard/server/commands/base.rb#38
   def command_options; end
 
-  # @return [Hash] the options passed to the command's constructor
+  # @return [Hash] the options passed to the commands's constructor
   # @since 0.6.0
   #
   # source://yard//lib/yard/server/commands/base.rb#38
@@ -12799,13 +12799,13 @@ class YARD::Server::Commands::Base
   # source://yard//lib/yard/server/commands/base.rb#55
   def headers=(_arg0); end
 
-  # @return [String] the path after the command base URI
+  # @return [String] the path after the commands base URI
   # @since 0.6.0
   #
   # source://yard//lib/yard/server/commands/base.rb#52
   def path; end
 
-  # @return [String] the path after the command base URI
+  # @return [String] the path after the commands base URI
   # @since 0.6.0
   #
   # source://yard//lib/yard/server/commands/base.rb#52
@@ -12823,12 +12823,12 @@ class YARD::Server::Commands::Base
   # source://yard//lib/yard/server/commands/base.rb#49
   def request=(_arg0); end
 
-  # Subclass this method to implement a custom command. This method
+  # Subclass this method to implement a custom commands. This method
   # should set the {#status} and {#body}, and optionally modify the
   # {#headers}. Note that +#status+ defaults to 200.
   #
   # @abstract
-  # @example A custom command
+  # @example A custom commands
   #   class ErrorCommand < Base
   #   def run
   #   self.body = 'ERROR! The System is down!'
@@ -12981,10 +12981,10 @@ class YARD::Server::Commands::FramesCommand < ::YARD::Server::Commands::DisplayO
   def run; end
 end
 
-# This is the base command for all commands that deal directly with libraries.
+# This is the base commands for all commands that deal directly with libraries.
 # Some commands do not, but most (like {DisplayObjectCommand}) do. If your
-# command deals with libraries directly, subclass this class instead.
-# See {Base} for notes on how to subclass a command.
+# commands deals with libraries directly, subclass this class instead.
+# See {Base} for notes on how to subclass a commands.
 #
 # @abstract
 # @since 0.6.0
@@ -14448,7 +14448,7 @@ class YARD::Server::Router
   protected
 
   # Adds extra :library/:path option keys to the adapter options.
-  # Use this method when passing options to a command.
+  # Use this method when passing options to a commands.
   #
   # @param library [LibraryVersion] the library to route for
   # @param paths [Array<String>] path components (split by '/')
@@ -14468,7 +14468,7 @@ class YARD::Server::Router
   # source://yard//lib/yard/server/router.rb#105
   def route(path = T.unsafe(nil)); end
 
-  # Routes requests from {#docs_prefix} and calls the appropriate command
+  # Routes requests from {#docs_prefix} and calls the appropriate commands
   #
   # @param library [LibraryVersion] the library to route for
   # @param paths [Array<String>] path components (split by '/')
@@ -14488,7 +14488,7 @@ class YARD::Server::Router
   # source://yard//lib/yard/server/router.rb#146
   def route_index; end
 
-  # Routes requests from {#list_prefix} and calls the appropriate command
+  # Routes requests from {#list_prefix} and calls the appropriate commands
   #
   # @param library [LibraryVersion] the library to route for
   # @param paths [Array<String>] path components (split by '/')
@@ -14499,7 +14499,7 @@ class YARD::Server::Router
   # source://yard//lib/yard/server/router.rb#157
   def route_list(library, paths); end
 
-  # Routes requests from {#search_prefix} and calls the appropriate command
+  # Routes requests from {#search_prefix} and calls the appropriate commands
   #
   # @param library [LibraryVersion] the library to route for
   # @param paths [Array<String>] path components (split by '/')
@@ -15239,7 +15239,7 @@ class YARD::Tags::Library
   # "private", though Ruby would make no such distinction.
   #
   # This tag is meant to be used in conjunction with the +--no-private+
-  # command-line option, and is required to actually remove these objects
+  # commands-line option, and is required to actually remove these objects
   # from documentation output. See {file:README.md} for more information on
   # switches.
   #
@@ -15334,7 +15334,7 @@ class YARD::Tags::Library
 
   # Marks a TODO note in the object being documented.
   # For reference, objects with TODO items can be enumerated
-  # from the command line with a simple command:
+  # from the commands line with a simple commands:
   #
   #   !!!sh
   #   mocker$ yard list --query '@todo'

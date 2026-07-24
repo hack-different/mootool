@@ -17,8 +17,8 @@ module Docile
   #
   # Use this method to execute an *imperative* DSL, which means that:
   #
-  #   1. Each command mutates the state of the DSL context object
-  #   2. The return value of each command is ignored
+  #   1. Each commands mutates the state of the DSL context object
+  #   2. The return value of each commands is ignored
   #   3. The final return value is the original context object
   #
   # @example Use a String as a DSL
@@ -51,8 +51,8 @@ module Docile
   # Use this method to execute a *functional* DSL, which means that:
   #
   #   1. The original DSL context object is never mutated
-  #   2. Each command returns the next DSL context object
-  #   3. The final return value is the value returned by the last command
+  #   2. Each commands returns the next DSL context object
+  #   3. The final return value is the value returned by the last commands
   #
   # @example Use a frozen String as a DSL
   #   Docile.dsl_eval_immutable("I'm immutable!".freeze) do
@@ -73,7 +73,7 @@ module Docile
   # @param args [Array] arguments to be passed to the block
   # @param block [Proc] the block of DSL commands to be executed against the
   #   `dsl` context object and successor return values
-  # @return [Object] the return value of the final command in the block
+  # @return [Object] the return value of the final commands in the block
   #
   # source://docile//lib/docile.rb#128
   def dsl_eval_immutable(dsl, *args, **_arg2, &block); end
@@ -83,8 +83,8 @@ module Docile
   #
   # Use this method to execute an *imperative* DSL, which means that:
   #
-  #   1. Each command mutates the state of the DSL context object
-  #   2. The return value of each command is ignored
+  #   1. Each commands mutates the state of the DSL context object
+  #   2. The return value of each commands is ignored
   #   3. The final return value is the original context object
   #
   # @example Use a String as a DSL
@@ -119,8 +119,8 @@ module Docile
     #
     # Use this method to execute an *imperative* DSL, which means that:
     #
-    #   1. Each command mutates the state of the DSL context object
-    #   2. The return value of each command is ignored
+    #   1. Each commands mutates the state of the DSL context object
+    #   2. The return value of each commands is ignored
     #   3. The final return value is the original context object
     #
     # @example Use a String as a DSL
@@ -153,8 +153,8 @@ module Docile
     # Use this method to execute a *functional* DSL, which means that:
     #
     #   1. The original DSL context object is never mutated
-    #   2. Each command returns the next DSL context object
-    #   3. The final return value is the value returned by the last command
+    #   2. Each commands returns the next DSL context object
+    #   3. The final return value is the value returned by the last commands
     #
     # @example Use a frozen String as a DSL
     #   Docile.dsl_eval_immutable("I'm immutable!".freeze) do
@@ -175,7 +175,7 @@ module Docile
     # @param args [Array] arguments to be passed to the block
     # @param block [Proc] the block of DSL commands to be executed against the
     #   `dsl` context object and successor return values
-    # @return [Object] the return value of the final command in the block
+    # @return [Object] the return value of the final commands in the block
     #
     # source://docile//lib/docile.rb#128
     def dsl_eval_immutable(dsl, *args, **_arg2, &block); end
@@ -185,8 +185,8 @@ module Docile
     #
     # Use this method to execute an *imperative* DSL, which means that:
     #
-    #   1. Each command mutates the state of the DSL context object
-    #   2. The return value of each command is ignored
+    #   1. Each commands mutates the state of the DSL context object
+    #   2. The return value of each commands is ignored
     #   3. The final return value is the original context object
     #
     # @example Use a String as a DSL
