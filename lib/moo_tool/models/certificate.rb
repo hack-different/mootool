@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module MooTool
   module Models
     class Certificate
       def initialize(sequence)
         @certificate = sequence
-
 
         @decoded = {
           version: @certificate[0][0],
@@ -12,16 +13,37 @@ module MooTool
           issuer: parse_ds_name(@certificate[3]),
           validity: {
             not_before: @certificate[4][0],
-            not_after: @certificate[4][1],
+            not_after: @certificate[4][1]
           },
           subject: parse_ds_name(@certificate[5]),
           key: {
             @certificate[6][0][0].to_sym =>
               @certificate[6][0][1],
-            :data => @certificate[6][1]
+            :public_key => @certificate[6][1]
           },
-          extensions: @certificate[7]
+          extensions: @certificate[7][0].map { |e| parse_extension(e) }
         }
+      end
+
+      def parse_extension(extension)
+        case extension
+        when 'basicConstraints'
+          { basicConstraints: {critical: extension[1], constraints: @certificate[2][0] } }
+        when 'authorityKeyIdentifier'
+          { authorityKeyIdentifier: Digest.new(extension[1]) }
+        when 'subjectKeyIdentifier'
+          { subjectKeyIdentifier: Digest.new(extension[1]) }
+        when 'keyUsage'
+          { keyUsage: { critical: extension[1], usage: Digest.new(extension[2]) } }
+        when '1.2.840.113635.100.6.1.15', '1.2.840.113635.100.6.16','1.2.840.113635.100.6.17'
+          if extension[1].is_a?(String)
+          { extension[0] => IMG4::File.asn1_to_hash( OpenSSL::ASN1.decode(extension[1]) )}
+          else
+            { extension[0] => { value: IMG4::File.asn1_to_hash( OpenSSL::ASN1.decode(extension[2])), critical: extension[1] } }
+            end
+        else
+          extension
+        end
       end
 
       def map_to_arrays(input)
@@ -34,13 +56,15 @@ module MooTool
       end
 
       def parse_ds_name(name)
-        map_to_arrays(name).flatten.each_slice(2).to_h.transform_keys do |key|
-          key.to_sym
-        end
+        map_to_arrays(name).flatten.each_slice(2).to_h.transform_keys(&:to_sym)
       end
 
       def to_h
         @decoded
+      end
+
+      def inspect
+        @decoded.to_h
       end
     end
   end

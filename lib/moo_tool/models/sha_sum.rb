@@ -1,4 +1,4 @@
-require 'pathname'
+# frozen_string_literal: true
 
 module MooTool
   module Models
@@ -7,14 +7,12 @@ module MooTool
 
       delegate :has_key?, to: :index
       def initialize(lines)
-        @lines = lines.map do |line|
-          line.split ' '
-        end
+        @lines = lines.map(&:split)
         grouped = @lines.group_by do |hash, _file|
           hash
         end
         mapping = grouped.map do |key, values|
-          [ key.upcase, values.map { |v| Pathname.new v[1]} ]
+          [key.upcase, values.map { |v| Pathname.new v[1] }]
         end
         @index = mapping.to_h
       end

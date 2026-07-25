@@ -5,7 +5,7 @@ require_relative 'moo_tool/version'
 
 require 'macho'
 require 'zip'
-require 'pathname'
+require 'uuidtools'
 
 require_relative 'moo_tool/core_extensions'
 require 'active_support/all'
@@ -15,7 +15,6 @@ require 'amazing_print'
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'IMG4'
 end
-
 
 # MooTool
 module MooTool
@@ -29,22 +28,47 @@ module MooTool
     autoload :IMG4, 'moo_tool/commands/img4'
   end
 
+  module Helpers
+    autoload :IMG4, 'moo_tool/helpers/img4'
+  end
+
   autoload :Models
 
   class Digest
     attr_reader :value
 
     def initialize(value)
-      @value = value
+      case value
+      when String
+        @value = value
+      when Integer
+        @value = [value.to_s(16)].pack('H*')
+        @integer = true
+      else
+        raise ArgumentError, "Invalid Input: #{value.inspect}"
+      end
+    rescue => e
+      raise "Value #{value} with class #{value.class} could not be parsed"
+    end
+
+    def integer?
+      @integer
+    end
+
+    def self.create(input)
+      if input.is_a?(String) && input.length == 16
+        UUIDTools::UUID.parse_raw input
+        elsif input.is_a?(Array)
+          input.map { |i| create(i) }
+      elsif input.nil?
+        nil
+      else
+        Digest.new input
+      end
     end
 
     def to_s
-      if value.respond_to?(:unpack1)
-                value.unpack1('H*')
-      else
-        value.to_s
-        end
-
+      value.unpack1('H*')
     end
 
     def shasum
@@ -52,10 +76,10 @@ module MooTool
     end
 
     def file_names(sums)
-      if sums.index.has_key? self.shasum
+      if sums.index.key? shasum
         { hash: self,
           files:
-        sums.index[self.shasum] }
+        sums.index[shasum] }
       else
         self
       end
@@ -81,35 +105,49 @@ module MooTool
           cast = :digest
         when Pathname
           cast = :path
+        when UUIDTools::UUID
+          cast = :uuid
+        when Models::Certificate
+          cast = :certificate
         end
         cast
       end
 
+      def awesome_certificate(object)
+        awesome_hash(object.to_h)
+      end
       def awesome_digest(object)
-        colorize(object.inspect, :digest)
+        if object.integer?
+          colorize(object.inspect, :integer)
+        else
+          colorize(object.inspect, :digest)
+        end
       end
 
       def awesome_path(object)
         colorize(object.to_s, :path)
       end
+
+      def awesome_uuid(object)
+        colorize(object.to_s, :uuid)
+      end
     end
   end
 end
 
-
-AmazingPrint.defaults =({
-  indent: 4,            # Number of spaces for indenting.
-  index: true,         # Display array indices.
-  html: false,        # Use ANSI color codes rather than HTML.
-  multiline: true,         # Display in multiple lines.
+AmazingPrint.defaults = ({
+  indent: 4, # Number of spaces for indenting.
+  index: true, # Display array indices.
+  html: false, # Use ANSI color codes rather than HTML.
+  multiline: true, # Display in multiple lines.
   colors: :all, # Controls what should be colored. Can be one of :all, :values_only, or :none
-  raw: false,        # Do not recursively format instance variables.
+  raw: false, # Do not recursively format instance variables.
   sort_keys: false,        # Do not sort hash keys.
   sort_vars: true,         # Sort instance variables.
-  limit: false,        # Limit arrays & hashes. Accepts bool or int.
-  hash_format: :symbol,      # The format for printing hashes. Can be one of :json, :rocket, or :symbol
-  class_name: :class,       # Method called to report the instance class name. (e.g. :to_s)
-  object_id: true,         # Show object id.
+  limit: false, # Limit arrays & hashes. Accepts bool or int.
+  hash_format: :symbol, # The format for printing hashes. Can be one of :json, :rocket, or :symbol
+  class_name: :class, # Method called to report the instance class name. (e.g. :to_s)
+  object_id: true, # Show object id.
   color: {
     args: :whiteish,
     array: :white,
@@ -118,6 +156,7 @@ AmazingPrint.defaults =({
     date: :greenish,
     falseclass: :red,
     digest: :purple,
+    uuid: :yellowish,
     integer: :blue,
     float: :blue,
     hash: :whiteish,
@@ -125,7 +164,7 @@ AmazingPrint.defaults =({
     method: :purpleish,
     nilclass: :red,
     rational: :blue,
-    string: :yellowish,
+    string: :yellow,
     struct: :whiteish,
     symbol: :cyanish,
     time: :greenish,
@@ -135,6 +174,8 @@ AmazingPrint.defaults =({
   }
 })
 
-class AmazingPrint::Formatter
-  include MooTool::Formatters::DigestFormatter
+module AmazingPrint
+  class Formatter
+    include MooTool::Formatters::DigestFormatter
+  end
 end

@@ -4,7 +4,6 @@
 # rubocop:disable Style/Documentation
 
 class Integer
-
   def align(alignment = nil)
     alignment ||= 4
 

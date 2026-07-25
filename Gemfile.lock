@@ -13,6 +13,7 @@ PATH
       ruby-macho
       rubyzip
       thor
+      uuidtools
 
 GEM
   remote: https://rubygems.org/
@@ -121,14 +122,14 @@ GEM
     rubyzip (3.4.1)
     securerandom (0.4.1)
     simplecov (1.0.2)
-    sorbet (0.6.13354)
-      sorbet-static (= 0.6.13354)
-    sorbet-runtime (0.6.13354)
-    sorbet-static (0.6.13354-universal-darwin)
-    sorbet-static (0.6.13354-x86_64-linux)
-    sorbet-static-and-runtime (0.6.13354)
-      sorbet (= 0.6.13354)
-      sorbet-runtime (= 0.6.13354)
+    sorbet (0.6.13359)
+      sorbet-static (= 0.6.13359)
+    sorbet-runtime (0.6.13359)
+    sorbet-static (0.6.13359-universal-darwin)
+    sorbet-static (0.6.13359-x86_64-linux)
+    sorbet-static-and-runtime (0.6.13359)
+      sorbet (= 0.6.13359)
+      sorbet-runtime (= 0.6.13359)
     spoom (1.8.4)
       erubi (>= 1.10.0)
       prism (>= 0.28.0)
@@ -145,6 +146,7 @@ GEM
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
     uri (1.1.1)
+    uuidtools (3.0.0)
 
 PLATFORMS
   arm64-darwin-21

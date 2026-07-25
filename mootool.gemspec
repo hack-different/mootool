@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/hack-different/mootool'
   spec.license = 'MIT'
 
-  spec.required_ruby_version = '>= 3.0'
+  spec.required_ruby_version = '>= 4.0'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel'
   spec.add_dependency 'activesupport'
+  spec.add_dependency 'amazing_print'
   spec.add_dependency 'colorize'
   spec.add_dependency 'lzfse'
   spec.add_dependency 'lzss'
@@ -47,7 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-macho'
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor'
-  spec.add_dependency 'amazing_print'
+  spec.add_dependency 'uuidtools'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

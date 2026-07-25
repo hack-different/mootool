@@ -10,7 +10,7 @@ module MooTool
       option :friendly, type: :boolean, default: true
       def print
         filename = options[:file]
-        file = Models::IMG4::File.new(filename)
+        file = Models::IMG4::File.load(filename)
         file.print(options[:friendly])
       end
     end
