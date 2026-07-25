@@ -17,7 +17,7 @@ module MooTool
 
       DECODE_TAGS = parse_4cc(%w[clid])
       OCTET_TAGS = parse_4cc(%w[tbms vuid kuid prid])
-      KVP_TAGS = parse_4cc(%w[faic inst eg0n oppd DGST ESEC EPRO BNCH tbms apmv esdm prid srvn tstp prtp sdkp snon tagt uidm tatp spih hrlp vnum stng clas pave trcs snuf EKEY UDID fchp augs cnch upcl ndom styp type kuid lpnh love rpnh rolp vuid nish nsih lobo ECID CEPO SDOM CSEC CPRO CHIP BORD])
+      KVP_TAGS = parse_4cc(%w[faic vnum trcs inst eg0n oppd DGST ESEC EPRO BNCH tbms apmv esdm prid srvn tstp prtp sdkp snon tagt uidm tatp spih hrlp vnum stng clas pave trcs snuf EKEY UDID fchp augs cnch upcl ndom styp type kuid lpnh love rpnh rolp vuid nish nsih lobo ECID CEPO SDOM CSEC CPRO CHIP BORD])
       SEQUENCE_TAGS = parse_4cc(%w[OBJP MANP dCfg casy caos csos cssy aupr ansf aubt anef aopf csys bstc avef batF bat0 bat1 ciof cphy chg1 chg0 dven dcpf dcp2 dtre MANB lcrt gfxf ftsp ftap illb lpol ibss glyP ibot ipdf ibdt ibec ispf isys trca krnl mtfw msys logo rans mtpf pmcf pmpf recm rcio rdc2 rdsk rdcp rdtr trxm rfta rkrn trst rfts tmuf stg1 rlg1 rlg2 rsep rlgo rosi rspt sptm siof sepi rtsc rtmu rtrx])
 
       # An instance of a IMG4 file
@@ -39,8 +39,6 @@ module MooTool
           @type = @value.first
           @content = {}
 
-          ap @value
-
           case @type
           when 'IM4P'
             @content[:im4p] = {
@@ -52,7 +50,7 @@ module MooTool
             @content[:im4m] = {
               version: @value[1],
               MANB: @value[2][0]['MANB'],
-              signature: @value[3],
+              signature: Digest.create(@value[3]),
               certificate: Certificate.new(@value[4][0][0])
             }
           when 'IMG4'
@@ -62,7 +60,7 @@ module MooTool
                 @content[:im4m] = {
                   version: entry[1],
                   MANB: entry[2][0],
-                  signature: entry[3],
+                  signature: Digest.create(entry[3]),
                   certificate: Certificate.new(entry[4][0][0]),
                 }
               when 'IM4P'
@@ -81,7 +79,7 @@ module MooTool
               when 'rvok'
                 { entry[0] => entry[1] }
               when 'trpk'
-                { entry[0] => entry.drop(1).map { |e| Digest.new( e ) } }
+                { entry[0] => entry.drop(1) }
               end
             end.reduce(&:merge)
           when 'comb'
@@ -92,7 +90,6 @@ module MooTool
               end
             end
           else
-            ap @value
             raise "Unknown IMG4 type #{@type}"
           end
         end
@@ -104,9 +101,8 @@ module MooTool
           when 'MANB'
             parse_pair manifest.value[1].value[0].value[0]
             @manifest = parse_manifest manifest.value[1]
-            @signature = Digest.new @data.value[3].value
+            @signature = @data.value[3].value
             @certificate = Models::Certificate.new @data.value[4].value
-
           end
         end
 
@@ -121,7 +117,7 @@ module MooTool
             case element
             when String
               if [384].include?(element.length * 8)
-                Digest.new element
+                element
               else
                 element
               end

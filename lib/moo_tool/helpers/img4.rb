@@ -1,4 +1,5 @@
 require 'set'
+require 'openssl'
 
 module MooTool
   module Helpers
@@ -9,60 +10,72 @@ module MooTool
         end
       end
 
-      HASH_LENGTHS = [160, 224, 256, 384, 512].freeze
+      HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
-      KVP_TAGS = parse_4cc(%w[faic inst eg0n oppd DGST ESEC EPRO BNCH tbms apmv esdm prid srvn tstp prtp sdkp snon tagt uidm tatp spih hrlp vnum stng clas pave snuf EKEY UDID fchp augs cnch upcl ndom styp type kuid lpnh love rpnh rolp vuid nish nsih lobo ECID CEPO SDOM CSEC CPRO CHIP BORD])
-      SEQUENCE_TAGS = parse_4cc(%w[sePk csos caos cssy trca casy trcs])
-      FIRMWARE_TAGS = parse_4cc(%w[ MANP rspt aubt avef bat0 rlg1 rlg2 rlgo rosi rsep rspt recm rcio rans aupr bstc chg1 sepi rtmu rtrx ipdf illb mtfw trxm siof ftap dven anef ansf aopf bat1 batF ftsp gfxf sptm chg0 ciof csys dcp2 dcpf dtre ibot ibec ibdt glyP ibss tmuf logo krnl isys ispf stg1 msys cphy pmpf pmcf mtpf rdtr rdcp rdc2 rfta rfts rkrn trst])
+      KVP_TAGS = parse_4cc(%w[UDID spih hrlp stng caos casy csos tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih])
+      SEQUENCE_TAGS = parse_4cc(%w[MANB MANP])
+      FIRMWARE_TAGS = parse_4cc(%w[cphy cssy trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
       def construct_object(input)
+        nil if input.nil? || input.value.nil?
+
         begin
           case input.tag
-          when OpenSSL::ASN1::SEQUENCE, OpenSSL::ASN1::SET
+          when OpenSSL::ASN1::NULL
+            nil
+          when OpenSSL::ASN1::INTEGER
+            construct(input.value)
+          when OpenSSL::ASN1::BOOLEAN, OpenSSL::ASN1::UTCTIME, OpenSSL::ASN1::GENERALIZEDTIME,
+            OpenSSL::ASN1::UTF8STRING, OpenSSL::ASN1::IA5STRING, OpenSSL::ASN1::OBJECT
+
+            input.value
+          when OpenSSL::ASN1::BIT_STRING
+            case input.value
+            when Array
+              input.value.map { |v| construct(v) }
+            when String
+              Digest.create input.value
+            else
+              input.value
+            end
+          when OpenSSL::ASN1::OCTET_STRING
+            if HASH_LENGTHS.include?(input.value.size * 8) || (input.value.size * 8) > 1024
+              Digest.create input.value
+            else
+              input.value
+            end
+          when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED
             input.value.map { |v| construct(v) }
+          when OpenSSL::ASN1::SEQUENCE
+            input.value&.map { |v| construct(v) }
           when *KVP_TAGS
-            construction = construct(input.value).first
+            construction = construct(input.value.first)
             { construction[0] => construction[1] }
-          when *SEQUENCE_TAGS
-            construction = construct(input.value).first
-            values = construction[1] ? construction[1].reduce({}, :merge) : {}
-            { construction[0] => values }
-          when *FIRMWARE_TAGS
-            construction = construct(input.value).first
-            values = construction[1] ? construction[1].reduce({}, :merge) : {}
-            { construction[0] => values }
+          when *SEQUENCE_TAGS, *FIRMWARE_TAGS
+            construction = construct(input.value.first)
+            { construction[0] => construction[1].reduce(&:merge) }
           else
-            construct(input.value).first
+            value = case input.value
+                    when Enumerable
+                      input.value.map { |v| construct(v) }
+                    else
+                      input.value
+                    end
+            {tag: input.tag, other: value}
           end
         rescue => e
-          ap input.value
-          raise ArgumentError, "Unable to Process: #{input}\n#{e.inspect}"
+          raise ArgumentError, "Unable to Process: #{input.tag} - #{input.value.inspect}\n#{e.message}\n#{e.inspect}\n#{e.backtrace}\n"
         end
       end
 
       def construct(input)
         case input
-        when OpenSSL::ASN1::Boolean, OpenSSL::ASN1::PrintableString, OpenSSL::ASN1::UTF8String,
-          OpenSSL::ASN1::UniversalString, OpenSSL::ASN1::Null, OpenSSL::ASN1::UTCTime, OpenSSL::ASN1::IA5String,
-          OpenSSL::ASN1::ObjectId
-
-          input.value
-        when OpenSSL::ASN1::OctetString, OpenSSL::ASN1::BitString
-          Digest.new input.value
-        when OpenSSL::ASN1::Integer
-          input.value.to_i
-        when OpenSSL::BN
+        in OpenSSL::BN
           input.to_i
-        when OpenSSL::ASN1::Sequence, OpenSSL::ASN1::Enumerated, OpenSSL::ASN1::Set
+        in OpenSSL::ASN1::ASN1Data
           construct_object(input)
-        when OpenSSL::ASN1::ASN1Data
-          construct_object(input)
-        when String, Digest, NilClass
+        in nil, true, false, String, Digest, Integer, Hash, Array
           input
-        when Array
-          input.map do |value|
-            construct(value)
-          end
         else
           raise ArgumentError, "Unable to process #{input.class} #{input.inspect}"
         end

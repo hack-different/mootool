@@ -62,13 +62,15 @@ module MooTool
           input.map { |i| create(i) }
       elsif input.nil?
         nil
+      elsif input.is_a?(Digest)
+        input
       else
         Digest.new input
       end
     end
 
     def to_s
-      value.unpack1('H*')
+      value
     end
 
     def shasum
@@ -86,7 +88,7 @@ module MooTool
     end
 
     def inspect
-      to_s.upcase
+      to_s.unpack1('H*').upcase
     end
   end
 

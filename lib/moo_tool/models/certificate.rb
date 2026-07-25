@@ -3,6 +3,8 @@
 module MooTool
   module Models
     class Certificate
+      include Helpers::IMG4
+
       def initialize(sequence)
         @certificate = sequence
 
@@ -26,21 +28,21 @@ module MooTool
       end
 
       def parse_extension(extension)
-        case extension
+        case extension[0]
         when 'basicConstraints'
           { basicConstraints: {critical: extension[1], constraints: @certificate[2][0] } }
         when 'authorityKeyIdentifier'
-          { authorityKeyIdentifier: Digest.new(extension[1]) }
+          { authorityKeyIdentifier: Digest.create(extension[1]) }
         when 'subjectKeyIdentifier'
-          { subjectKeyIdentifier: Digest.new(extension[1]) }
+          { subjectKeyIdentifier: Digest.create(extension[1]) }
         when 'keyUsage'
-          { keyUsage: { critical: extension[1], usage: Digest.new(extension[2]) } }
+          { keyUsage: { critical: extension[1], usage: Digest.create(extension[2]) } }
         when '1.2.840.113635.100.6.1.15', '1.2.840.113635.100.6.16','1.2.840.113635.100.6.17'
           if extension[1].is_a?(String)
-          { extension[0] => IMG4::File.asn1_to_hash( OpenSSL::ASN1.decode(extension[1]) )}
+            { extension[0] => construct(OpenSSL::ASN1.decode(extension[1])) }
           else
-            { extension[0] => { value: IMG4::File.asn1_to_hash( OpenSSL::ASN1.decode(extension[2])), critical: extension[1] } }
-            end
+            { extension[0] => { value: construct(OpenSSL::ASN1.decode(extension[2].to_s)), critical: extension[1] } }
+          end
         else
           extension
         end
