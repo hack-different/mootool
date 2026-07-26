@@ -32,11 +32,11 @@ module MooTool
         when 'basicConstraints'
           { basicConstraints: {critical: extension[1], constraints: @certificate[2][0] } }
         when 'authorityKeyIdentifier'
-          { authorityKeyIdentifier: Digest.create(extension[1]) }
+          { authorityKeyIdentifier: Models::Digest.create(extension[1]) }
         when 'subjectKeyIdentifier'
-          { subjectKeyIdentifier: Digest.create(extension[1]) }
+          { subjectKeyIdentifier: Models::Digest.create(extension[1]) }
         when 'keyUsage'
-          { keyUsage: { critical: extension[1], usage: Digest.create(extension[2]) } }
+          { keyUsage: { critical: extension[1], usage: Models::Digest.create(extension[2]) } }
         when '1.2.840.113635.100.6.1.15', '1.2.840.113635.100.6.16','1.2.840.113635.100.6.17'
           if extension[1].is_a?(String)
             { extension[0] => construct(OpenSSL::ASN1.decode(extension[1])) }

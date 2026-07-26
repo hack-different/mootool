@@ -15,14 +15,9 @@ module MooTool
         end
       end
 
-      DECODE_TAGS = parse_4cc(%w[clid])
-      OCTET_TAGS = parse_4cc(%w[tbms vuid kuid prid])
-      KVP_TAGS = parse_4cc(%w[faic vnum trcs inst eg0n oppd DGST ESEC EPRO BNCH tbms apmv esdm prid srvn tstp prtp sdkp snon tagt uidm tatp spih hrlp vnum stng clas pave trcs snuf EKEY UDID fchp augs cnch upcl ndom styp type kuid lpnh love rpnh rolp vuid nish nsih lobo ECID CEPO SDOM CSEC CPRO CHIP BORD])
-      SEQUENCE_TAGS = parse_4cc(%w[OBJP MANP dCfg casy caos csos cssy aupr ansf aubt anef aopf csys bstc avef batF bat0 bat1 ciof cphy chg1 chg0 dven dcpf dcp2 dtre MANB lcrt gfxf ftsp ftap illb lpol ibss glyP ibot ipdf ibdt ibec ispf isys trca krnl mtfw msys logo rans mtpf pmcf pmpf recm rcio rdc2 rdsk rdcp rdtr trxm rfta rkrn trst rfts tmuf stg1 rlg1 rlg2 rsep rlgo rosi rspt sptm siof sepi rtsc rtmu rtrx])
-
       # An instance of a IMG4 file
       class File
-        attr_reader :payload, :manifest, :shasum
+        attr_reader :payload, :manifest, :file_index
 
         include Helpers::IMG4
 
@@ -31,9 +26,16 @@ module MooTool
           File.new(data)
         end
 
-        def initialize(der)
-          @shasum = ShaSum.from_file('/Users/rickmark/Desktop/table.txt')
+        def parse_certificates(certificates)
+          certificates.map do |certificate|
+            OpenSSL::X509::Certificate.new(certificate)
+          end
+        end
 
+        def initialize(der)
+          @file_index = Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
+
+          @hash = Models::Digest.create(::Digest::SHA384.digest(der))
           @data = OpenSSL::ASN1.decode(der)
           @value = construct(@data)
           @type = @value.first
@@ -50,24 +52,25 @@ module MooTool
             @content[:im4m] = {
               version: @value[1],
               MANB: @value[2][0]['MANB'],
-              signature: Digest.create(@value[3]),
-              certificate: Certificate.new(@value[4][0][0])
+              signature: Models::Digest.create(@value[3]),
+              certificate: parse_certificates(@data.value[4])
             }
           when 'IMG4'
-            @value[2].each do |entry|
+            @value[2].each_with_index do |entry, index|
               case entry[0]
               when 'IM4M'
                 @content[:im4m] = {
                   version: entry[1],
                   MANB: entry[2][0],
-                  signature: Digest.create(entry[3]),
-                  certificate: Certificate.new(entry[4][0][0]),
+                  signature: Models::Digest.create(entry[3]),
+                  certificate: parse_certificates(@data.value[2].value[index].value[4]),
                 }
               when 'IM4P'
                 @content[:im4p] = {
                   im4p_type: entry[1],
                   version: entry[2],
                   manifest: entry[3],
+                  payload: entry[4]
                 }
               end
             end
@@ -160,6 +163,14 @@ module MooTool
           @content
         end
 
+        def hashes
+          result = [ @hash ]
+          if @content[:im4p]
+            result += @content[:im4p][:payload].hashes
+          end
+          result
+        end
+
         def print(friendly)
           if friendly
             mappings = IMG4.mappings
@@ -169,15 +180,15 @@ module MooTool
             end
             output = output.deep_transform_values do |value|
               case value
-              when MooTool::Digest
-                value.file_names @shasum
+              when MooTool::Models::Digest
+                value.file_names @file_index
               else
                 value
               end
             end
             ap output
           else
-            ap asn1_to_hash(@elements)
+            ap print_value
           end
         end
 

@@ -15,21 +15,38 @@ module MooTool
     COMPRESSION_LZFSE = 'bvx2'
     COMPRESSION_LZMA = 'lzma'
 
-    attr_reader :value
+    attr_reader :value, :hash
 
     def initialize(data)
+      data = data.value if data.is_a? Models::Digest
+      @hash = Models::Digest.create( ::Digest::SHA384.digest(data))
       @value = case data[0..3]
                when COMPRESSION_LZFSE
+                 @compression = :lzfse
                  LZFSE.lzfse_decompress(data)
                when COMPRESSION_LZVN
+                 @compression = :lzvn
                  LZFSE.lzvn_decompress(data)
                when COMPRESSION_LZSS
+                 @compression = :lzss
                  OpenSSL::Digest::DSS.decompress(data)
                when COMPRESSION_LZMA
+                 @compression = :lzma
                  Net::DNS::QueryTypes::ATMA.decompress(data)
                else
+                 @compression = :raw
                  data
                end
+      @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
+    end
+
+    def hashes
+      [ @hash, @decompressed_hash ].reject(&:nil?).uniq
+    end
+
+
+    def inspect
+      { compression: @compression, length: @value.size, hash: @hash, decompressed_hash: @decompressed_hash }.ai
     end
   end
 end

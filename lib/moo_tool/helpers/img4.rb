@@ -12,9 +12,10 @@ module MooTool
 
       HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
-      KVP_TAGS = parse_4cc(%w[UDID spih hrlp stng caos casy csos tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih])
+      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp])
+      KVP_TAGS = parse_4cc(%w[UDID faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih])
       SEQUENCE_TAGS = parse_4cc(%w[MANB MANP])
-      FIRMWARE_TAGS = parse_4cc(%w[cphy cssy trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
+      FIRMWARE_TAGS = parse_4cc(%w[cphy rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
       def construct_object(input)
         nil if input.nil? || input.value.nil?
@@ -34,13 +35,13 @@ module MooTool
             when Array
               input.value.map { |v| construct(v) }
             when String
-              Digest.create input.value
+              Models::Digest.create input.value
             else
               input.value
             end
           when OpenSSL::ASN1::OCTET_STRING
             if HASH_LENGTHS.include?(input.value.size * 8) || (input.value.size * 8) > 1024
-              Digest.create input.value
+              Models::Digest.create input.value
             else
               input.value
             end
@@ -50,7 +51,12 @@ module MooTool
             input.value&.map { |v| construct(v) }
           when *KVP_TAGS
             construction = construct(input.value.first)
-            { construction[0] => construction[1] }
+            if OCTET_TAGS.include?(input.tag) && !construction[1].is_a?(Models::Digest)
+              { construction[0] => Models::Digest.new(construction[1]) }
+            else
+              { construction[0] => construction[1] }
+            end
+
           when *SEQUENCE_TAGS, *FIRMWARE_TAGS
             construction = construct(input.value.first)
             { construction[0] => construction[1].reduce(&:merge) }

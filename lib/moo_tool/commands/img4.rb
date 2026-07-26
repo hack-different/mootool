@@ -3,15 +3,31 @@
 module MooTool
   module Commands
     class IMG4 < Thor
-      desc 'file', 'The name of the file'
-      class_option :file, required: true
-
       desc 'print', 'Parses and prints pretty versions of an img4/DER'
       option :friendly, type: :boolean, default: true
-      def print
-        filename = options[:file]
+
+      def print(filename)
         file = Models::IMG4::File.load(filename)
         file.print(options[:friendly])
+      end
+
+      desc :save_file, 'The file to save the results too'
+      method_option :save_file, type: :string, required: false, default: nil
+      desc :hash, 'If the contents should be hashed'
+      method_option :hash, type: :boolean, required: false, default: true
+      desc :index, 'Index for any relevant files on a live system'
+      def index
+        indexer = Models::FileIndex.new
+
+        if options[:hash]
+          indexer.hash
+        end
+
+        if options[:save_file]
+          File.write options[:save_file], JSON.dump(indexer.index)
+        end
+
+        ap indexer.index
       end
     end
   end

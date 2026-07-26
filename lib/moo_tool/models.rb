@@ -7,5 +7,7 @@ module MooTool
     autoload :IMG4
     autoload :Certificate
     autoload :ShaSum
+    autoload :Digest
+    autoload :FileIndex
   end
 end
