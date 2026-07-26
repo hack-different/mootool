@@ -21,6 +21,8 @@ module MooTool
 
         include Helpers::IMG4
 
+        DER_PAYLOADS = %w[trst]
+
         def self.load(path)
           data = ::File.binread(path)
           File.new(data)
@@ -43,35 +45,34 @@ module MooTool
 
           case @type
           when 'IM4P'
+            @payload = MooTool::Decompressor.new(@data.value[3].value)
             @content[:im4p] = {
               img4_type: @value[1],
               build: @value[2],
-              payload: MooTool::Decompressor.new(@value[3])
+              payload: @payload
             }
           when 'IM4M'
             @content[:im4m] = {
               version: @value[1],
-              MANB: @value[2][0]['MANB'],
+              manifest: @value[2],
               signature: Models::Digest.create(@value[3]),
               certificate: parse_certificates(@data.value[4])
             }
           when 'IMG4'
-            @value[2].each_with_index do |entry, index|
+            entries = @value.drop(1)
+            entries.each_with_index do |entry, index|
               case entry[0]
               when 'IM4M'
-                @content[:im4m] = {
-                  version: entry[1],
-                  MANB: entry[2][0],
-                  signature: Models::Digest.create(entry[3]),
-                  certificate: parse_certificates(@data.value[2].value[index].value[4]),
-                }
+                extract_img4_im4m(entry, @data.value[index + 1])
               when 'IM4P'
-                @content[:im4p] = {
-                  im4p_type: entry[1],
-                  version: entry[2],
-                  manifest: entry[3],
-                  payload: entry[4]
-                }
+                parse_img4_im4p(entry, @data.value[index + 1])
+              else
+                entry.each_with_index do |subentry, subindex|
+                  case subentry[0]
+                  when 'IM4M'
+                    extract_img4_im4m(subentry, @data.value[index + 1].value[subindex])
+                  end
+                end
               end
             end
           when 'secb'
@@ -160,15 +161,16 @@ module MooTool
         end
 
         def print_value
-          @content
+          @content.merge(hashes: self.hashes)
         end
 
         def hashes
           result = [ @hash ]
-          if @content[:im4p]
-            result += @content[:im4p][:payload].hashes
+          if @payload
+            result += @payload.hashes
           end
-          result
+
+          result.uniq { |u| u.value }
         end
 
         def print(friendly)
@@ -190,6 +192,28 @@ module MooTool
           else
             ap print_value
           end
+        end
+
+        private
+
+        def extract_img4_im4m(entry, data_path)
+          @content[:im4m] = {
+            version: entry[1],
+            MANB: entry[2][0],
+            signature: Models::Digest.create(entry[3]),
+            certificate: parse_certificates(data_path.value[4])
+          }
+        end
+
+        def parse_img4_im4p(entry, data_path)
+          payload_data = data_path.value[3].value
+          @payload = MooTool::Decompressor.new(payload_data)
+
+          @content[:im4p] = {
+            im4p_type: entry[1],
+            version: entry[2],
+            payload: @payload
+          }
         end
 
       end

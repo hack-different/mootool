@@ -20,12 +20,26 @@ module MooTool
 
         end
 
+        def fullname
+          File.join(@location, @filename)
+        end
+
         def generate_hashes
-          @hashes = if filename.ends_with?('.im4p')
-            IMG4::File.load("#{@location}/#{filename}").hashes
-          else
-            [Models::Digest.create(::Digest::SHA384.digest(@filename))]
-                    end
+          case @filename
+          when /.*\.img4/
+            @hashes =
+              IMG4::File.load("#{@location}/#{filename}").hashes
+          when /.*\.im4p/
+            @hashes =
+                        IMG4::File.load("#{@location}/#{filename}").hashes
+            when /.*\/kernelcache(.*)/
+            @hashes =
+              IMG4::File.load("#{@location}/#{filename}").hashes
+            else
+          @hashes =   [Models::Digest.create(::Digest::SHA384.digest(@filename))]
+          end
+
+
 
         end
 
@@ -47,7 +61,7 @@ module MooTool
         end
 
         def to_ref(hash)
-          "#{@location}/#{@filename}:#{hash}"
+          "#{self.fullname}"
         end
 
         def inspect
@@ -76,9 +90,9 @@ module MooTool
         Hardware
       ].freeze
 
-      EXTENSIONS = %w[
-        kernelcache kernel sep-patches imutablekernel der im4m
-        im4p dmg der img4 pem request.txt response.txt dmg dmg.*
+      FILE_KINDS = %w[
+        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m
+        *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
       ].freeze
 
       def initialize(index = nil)
@@ -109,14 +123,19 @@ module MooTool
 
       def perform
         flat_names = PATHS.flat_map do |path|
-          Dir.glob('**/*', base: path).map { |file| FileLocation.new(path, file) }
+          Dir.glob('**/*', base: path).map do |file|
+            FileLocation.new(path, file)
+          end
         end
 
         search_names = mounts.flat_map do |path|
-          Dir.glob("**/*.{#{EXTENSIONS.join(',')}}", base: path).map { |file| FileLocation.new(path, file) }
+          Dir.glob("**/{#{FILE_KINDS.join(',')}}", base: path).map do |file|
+            FileLocation.new(path, file)
+          end
         end
 
         @index = flat_names + search_names
+        @index.reject! { |e| File.directory? e.fullname }
       end
 
       def as_json(options = {})

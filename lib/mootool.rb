@@ -24,6 +24,7 @@ module MooTool
   extend ActiveSupport::Autoload
 
   autoload :Command, 'moo_tool/command'
+  autoload :Decompressor, 'moo_tool/models/decompressor'
 
   module Commands
     autoload :IMG4, 'moo_tool/commands/img4'

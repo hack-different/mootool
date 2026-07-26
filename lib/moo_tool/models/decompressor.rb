@@ -17,9 +17,13 @@ module MooTool
 
     attr_reader :value, :hash
 
+    def self.load(filename)
+      new File.binread(filename)
+    end
+
     def initialize(data)
       data = data.value if data.is_a? Models::Digest
-      @hash = Models::Digest.create( ::Digest::SHA384.digest(data))
+      @hash = Models::Digest.create(::Digest::SHA384.digest(data))
       @value = case data[0..3]
                when COMPRESSION_LZFSE
                  @compression = :lzfse

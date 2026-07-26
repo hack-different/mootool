@@ -71,7 +71,7 @@ module MooTool
         if file_index.has_hash? shasum
           { hash: self,
             files:
-              file_index.files_with_hash(shasum).map {|f| f.to_ref(shasum)} }
+              file_index.files_with_hash(shasum).map {|f| f.to_ref(shasum)}.uniq }
         else
           self
         end
