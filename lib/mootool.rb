@@ -28,6 +28,7 @@ module MooTool
 
   module Commands
     autoload :IMG4, 'moo_tool/commands/img4'
+    autoload :Certificate, 'moo_tool/commands/certificate'
   end
 
   module Helpers

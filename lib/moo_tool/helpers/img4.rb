@@ -12,8 +12,8 @@ module MooTool
 
       HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
-      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp])
-      KVP_TAGS = parse_4cc(%w[UDID faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih])
+      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk])
+      KVP_TAGS = parse_4cc(%w[UDID trpk faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih])
       SEQUENCE_TAGS = parse_4cc(%w[MANB MANP])
       FIRMWARE_TAGS = parse_4cc(%w[cphy rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
@@ -52,14 +52,18 @@ module MooTool
           when *KVP_TAGS
             construction = construct(input.value.first)
             if OCTET_TAGS.include?(input.tag) && !construction[1].is_a?(Models::Digest)
-              { construction[0] => Models::Digest.new(construction[1]) }
+              if construction[1].is_a?(Array)
+                { construction[0].to_sym => construction[1].map { |v| Models::Digest.create(v) } }
+              else
+                { construction[0].to_sym => Models::Digest.new(construction[1]) }
+              end
             else
-              { construction[0] => construction[1] }
+              { construction[0].to_sym => construction[1] }
             end
 
           when *SEQUENCE_TAGS, *FIRMWARE_TAGS
             construction = construct(input.value.first)
-            { construction[0] => construction[1].reduce(&:merge) }
+            { construction[0].to_sym => construction[1].reduce(&:merge) }
           else
             value = case input.value
                     when Enumerable

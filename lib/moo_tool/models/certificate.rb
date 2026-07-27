@@ -5,46 +5,61 @@ module MooTool
     class Certificate
       include Helpers::IMG4
 
-      def initialize(sequence)
-        @certificate = sequence
+      APPLE_OID_MAP = {
+        1 => :appleTrustPolicy,
+        6 => {
+          1 => {
+            15 => :CTOidItemAppleImg4Manifest
+          },
+          2 => :appleSecurityAlgorithm,
+          3 => :appleDotMacCertificate,
+          4 => :appleExtendedKeyUsage,
+          5 => :appleCertificatePolicies,
 
-        @decoded = {
-          version: @certificate[0][0],
-          serial_number: @certificate[1],
-          algorithm: { @certificate[2][0].to_sym => @certificate[2][1] },
-          issuer: parse_ds_name(@certificate[3]),
-          validity: {
-            not_before: @certificate[4][0],
-            not_after: @certificate[4][1]
-          },
-          subject: parse_ds_name(@certificate[5]),
-          key: {
-            @certificate[6][0][0].to_sym =>
-              @certificate[6][0][1],
-            :public_key => @certificate[6][1]
-          },
-          extensions: @certificate[7][0].map { |e| parse_extension(e) }
+          44 => :applePinningAllowTestCertsUCRT
+        },
+        8 => {
+          2 => :CTOidItemAppleDeviceAttestationNonce,
+          4 => :CTOidItemAppleDeviceAttestationHardwareProperties,
+          5 => :CTOidItemAppleDeviceAttestationKeyUsageProperties,
+          7 => :CTOidItemAppleDeviceAttestationDeviceOSInformation
         }
+      }.freeze
+
+      def initialize(certificate)
+        @certificate = certificate
+
+        @extensions = certificate.extensions.map do |extension|
+          parse_extension(extension)
+        end.reduce(&:merge)
+      end
+
+      def oid_to_name(oid)
+        return oid unless /1.2.840.113635.100/.match?(oid)
+
+        apple_root = oid.gsub(/^1.2.840.113635.100./, '')
+        oid_values = apple_root .split('.').map { |v| v.to_i }
+        result = APPLE_OID_MAP.dig *oid_values
+        result || apple_root
       end
 
       def parse_extension(extension)
-        case extension[0]
+        oid_name = oid_to_name(extension.oid)
+        case extension.oid
         when 'basicConstraints'
-          { basicConstraints: {critical: extension[1], constraints: @certificate[2][0] } }
+          { basicConstraints: {critical: extension.critical?, constraints: extension.value } }
         when 'authorityKeyIdentifier'
-          { authorityKeyIdentifier: Models::Digest.create(extension[1]) }
+          { authorityKeyIdentifier: Models::Digest.create(extension.value) }
         when 'subjectKeyIdentifier'
-          { subjectKeyIdentifier: Models::Digest.create(extension[1]) }
+          { subjectKeyIdentifier: Models::Digest.create(extension.value) }
         when 'keyUsage'
-          { keyUsage: { critical: extension[1], usage: Models::Digest.create(extension[2]) } }
-        when '1.2.840.113635.100.6.1.15', '1.2.840.113635.100.6.16','1.2.840.113635.100.6.17'
-          if extension[1].is_a?(String)
-            { extension[0] => construct(OpenSSL::ASN1.decode(extension[1])) }
-          else
-            { extension[0] => { value: construct(OpenSSL::ASN1.decode(extension[2].to_s)), critical: extension[1] } }
-          end
+          { keyUsage: { critical: extension.critical?, usage: Models::Digest.create(extension.value) } }
+        when '1.2.840.113635.100.6.16','1.2.840.113635.100.6.17'
+          { id: oid_name, critical: extension.critical?, value: extension.value }
+        when '1.2.840.113635.100.6.1.15'
+          { id: oid_name, critical: extension.critical?, value: extension.value }
         else
-          extension
+          { id: oid_name, critical: extension.critical?, value: extension.value }
         end
       end
 
@@ -62,11 +77,11 @@ module MooTool
       end
 
       def to_h
-        @decoded
+        { certificate: @certificate, extensions: @extensions }
       end
 
       def inspect
-        @decoded.to_h
+        to_h
       end
     end
   end

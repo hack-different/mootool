@@ -8,5 +8,8 @@ module MooTool
 
     desc 'img4', 'Commands for img4, apticket, lpol'
     subcommand :img4, MooTool::Commands::IMG4
+
+    desc 'cert', 'Certificate parsing and handling'
+    subcommand :cert, MooTool::Commands::Certificate
   end
 end

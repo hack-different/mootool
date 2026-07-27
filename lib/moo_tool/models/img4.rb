@@ -30,7 +30,13 @@ module MooTool
 
         def parse_certificates(certificates)
           certificates.map do |certificate|
-            OpenSSL::X509::Certificate.new(certificate)
+            case certificate
+            when Models::Digest
+              Models::Certificate.new OpenSSL::X509::Certificate.new(certificate.value)
+            else
+              Models::Certificate.new OpenSSL::X509::Certificate.new(certificate)
+            end
+
           end
         end
 
@@ -46,13 +52,13 @@ module MooTool
           case @type
           when 'IM4P'
             @payload = MooTool::Decompressor.new(@data.value[3].value)
-            @content[:im4p] = {
+            @content[:IM4P] = {
               img4_type: @value[1],
               build: @value[2],
               payload: @payload
             }
           when 'IM4M'
-            @content[:im4m] = {
+            @content[:IM4M] = {
               version: @value[1],
               manifest: @value[2],
               signature: Models::Digest.create(@value[3]),
@@ -66,11 +72,11 @@ module MooTool
                 extract_img4_im4m(entry, @data.value[index + 1])
               when 'IM4P'
                 parse_img4_im4p(entry, @data.value[index + 1])
-              else
+              when Array
                 entry.each_with_index do |subentry, subindex|
                   case subentry[0]
                   when 'IM4M'
-                    extract_img4_im4m(subentry, @data.value[index + 1].value[subindex])
+                    extract_img4_im4m(subentry, @data.value[index + 1].value[0].value[4])
                   end
                 end
               end
@@ -79,11 +85,11 @@ module MooTool
             @content[:secb] = @value.drop(1).map do |entry|
               case entry[0]
               when 'trst', 'rssl'
-                { entry[0] => Certificate.new(construct(OpenSSL::ASN1.decode(entry[1]))[0] )}
+                { entry[0].to_sym => parse_certificates(entry.drop(1)) }
               when 'rvok'
-                { entry[0] => entry[1] }
+                { entry[0].to_sym => entry[1] }
               when 'trpk'
-                { entry[0] => entry.drop(1) }
+                { entry[0].to_sym => entry.drop(1).map { |e| Models::Digest.create(e) } }
               end
             end.reduce(&:merge)
           when 'comb'
@@ -95,39 +101,6 @@ module MooTool
             end
           else
             raise "Unknown IMG4 type #{@type}"
-          end
-        end
-
-        def parse_im4m(value)
-          @version = value[1]
-          manifest = value[2]
-          case manifest
-          when 'MANB'
-            parse_pair manifest.value[1].value[0].value[0]
-            @manifest = parse_manifest manifest.value[1]
-            @signature = @data.value[3].value
-            @certificate = Models::Certificate.new @data.value[4].value
-          end
-        end
-
-        def parse_manifest(manifest)
-          @manp = manifest.value.first
-          @elements = manifest.value.drop(1).map do |e|
-            parse_element e.value[0]
-          end.reduce(&:merge).transform_values do |value|
-            value.map { |p| parse_element p.value[0] }.reduce(&:merge)
-          end
-          @elements = @elements.deep_transform_values do |element|
-            case element
-            when String
-              if [384].include?(element.length * 8)
-                element
-              else
-                element
-              end
-            else
-              element
-            end
           end
         end
 
@@ -199,9 +172,9 @@ module MooTool
         def extract_img4_im4m(entry, data_path)
           @content[:im4m] = {
             version: entry[1],
-            MANB: entry[2][0],
+            body: entry[2][0],
             signature: Models::Digest.create(entry[3]),
-            certificate: parse_certificates(data_path.value[4])
+            certificates: parse_certificates(data_path)
           }
         end
 
@@ -220,7 +193,7 @@ module MooTool
 
       def self.mappings
         mappings_data = YAML.load_file('/Users/rickmark/Sites/apple-knowledge/_data/img4.yaml')
-        mappings_data['property_collections'].map { |p| mappings_data[p] }.reduce(&:merge)
+        mappings_data['property_collections'].map { |p| mappings_data[p] }.reduce(&:merge).with_indifferent_access
       end
     end
   end

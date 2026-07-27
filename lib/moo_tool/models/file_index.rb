@@ -25,26 +25,20 @@ module MooTool
         end
 
         def generate_hashes
-          case @filename
+          @hashes = case @filename
           when /.*\.img4/
-            @hashes =
-              IMG4::File.load("#{@location}/#{filename}").hashes
+            IMG4::File.load("#{@location}/#{filename}").hashes
           when /.*\.im4p/
-            @hashes =
-                        IMG4::File.load("#{@location}/#{filename}").hashes
+            IMG4::File.load("#{@location}/#{filename}").hashes
             when /.*\/kernelcache(.*)/
-            @hashes =
-              IMG4::File.load("#{@location}/#{filename}").hashes
+            IMG4::File.load("#{@location}/#{filename}").hashes
             else
-          @hashes =   [Models::Digest.create(::Digest::SHA384.digest(@filename))]
-          end
-
-
-
+          [Models::Digest.create(::Digest::SHA384.digest(@filename))]
+                    end
         end
 
         def to_h
-          { location: @location, filename: @filename, hashes: @hashes }
+          { path: self.fullname, location: @location, filename: @filename, hashes: @hashes }
         end
 
         def hash?(hash)
@@ -91,7 +85,7 @@ module MooTool
       ].freeze
 
       FILE_KINDS = %w[
-        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m
+        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m root_hash
         *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
       ].freeze
 
