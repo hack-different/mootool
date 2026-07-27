@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activemodel'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'amazing_print'
+  spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'
   spec.add_dependency 'lzfse'
   spec.add_dependency 'lzss'

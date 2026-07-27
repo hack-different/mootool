@@ -21,7 +21,7 @@ module MooTool
 
         include Helpers::IMG4
 
-        DER_PAYLOADS = %w[trst]
+        DER_PAYLOADS = %w[trst].freeze
 
         def self.load(path)
           data = ::File.binread(path)
@@ -36,8 +36,11 @@ module MooTool
             else
               Models::Certificate.new OpenSSL::X509::Certificate.new(certificate)
             end
-
           end
+        end
+
+        def to_h
+          @content
         end
 
         def initialize(der)
@@ -60,7 +63,7 @@ module MooTool
           when 'IM4M'
             @content[:IM4M] = {
               version: @value[1],
-              manifest: @value[2],
+              **@value[2].map(&:to_h).reduce({}, :merge),
               signature: Models::Digest.create(@value[3]),
               certificate: parse_certificates(@data.value[4])
             }
@@ -73,7 +76,7 @@ module MooTool
               when 'IM4P'
                 parse_img4_im4p(entry, @data.value[index + 1])
               when Array
-                entry.each_with_index do |subentry, subindex|
+                entry.each_with_index do |subentry, _subindex|
                   case subentry[0]
                   when 'IM4M'
                     extract_img4_im4m(subentry, @data.value[index + 1].value[0].value[4])
@@ -100,8 +103,13 @@ module MooTool
               end
             end
           else
-            raise "Unknown IMG4 type #{@type}"
+            @content = @value.map(&:to_h).reduce(&:merge)
+
           end
+        end
+
+        def inspect
+          @content
         end
 
         def parse_element(element)
@@ -134,26 +142,27 @@ module MooTool
         end
 
         def print_value
-          @content.merge(hashes: self.hashes)
+          @content.merge(hashes: hashes).to_h
         end
 
         def hashes
-          result = [ @hash ]
-          if @payload
-            result += @payload.hashes
-          end
+          result = [@hash]
+          result += @payload.hashes if @payload
 
-          result.uniq { |u| u.value }
+          result.uniq(&:value)
         end
 
         def print(friendly)
+          output = print_value.deep_symbolize_keys
           if friendly
             mappings = IMG4.mappings
-            output = print_value.deep_transform_keys do |key|
+
+            output.deep_transform_keys! do |key|
               new_key = mappings.dig(key.to_s, 'title') || mappings.dig(key.to_s, 'description') || key
               new_key.to_sym
             end
-            output = output.deep_transform_values do |value|
+
+            output.deep_transform_values! do |value|
               case value
               when MooTool::Models::Digest
                 value.file_names @file_index
@@ -161,10 +170,9 @@ module MooTool
                 value
               end
             end
-            ap output
-          else
-            ap print_value
           end
+
+          ap(output)
         end
 
         private
@@ -172,7 +180,7 @@ module MooTool
         def extract_img4_im4m(entry, data_path)
           @content[:im4m] = {
             version: entry[1],
-            body: entry[2][0],
+            **entry[2].map(&:to_h).reduce(&:merge),
             signature: Models::Digest.create(entry[3]),
             certificates: parse_certificates(data_path)
           }
@@ -188,7 +196,6 @@ module MooTool
             payload: @payload
           }
         end
-
       end
 
       def self.mappings

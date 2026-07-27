@@ -45,9 +45,8 @@ module MooTool
     end
 
     def hashes
-      [ @hash, @decompressed_hash ].reject(&:nil?).uniq
+      [@hash, @decompressed_hash].compact.uniq
     end
-
 
     def inspect
       { compression: @compression, length: @value.size, hash: @hash, decompressed_hash: @decompressed_hash }.ai

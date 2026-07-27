@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module MooTool
   module Models
@@ -14,7 +15,7 @@ module MooTool
         else
           raise ArgumentError, "Invalid Input: #{value.inspect}"
         end
-      rescue => e
+      rescue StandardError
         raise "Value #{value} with class #{value.class} could not be parsed"
       end
 
@@ -48,12 +49,14 @@ module MooTool
         to_s.unpack1('H*').upcase
       end
 
-      def as_json(*options)
+      def as_json(*_options)
         shasum
       end
 
       def ==(other)
-        ap(other) if self.shasum == '617E782EE46D0ECB9D8DB0BEA211F17BB5DDEB33366E5D7ABB0B668C726D7AEE51881330BC136CB738D8361D731479A3'
+        if shasum == '617E782EE46D0ECB9D8DB0BEA211F17BB5DDEB33366E5D7ABB0B668C726D7AEE51881330BC136CB738D8361D731479A3'
+          ap(other)
+        end
         if other.is_a?(Models::Digest)
           value == other.value
         elsif other.is_a?(String)
@@ -71,7 +74,7 @@ module MooTool
         if file_index.has_hash? shasum
           { hash: self,
             files:
-              file_index.files_with_hash(shasum).map {|f| f.to_ref(shasum)}.uniq }
+              file_index.files_with_hash(shasum).map { |f| f.to_ref(shasum) }.uniq }
         else
           self
         end
@@ -80,7 +83,6 @@ module MooTool
       def inspect
         to_s.unpack1('H*').upcase
       end
-
 
       module DigestFormatter
         def self.included(base)
@@ -107,6 +109,7 @@ module MooTool
         def awesome_certificate(object)
           awesome_hash(object.to_h)
         end
+
         def awesome_digest(object)
           if object.integer?
             colorize(object.inspect, :integer)

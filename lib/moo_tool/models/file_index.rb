@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'colorize'
 module MooTool
@@ -15,9 +17,8 @@ module MooTool
           when String
             [Models::Digest.create(hashes)]
           when Array
-            @hashes = hashes.map {|h| Models::Digest.create(h)}
+            @hashes = hashes.map { |h| Models::Digest.create(h) }
           end
-
         end
 
         def fullname
@@ -26,27 +27,27 @@ module MooTool
 
         def generate_hashes
           @hashes = case @filename
-          when /.*\.img4/
-            IMG4::File.load("#{@location}/#{filename}").hashes
-          when /.*\.im4p/
-            IMG4::File.load("#{@location}/#{filename}").hashes
-            when /.*\/kernelcache(.*)/
-            IMG4::File.load("#{@location}/#{filename}").hashes
-            else
-          [Models::Digest.create(::Digest::SHA384.digest(@filename))]
+                    when /.*\.img4/
+                      IMG4::File.load("#{@location}/#{filename}").hashes
+                    when /.*\.im4p/
+                      IMG4::File.load("#{@location}/#{filename}").hashes
+                    when %r{.*/kernelcache(.*)}
+                      IMG4::File.load("#{@location}/#{filename}").hashes
+                    else
+                      [Models::Digest.create(::Digest::SHA384.digest(@filename))]
                     end
         end
 
         def to_h
-          { path: self.fullname, location: @location, filename: @filename, hashes: @hashes }
+          { path: fullname, location: @location, filename: @filename, hashes: @hashes }
         end
 
         def hash?(hash)
           hash = Models::Digest.create(hash) unless hash.is_a?(Models::Digest)
-          @hashes.any? {|h| h == hash }
+          @hashes.any? { |h| h == hash }
         end
 
-        def as_json(options = {})
+        def as_json(_options = {})
           to_h
         end
 
@@ -54,8 +55,8 @@ module MooTool
           as_json(*options).to_json(*options)
         end
 
-        def to_ref(hash)
-          "#{self.fullname}"
+        def to_ref(_hash)
+          fullname.to_s
         end
 
         def inspect
@@ -68,7 +69,6 @@ module MooTool
           else
             new hash['location'], hash['filename']
           end
-
         end
       end
 
@@ -91,9 +91,9 @@ module MooTool
 
       def initialize(index = nil)
         @index = index
-        unless @index
+        return if @index
+
         perform
-        end
       end
 
       attr_reader :index
@@ -141,7 +141,6 @@ module MooTool
       end
 
       def has_hash?(hash)
-
         @index.any? do |entry|
           entry.hash? hash
         end
@@ -152,9 +151,7 @@ module MooTool
       end
 
       def hash
-        @index.each do |entry|
-          entry.generate_hashes
-        end
+        @index.each(&:generate_hashes)
       end
     end
   end
