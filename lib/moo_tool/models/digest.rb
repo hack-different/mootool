@@ -4,11 +4,17 @@ module MooTool
   module Models
     class Digest
       attr_reader :value
+      attr_accessor :hint
 
-      def initialize(value)
+      def initialize(value, hint = nil)
+        @hint = hint
+
         case value
         when String
           @value = value
+          @hint = 'SHA1' if value.length == 20
+          @hint = 'SHA256' if value.length == 32
+          @hint = 'SHA384' if value.length == 48
         when Integer
           @value = [value.to_s(16)].pack('H*')
           @integer = true
@@ -54,9 +60,6 @@ module MooTool
       end
 
       def ==(other)
-        if shasum == '617E782EE46D0ECB9D8DB0BEA211F17BB5DDEB33366E5D7ABB0B668C726D7AEE51881330BC136CB738D8361D731479A3'
-          ap(other)
-        end
         if other.is_a?(Models::Digest)
           value == other.value
         elsif other.is_a?(String)
@@ -102,8 +105,17 @@ module MooTool
             cast = :uuid
           when Models::Certificate
             cast = :certificate
+          when OpenSSL::PKey::EC::Point
+            cast = :point
           end
           cast
+        end
+
+        def awesome_point(point)
+          point_data = point.to_octet_string(:uncompressed)
+          x = point_data[0..(point_data.length / 2)].unpack1('H*').upcase
+          y = point_data[(point_data.length / 2)..-1].unpack1('H*').upcase
+          "#{colorize('ECCPoint', :class)} #{colorize(point.group.curve_name, :symbol)} #{colorize('x=', :args)}#{colorize(x, :integer)}, #{colorize('y=', :args)}#{colorize(y, :integer)}"
         end
 
         def awesome_certificate(object)
@@ -114,7 +126,8 @@ module MooTool
           if object.integer?
             colorize(object.inspect, :integer)
           else
-            colorize(object.inspect, :digest)
+            object.hint ? "#{colorize(object.hint, :class)} #{colorize(object.inspect, :digest)}" :
+             colorize(object.inspect, :digest)
           end
         end
 

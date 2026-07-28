@@ -49,7 +49,10 @@ module MooTool
     end
 
     def inspect
-      { compression: @compression, length: @value.size, hash: @hash, decompressed_hash: @decompressed_hash }.ai
+      result = { length: @value.size, hash: @hash }
+      result[:compression] = @compression if @compression != :raw
+      result[:decompressed_hash] = @decompressed_hash if @decompressed_hash != @hash
+      result.ai
     end
   end
 end

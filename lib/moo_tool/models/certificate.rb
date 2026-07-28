@@ -44,7 +44,7 @@ module MooTool
                 when :keyUsage
                   construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
-                  Models::Digest.create(extension.value)
+                  extension.value
                 else
                   case oid_properties[:type]
                   when :img4

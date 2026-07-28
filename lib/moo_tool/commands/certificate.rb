@@ -23,7 +23,7 @@ module MooTool
           @certificates.map do |certificate|
             certificate.to_h.deep_transform_keys do |key|
               new_key = mappings.dig(key.to_s, 'title') || mappings.dig(key.to_s, 'description') || key
-              new_key.to_sym
+              new_key.respond_to?(:to_sym) ? new_key.to_sym : new_key
             end
           end
         end

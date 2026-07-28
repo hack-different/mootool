@@ -9,6 +9,17 @@ module MooTool
 
       MATCHER_REGEX = /---------REQUEST START---------\n.*BODY: \n(?<body>.*)\n\n----------REQUEST END----------/m
 
+      PRIME_CURVE = OpenSSL::PKey::EC::Group.new('prime256v1')
+
+      ALGORITHMS = { 0 => :RSA, 1 => :ECC_MQV, 2 => :ECC_HMQV }
+
+      PUBLIC_KEY_PROPERTIES = {
+        UIKPub: :prime256v1,
+        RKSigningPub: :prime256v1,
+        SIKPub: :secp384r1,
+        RKCertificationPub: :secp384r1,
+      }
+
       MANIFEST_PROPERTIES = %i[
         Cryptex1Image4Manifest
         FWImage4Manifest
@@ -33,7 +44,11 @@ module MooTool
           @rk[:certification] = parse_certification(@data[:RKCertification])
           @data.delete :RKCertification
         end
-        @rk[:signature] = Models::Digest.create(@data[:RKSignature])
+
+        if @data.key? :RKSignature
+          @rk[:signature] = construct(OpenSSL::ASN1.decode(@data[:RKSignature]))
+          @data.delete :RKSignature
+        end
 
         if @data.key? :RKProperties
           properties = CFPropertyList.native_types(CFPropertyList::List.new(data: @data[:RKProperties]).value).deep_symbolize_keys
@@ -42,18 +57,18 @@ module MooTool
         end
 
         if @data.key? :RKSigningPub
-          @rk[:signing_pub] = Models::Digest.create(@data[:RKSigningPub])
+          @rk[:signing_pub] = parse_point(@data[:RKSigningPub])
           @data.delete :RKSigningPub
         end
 
         if @data.key? :RKPropertiesSignature
-          @rk[:properties_signature] = Models::Digest.create(@data[:RKPropertiesSignature])
+          @rk[:properties_signature] = construct(OpenSSL::ASN1.decode(@data[:RKPropertiesSignature]))
           @data.delete :RKPropertiesSignature
         end
 
         return unless @data.key? :RKSigning
 
-        @rk[:signing] = @data[:RKSigning]
+        @rk[:signing] = parse_certification(@data[:RKSigning])
         @data.delete :RKSigning
       end
 
@@ -68,12 +83,40 @@ module MooTool
           properties[:OIDSToInclude] = properties[:OIDSToInclude].map { |oid| Certificate.oid_to_name(oid) }
         end
 
+        PUBLIC_KEY_PROPERTIES.each do |prop, curve|
+          next unless properties.key? prop
+          properties[prop] = parse_point(properties[prop], curve)
+        end
+
+
         properties
+      end
+
+      def parse_point(point, curve = PRIME_CURVE)
+        curve = OpenSSL::PKey::EC::Group.new(curve.to_s) unless curve.is_a? OpenSSL::PKey::EC::Group
+
+        OpenSSL::PKey::EC::Point.new(curve, point)
       end
 
       def parse_certification(certification)
         # certification[:"Ap,RemotePolicyNonceHash"] = Models::Digest.create(certification[:"Ap,RemotePolicyNonceHash"])
-        construct OpenSSL::ASN1.decode(certification)
+
+
+        data = construct OpenSSL::ASN1.decode(certification)
+
+
+        data[1][4].hint ||= 'ECCEncryptedData'
+
+        {
+          algorithm: ALGORITHMS[data[0]],
+          signature: {
+            nonce: data[1][0],
+            ecc_point: parse_point(data[1][1]),
+            vuid: data[1][2],
+            kuid: data[1][3],
+            encrypted_data: data[1][4],
+          }
+        }
       end
 
       def self.load(file)

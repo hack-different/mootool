@@ -28,6 +28,17 @@ module MooTool
           File.new(data)
         end
 
+        def parse_signature(signature)
+          size = signature.is_a?(Models::Digest) ? signature.value.size : signature.size
+          if size > 128
+            # RSA Signature
+            signature.hint = 'RSASignature' if signature.respond_to?(:hint)
+            signature
+          else
+            construct(OpenSSL::ASN1.decode(signature))
+          end
+        end
+
         def parse_certificates(certificates)
           certificates.map do |certificate|
             case certificate
@@ -64,7 +75,7 @@ module MooTool
             @content[:IM4M] = {
               version: @value[1],
               **@value[2].map(&:to_h).reduce({}, :merge),
-              signature: Models::Digest.create(@value[3]),
+              signature: parse_signature(@value[3]),
               certificate: parse_certificates(@data.value[4])
             }
           when 'IMG4'
@@ -181,7 +192,7 @@ module MooTool
           @content[:im4m] = {
             version: entry[1],
             **entry[2].map(&:to_h).reduce(&:merge),
-            signature: Models::Digest.create(entry[3]),
+            signature: parse_signature(entry[3]),
             certificates: parse_certificates(data_path)
           }
         end
