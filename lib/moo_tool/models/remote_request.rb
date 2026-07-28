@@ -86,10 +86,23 @@ module MooTool
         PUBLIC_KEY_PROPERTIES.each do |prop, curve|
           next unless properties.key? prop
 
-          properties[prop] = parse_point(properties[prop], curve)
+          properties[prop] = parse_point_any(properties[prop])
         end
 
         properties
+      end
+
+      def parse_point_any(point)
+        mappings = ['prime256v1', 'secp384r1'].map do |group|
+          begin
+          group = OpenSSL::PKey::EC::Group.new(group)
+          OpenSSL::PKey::EC::Point.new(group, point)
+          rescue
+              nil
+          end
+        end
+
+        mappings.compact.first
       end
 
       def parse_point(point, curve = PRIME_CURVE)

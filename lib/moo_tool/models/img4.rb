@@ -55,14 +55,14 @@ module MooTool
 
           raw_data = der.is_a?(Models::Digest) ? der.value : der
 
-          @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data)), Models::Digest.create(::Digest::SHA256.digest(raw_data))]
+          @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data))]
           @data = OpenSSL::ASN1.decode(raw_data)
           @value = construct(@data)
           @type = @value.first
           @content = {}
 
-          filename_match = HASH_FILENAME.match(@filename)
-          @hashes << Models::Digest.new([filename_match[:hash]].pack('H*')) if filename_match
+          #filename_match = HASH_FILENAME.match(@filename)
+          #@hashes << Models::Digest.new([filename_match[:hash]].pack('H*')) if filename_match
 
           case @type
           when 'IM4P'
@@ -91,7 +91,7 @@ module MooTool
                 entry.each_with_index do |subentry, _subindex|
                   case subentry[0]
                   when 'IM4M'
-                    extract_img4_im4m(subentry, @data.value[index + 1].value[0].value[4])
+                    extract_img4_im4m(subentry, @data.value[index + 1].value[0])
                   end
                 end
               end
@@ -165,7 +165,11 @@ module MooTool
             result += @content[:comb].flat_map { |k,v| v.hashes }
           end
 
-          result.uniq(&:value)
+          if @content[:IM4M]
+            result.append(@content.dig(:IM4M, :MANB, :lpol, :DGST))
+          end
+
+          result.reject { |h| h.nil? }.uniq(&:value)
         end
 
         def print(friendly)
@@ -194,11 +198,11 @@ module MooTool
         private
 
         def extract_img4_im4m(entry, data_path)
-          @content[:im4m] = {
+          @content[:IM4M] = {
             version: entry[1],
             **entry[2].map(&:to_h).reduce(&:merge),
             signature: ::MooTool::Models::Certificate::ECCSignature.create(entry[3]),
-            certificates: parse_certificates(data_path)
+            certificates: parse_certificates(data_path.value[4])
           }
         end
 

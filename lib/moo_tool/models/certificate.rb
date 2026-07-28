@@ -109,8 +109,25 @@ module MooTool
         map_to_arrays(name).flatten.each_slice(2).to_h.transform_keys(&:to_sym)
       end
 
+      def key_id
+        common_name = @certificate.subject.to_a.map do |entry|
+          [ entry[0], entry[1]]
+        end.to_h['CN']
+
+        if /^[0-9a-z]*$/.match(common_name)
+          Models::Digest.create [common_name].pack('H*')
+        else
+          nil
+        end
+      end
+
       def to_h
-        { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s, extensions: @extensions }
+        result = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
+
+        result[:key_id] = self.key_id if self.key_id
+
+        result[:extensions] = @extensions
+        result
       end
 
       def inspect

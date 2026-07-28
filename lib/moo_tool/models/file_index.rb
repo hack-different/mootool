@@ -94,7 +94,7 @@ module MooTool
       ].freeze
 
       FILE_KINDS = %w[
-        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m *.aea.* ftab.*
+        kernelcache* kernel sep-patches* imutablekernel *.der *.im4m *.aea.* ft*.bin
         *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
       ].freeze
 
