@@ -117,6 +117,31 @@ module MooTool
         to_h
       end
 
+      class ECCSignature
+        include Helpers::IMG4
+
+        def initialize(signature)
+          @values = construct(OpenSSL::ASN1.decode(signature))
+          @r, @s = @values
+        end
+
+        def to_h
+          { r: @r, s: @s }
+        end
+
+        def self.create(signature)
+          size = signature.is_a?(Models::Digest) ? signature.value.size : signature.size
+          if size > 128
+            # RSA Signature
+            signature.hint = 'RSASignature' if signature.respond_to?(:hint)
+            signature
+          else
+            value = signature.respond_to?(:value) ? signature.value : signature
+            ECCSignature.new(value)
+          end
+        end
+      end
+
       class ECCMQVEncryption
         include Helpers::IMG4
         def initialize(input)
@@ -136,7 +161,5 @@ module MooTool
         end
       end
     end
-
-
   end
 end

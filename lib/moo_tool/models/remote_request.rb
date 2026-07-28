@@ -62,7 +62,7 @@ module MooTool
         end
 
         if @data.key? :RKPropertiesSignature
-          @rk[:properties_signature] = construct(OpenSSL::ASN1.decode(@data[:RKPropertiesSignature]))
+          @rk[:properties_signature] = Certificate::ECCSignature.create(@data[:RKPropertiesSignature])
           @data.delete :RKPropertiesSignature
         end
 

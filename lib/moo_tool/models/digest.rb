@@ -17,6 +17,7 @@ module MooTool
           @hint = 'SHA384' if value.length == 48
         when Integer
           @value = [value.to_s(16)].pack('H*')
+
           @integer = true
         else
           raise ArgumentError, "Invalid Input: #{value.inspect}"
@@ -107,8 +108,21 @@ module MooTool
             cast = :certificate
           when OpenSSL::PKey::EC::Point
             cast = :point
+          when Certificate::ECCSignature
+            cast = :ecc_signature
+          when :ALLOW_ANY_VALUE
+            cast = :any_value
           end
           cast
+        end
+
+        def awesome_any_value(input)
+          colorize('*** SPLAT ***', :trueclass)
+        end
+
+        def awesome_ecc_signature(signature)
+          values = signature.to_h
+          "#{colorize('ECCSignature', :class)} r=#{colorize(values[:r], :integer)}, s=#{colorize(values[:s], :integer)}"
         end
 
         def awesome_point(point)
