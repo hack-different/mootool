@@ -9,5 +9,7 @@ module MooTool
     autoload :ShaSum
     autoload :Digest
     autoload :FileIndex
+    autoload :RemoteRequest
+    autoload :RemoteResponse
   end
 end

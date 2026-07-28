@@ -11,5 +11,8 @@ module MooTool
 
     desc 'cert', 'Certificate parsing and handling'
     subcommand :cert, MooTool::Commands::Certificate
+
+    desc 'activation', 'MobileActivation parsing and handling'
+    subcommand :activation, MooTool::Commands::Activation
   end
 end
