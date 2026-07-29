@@ -34,17 +34,17 @@ module MooTool
         new [value].pack('H*')
       end
 
-      def self.create(input)
+      def self.create(input, hint = nil)
         if input.is_a?(String) && input.length == 16
           UUIDTools::UUID.parse_raw input
         elsif input.is_a?(Array)
-          input.map { |i| create(i) }
+          input.map { |i| create(i, hint) }
         elsif input.nil?
           nil
         elsif input.is_a?(Digest)
           input
         else
-          Digest.new input
+          Digest.new input, hint
         end
       end
 
@@ -70,6 +70,10 @@ module MooTool
 
       def as_json(*_options)
         shasum
+      end
+
+      def size
+        value.size
       end
 
       def ==(other)
@@ -111,6 +115,8 @@ module MooTool
           cast = cast_without_digest(object, type)
 
           case object
+          when MooTool::Helpers::FirmwareEntry
+            cast = :firmware_entry
           when Digest
             cast = :digest
           when Pathname
@@ -131,6 +137,27 @@ module MooTool
           cast
         end
 
+        def awesome_firmware_entry(entry, options={})
+          values = entry.value
+          digest = values[:DGST]
+          values.delete(:DGST)
+          booleans = values.select{ |k,v| [true, false].include?(v)}.map do |key, value|
+            color = value ? :trueclass : :falseclass
+            "#{colorize(key, color)}"
+          end
+          other = values.select { |k,v| not [true, false].include?(v) }
+          if other.any?
+            results = [ "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}" ]
+            results += other.map do |key, value|
+               "#{" " * @inspector.current_indentation}      #{colorize(key, :symbol)}  #{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
+            end
+            results.join("\n")
+          else
+            "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"
+          end
+
+        end
+
         def awesome_any_value(input)
           colorize('*** SPLAT ***', :trueclass)
         end
@@ -143,6 +170,11 @@ module MooTool
         def awesome_ecc_signature(signature)
           values = signature.to_h
           "#{colorize('ECCSignature', :class)} r=#{colorize(values[:r], :integer)}, s=#{colorize(values[:s], :integer)}"
+        end
+
+        def awesome_ecc_encryption(encryption)
+          values = encryption.to_h
+          "#{colorize('ECCEncryption', :class)} n=#{colorize(values[:n].shasum, :integer)}, x=#{colorize(values[:e_x].shasum, :integer)}, y=#{colorize(values[:e_y].shasum, :integer)}"
         end
 
         def awesome_point(point)

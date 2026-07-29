@@ -179,12 +179,23 @@ module MooTool
 
       class ECCMQVEncryption
         include Helpers::IMG4
-        def initialize(input)
-          @values = construct(OpenSSL::ASN1::decode(input.value))
-          @values.each do |v|
-            v.hint = 'ECCDH'
+
+        def initialize(input, nonce)
+          if input.is_a?(OpenSSL::PKey::EC::Point)
+            hex = input.to_octet_string(:uncompressed)
+            pair = hex[0..hex.length / 2], hex[hex.length / 2..-1]
+            @e_x = Models::Digest.create pair[0]
+            @e_y = Models::Digest.create pair[1]
+
+            @n = Models::Digest.create(nonce)
+          else
+            @values = construct(OpenSSL::ASN1::decode(input.value))
+            @values = @values.map { |v| Models::Digest.create(v) }
+            @values.each do |v|
+              v.hint = 'ECCDH'
+            end
+            @e_x, @e_y, @n = @values
           end
-          @e_x, @e_y, @n = @values
         end
 
         def to_h

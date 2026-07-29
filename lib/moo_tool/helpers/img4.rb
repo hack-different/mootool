@@ -93,7 +93,7 @@ module MooTool
     class PropertySequence
       include Helpers::IMG4
 
-      attr_reader :value, :key, :values
+      attr_reader :value, :key
 
       def initialize(input)
         construction = construct(input.value.first)
@@ -117,6 +117,12 @@ module MooTool
 
       def inspect
         to_h.ai
+      end
+    end
+
+    class FirmwareEntry < PropertySequence
+      def to_h
+        { @key => self}
       end
     end
 

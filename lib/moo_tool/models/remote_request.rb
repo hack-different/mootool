@@ -121,8 +121,7 @@ module MooTool
         {
           algorithm: ALGORITHMS[data[0]],
           signature: {
-            nonce: data[1][0],
-            ecc_point: parse_point(data[1][1]),
+            mqv: Certificate::ECCMQVEncryption.new(parse_point(data[1][1]), data[1][0]),
             vuid: data[1][2],
             kuid: data[1][3],
             encrypted_data: data[1][4]
@@ -140,7 +139,9 @@ module MooTool
       end
 
       def to_h
-        { data: @data, activation_request: @activation_request, rk: @rk }
+        result = {}
+        result[:activation_request] = @activation_request if @activation_request
+        result[:recovery_kit] = @rk if @rk
       end
 
       def inspect

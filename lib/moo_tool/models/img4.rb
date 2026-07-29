@@ -10,6 +10,7 @@ module MooTool
   module Models
     # Module for Apple's IMG4 encryption and signing format
     module IMG4
+
       def self.parse_4cc(input)
         input.map do |value|
           value.b.unpack1('N')
@@ -17,6 +18,51 @@ module MooTool
       end
 
       HASH_FILENAME = /(?<hash>\h{96})/
+
+      class IMG4Payload
+        def initialize(input)
+          @type = input.value[1].value
+          @description = input.value[2].value
+          @payload = MooTool::Decompressor.new(input.value[3].value)
+        end
+
+        def to_h
+          { type: @type, description: @description, payload: @payload }
+        end
+
+        def inspect
+          to_h.ai
+        end
+
+        def hashes
+          @payload.hashes
+        end
+      end
+
+      class IMG4Manifest
+        include Helpers::IMG4
+
+        def initialize(input)
+          @data = input
+
+          @version = @data.value[1].value.to_i
+          @body = construct(@data.value[2])
+          @signature = File.parse_signature(@data.value[3]) if @data.value[3]
+          @certificates = File.parse_certificates(@data.value[4]) if @data.value[4]
+        end
+
+        def to_h
+          { version: @version, body: @body, signature: @signature, certificates: @certificates }
+        end
+
+        def inspect
+          to_h.ai
+        end
+
+        def hashes
+          [ Models::Digest.create(::Digest::SHA384.digest(@data.to_der)) ]
+        end
+      end
 
       # An instance of a IMG4 file
       class File
@@ -31,20 +77,25 @@ module MooTool
           File.new(data, path)
         end
 
+        def self.parse_signature(signature)
+          signature = signature.value if signature.is_a?(OpenSSL::ASN1::OctetString)
+          if signature.size > 128
+            Models::Digest.create(signature, 'RSASignature')
+          else
+            ::MooTool::Models::Certificate::ECCSignature.create(signature)
+          end
+        end
 
-        def parse_certificates(certificates)
+        def self.parse_certificates(certificates)
           certificates.map do |certificate|
-            case certificate
-            when Models::Digest
-              Models::Certificate.new OpenSSL::X509::Certificate.new(certificate.value)
-            else
-              Models::Certificate.new OpenSSL::X509::Certificate.new(certificate)
-            end
+            Models::Certificate.new OpenSSL::X509::Certificate.new(certificate)
           end
         end
 
         def to_h
-          @content
+          @content.transform_values do |value|
+            value.respond_to?(:to_h) ? value.to_h : value
+          end
         end
 
 
@@ -57,50 +108,22 @@ module MooTool
 
           @hashes = [Models::Digest.create(::Digest::SHA384.digest(raw_data))]
           @data = OpenSSL::ASN1.decode(raw_data)
-          @value = construct(@data)
-          @type = @value.first
+          @type = @data.value[0].value
           @content = {}
-
-          #filename_match = HASH_FILENAME.match(@filename)
-          #@hashes << Models::Digest.new([filename_match[:hash]].pack('H*')) if filename_match
 
           case @type
           when 'IM4P'
-            @payload = MooTool::Decompressor.new(@data.value[3].value)
-            @content[:IM4P] = {
-              img4_type: @value[1],
-              build: @value[2],
-              payload: @payload
-            }
+            @content[:IM4P] = IMG4Payload.new(@data)
           when 'IM4M'
-            @content[:IM4M] = {
-              version: @value[1],
-              **@value[2].map(&:to_h).reduce({}, :merge),
-              signature: Models::Certificate::ECCSignature.create(@value[3]),
-              certificate: parse_certificates(@data.value[4])
-            }
+            @content[:IM4M] = IMG4Manifest.new(@data)
           when 'IMG4'
-            entries = @value.drop(1)
-            entries.each_with_index do |entry, index|
-              case entry[0]
-              when 'IM4M'
-                extract_img4_im4m(entry, @data.value[index + 1])
-              when 'IM4P'
-                parse_img4_im4p(entry, @data.value[index + 1])
-              when Array
-                entry.each_with_index do |subentry, _subindex|
-                  case subentry[0]
-                  when 'IM4M'
-                    extract_img4_im4m(subentry, @data.value[index + 1].value[0])
-                  end
-                end
-              end
-            end
+            @content[:IM4P] = IMG4Payload.new(@data.value[1])
+            @content[:IM4M] = IMG4Manifest.new(@data.value[2].value[0])
           when 'secb'
             @content[:secb] = @value.drop(1).map do |entry|
               case entry[0]
               when 'trst', 'rssl'
-                { entry[0].to_sym => parse_certificates(entry.drop(1)) }
+                { entry[0].to_sym => File.parse_certificates(entry.drop(1)) }
               when 'rvok'
                 { entry[0].to_sym => entry[1] }
               when 'trpk'
@@ -159,14 +182,17 @@ module MooTool
 
         def hashes
           result = @hashes.dup
-          result += @payload.hashes if @payload
 
           if @content[:comb]
-            result += @content[:comb].flat_map { |k,v| v.hashes }
+            result += @content[:comb].flat_map { |_k,v| v.hashes }
           end
 
           if @content[:IM4M]
-            result.append(@content.dig(:IM4M, :MANB, :lpol, :DGST))
+            result += @content[:IM4M].hashes
+          end
+
+          if @content[:IM4P]
+            result += @content[:IM4P].hashes
           end
 
           result.reject { |h| h.nil? }.uniq(&:value)
@@ -193,28 +219,6 @@ module MooTool
           end
 
           ap(output)
-        end
-
-        private
-
-        def extract_img4_im4m(entry, data_path)
-          @content[:IM4M] = {
-            version: entry[1],
-            **entry[2].map(&:to_h).reduce(&:merge),
-            signature: ::MooTool::Models::Certificate::ECCSignature.create(entry[3]),
-            certificates: parse_certificates(data_path.value[4])
-          }
-        end
-
-        def parse_img4_im4p(entry, data_path)
-          payload_data = data_path.value[3].value
-          @payload = MooTool::Decompressor.new(payload_data)
-
-          @content[:IM4P] = {
-            im4p_type: entry[1],
-            version: entry[2],
-            payload: @payload
-          }
         end
       end
 
