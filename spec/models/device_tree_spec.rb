@@ -17,21 +17,20 @@ YAML_OUT_FILE = File.join(TMP_DIR, 'output_data.yaml')
 FileUtils.mkdir_p TMP_DIR
 
 describe MooTool::DeviceTree do
-  it 'should be able to parse a device tree' do
-    device_tree = MooTool::DeviceTree.open(DEVICE_TREE_D49AP)
-    expect(device_tree).to_not be_nil
-    puts device_tree.to_h
+  it 'is able to parse a device tree' do
+    device_tree = described_class.open(DEVICE_TREE_D49AP)
+    expect(device_tree).not_to be_nil
   end
 
-  it 'should parse a device tree from a IMG4 file' do
+  it 'parses a device tree from a IMG4 file' do
     image = MooTool::Img4::File.new(DEVICE_TREE_IM4P_D49AP)
-    device_tree = MooTool::DeviceTree.new(image.payload)
-    expect(device_tree).to_not be_nil
+    device_tree = described_class.new(image.payload)
+    expect(device_tree).not_to be_nil
   end
 
-  it 'should be writable to a YAML file' do
-    device_tree = MooTool::DeviceTree.open(DEVICE_TREE_D49AP)
-    expect(device_tree).to_not be_nil
+  it 'is writable to a YAML file' do
+    device_tree = described_class.open(DEVICE_TREE_D49AP)
+    expect(device_tree).not_to be_nil
     hash_value = device_tree.to_h
     File.write(YAML_OUT_FILE, YAML.dump(hash_value))
   end

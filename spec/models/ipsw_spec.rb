@@ -12,13 +12,13 @@ describe MooTool::IPSW do
     File.binwrite(IPSW_FILE, Net::HTTP.get(IPSW_URL)) unless File.exist?(IPSW_FILE)
   end
 
-  it 'should load a IPSW file' do
-    open_thing = MooTool::IPSW.new IPSW_FILE
-    expect(open_thing).to_not be_nil
+  it 'loads a IPSW file' do
+    open_thing = described_class.new IPSW_FILE
+    expect(open_thing).not_to be_nil
   end
 
-  it 'should load a IPSW file and the manifest should be valid' do
-    open_thing = MooTool::IPSW.new IPSW_FILE
-    expect(open_thing.manifest).to_not be_nil
+  it 'loads a IPSW file and the manifest should be valid' do
+    open_thing = described_class.new IPSW_FILE
+    expect(open_thing.manifest).not_to be_nil
   end
 end

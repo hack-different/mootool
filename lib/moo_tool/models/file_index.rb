@@ -106,7 +106,7 @@ module MooTool
       attr_reader :index
 
       def self.current
-        @index ||= load('/Users/rickmark/Desktop/index.json')
+        @current ||= load('/Users/rickmark/Desktop/index.json')
       end
 
       def self.load(path)

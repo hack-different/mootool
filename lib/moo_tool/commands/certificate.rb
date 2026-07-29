@@ -32,6 +32,20 @@ module MooTool
           ap certificate
         end
       end
+
+      method_option :save_file, type: :string, default: nil
+      desc 'index', 'Indexes certificates throughout the land'
+      def index
+        Models::FileIndex.current.index.each do |file|
+          Models.file_guesser(file.fullname)
+        end
+
+        if options[:save_file]
+          Models::CertificateIndex.current.save options[:save_file]
+        end
+
+        ap(Models::CertificateIndex.current.index)
+      end
     end
   end
 end

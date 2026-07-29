@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'cfpropertylist'
+require 'moo_tool/models/certificate'
 
 module MooTool
   module Models
@@ -57,7 +58,7 @@ module MooTool
         end
 
         if @data.key? :RKSigningPub
-          @rk[:signing_pub] = parse_point(@data[:RKSigningPub])
+          @rk[:signing_pub] = parse_point_with_match(@data[:RKSigningPub])
           @data.delete :RKSigningPub
         end
 
@@ -83,23 +84,31 @@ module MooTool
           properties[:OIDSToInclude] = properties[:OIDSToInclude].map { |oid| Certificate.oid_to_name(oid) }
         end
 
-        PUBLIC_KEY_PROPERTIES.each do |prop, curve|
+        PUBLIC_KEY_PROPERTIES.each_key do |prop|
           next unless properties.key? prop
 
-          properties[prop] = parse_point_any(properties[prop])
+          properties[prop] = parse_point_with_match(properties[prop])
         end
 
         properties
       end
 
+      def parse_point_with_match(point)
+        point = parse_point_any(point)
+        matches = Models::CertificateIndex.current.matching_key(point)
+        if matches.any?
+          { key: point, matches: matches }
+        else
+          point
+        end
+      end
+
       def parse_point_any(point)
-        mappings = ['prime256v1', 'secp384r1'].map do |group|
-          begin
+        mappings = %w[prime256v1 secp384r1].map do |group|
           group = OpenSSL::PKey::EC::Group.new(group)
           OpenSSL::PKey::EC::Point.new(group, point)
-          rescue
-              nil
-          end
+        rescue StandardError
+          nil
         end
 
         mappings.compact.first
@@ -121,33 +130,39 @@ module MooTool
           @value[1][4].hint ||= 'ECCEncryptedData'
 
           @algorithm = ALGORITHMS[@value[0]]
-          @point = parse_point_any(@value[1][1])
+          @point = parse_point_with_match(@value[1][1])
           @nonce = @value[1][0]
         end
 
+        def parse_point_with_match(point)
+          point = parse_point_any(point)
+          matches = Models::CertificateIndex.current.matching_key(point)
+          if matches.any?
+            { key: point, matches: matches }
+          else
+            point
+          end
+        end
 
         def parse_point_any(point)
-          mappings = ['prime256v1', 'secp384r1'].map do |group|
-            begin
-              group = OpenSSL::PKey::EC::Group.new(group)
-              OpenSSL::PKey::EC::Point.new(group, point)
-            rescue
-              nil
-            end
+          %w[prime256v1 secp384r1].map do |group|
+            group = OpenSSL::PKey::EC::Group.new(group)
+            OpenSSL::PKey::EC::Point.new(group, point)
+          rescue StandardError
+            nil
           end.compact.first
         end
 
         def to_h
           {
             hmac_function: @algorithm,
-            ecies_iv: Models::Digest.create(@value[1][2].raw, 'AES128IV'),
-            data_iv: Models::Digest.create(@value[1][3].raw, 'AES128IV'),
+            ecies_iv: Models::Digest.create(@value[1][2].raw, 'IV AES128'),
+            data_iv: Models::Digest.create(@value[1][3].raw, 'IV AES128'),
             ecies: Certificate::ECIESEncryption.new(@point, @nonce),
             encrypted_data: @value[1][4]
           }
-          end
         end
-
+      end
 
       def parse_certification(certification)
         EncryptedPayload.new(certification)
@@ -166,7 +181,6 @@ module MooTool
         result = {}
         result[:activation_request] = @activation_request if @activation_request
         result[:recovery_kit] = @rk if @rk
-
       end
 
       def inspect

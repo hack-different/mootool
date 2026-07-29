@@ -17,7 +17,7 @@ module MooTool
           @hint = 'SHA384' if value.length == 48
         when Integer
           @value = [value.to_s(16)].pack('H*')
-
+          @hint = hint
           @integer = true
         else
           raise ArgumentError, "Invalid Input: #{value.inspect}"
@@ -36,6 +36,11 @@ module MooTool
 
       def self.parse(value)
         new [value].pack('H*')
+      end
+
+      def self.digest(value)
+        hash = ::Digest::SHA384.digest value
+        new hash, 'SHA384'
       end
 
       def self.create(input, hint = nil)
@@ -57,6 +62,10 @@ module MooTool
       end
 
       def shasum
+        self.hex
+      end
+
+      def hex
         to_s.unpack1('H*').upcase
       end
 
@@ -120,6 +129,8 @@ module MooTool
             cast = :certificate
           when OpenSSL::PKey::EC::Point
             cast = :point
+          when Certificate::ECCPublicKey
+            cast = :ecc_public_key
           when Certificate::ECCSignature
             cast = :ecc_signature
           when Certificate::ECIESEncryption
@@ -142,12 +153,19 @@ module MooTool
 
           results = ["#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"]
           results += digest.files.map do |file|
-            "#{' ' * @inspector.current_indentation}              #{colorize('file match', :args)}: #{colorize(file.fullname, :path)}"
+            "#{' ' * @inspector.current_indentation}                          #{colorize('match',
+                                                                                         :args)}: #{colorize(
+                                                                                           file.fullname, :path
+                                                                                         )}"
           end
 
           if other.any?
             results += other.map do |key, value|
-              "#{' ' * @inspector.current_indentation}      #{colorize(key, :symbol)}  #{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
+              "#{' ' * @inspector.current_indentation}      #{colorize(key,
+                                                                       :symbol)}  #{colorize(value.hint,
+                                                                                             :class).rjust(24)} #{colorize(
+                                                                                               value.shasum, :digest
+                                                                                             )}"
             end
           end
 
@@ -174,18 +192,32 @@ module MooTool
                                                                                          )}"
         end
 
+        def awesome_ecc_public_key(public_key)
+          point_data = public_key.point.to_octet_string(:uncompressed)
+          x = point_data[0..(point_data.length / 2)].unpack1('H*').upcase
+          y = point_data[(point_data.length / 2)..].unpack1('H*').upcase
+          "#{colorize('ECCPublicKey',
+                      :class)} #{colorize(public_key.curve.curve_name,
+                                          :args)} #{colorize('x=',
+                                                             :args)}#{colorize(x,
+                                                                               :integer)}, #{colorize('y=',
+                                                                                                      :args)}#{colorize(
+                                                                                                        y, :integer
+                                                                                                      )}"
+        end
+
         def awesome_point(point)
-          point_data = point.to_octet_string(:uncompressed)
+          point_data = point.to_octet_string(:uncompressed)[1..-1]
           x = point_data[0..(point_data.length / 2)].unpack1('H*').upcase
           y = point_data[(point_data.length / 2)..].unpack1('H*').upcase
           "#{colorize('ECCPoint',
                       :class)} #{colorize(point.group.curve_name,
-                                          :symbol)} #{colorize('x=',
-                                                               :args)}#{colorize(x,
-                                                                                 :integer)}, #{colorize('y=',
-                                                                                                        :args)}#{colorize(
-                                                                                                          y, :integer
-                                                                                                        )}"
+                                          :args)} #{colorize('x=',
+                                                             :args)}#{colorize(x,
+                                                                               :integer)}, #{colorize('y=',
+                                                                                                      :args)}#{colorize(
+                                                                                                        y, :integer
+                                                                                                      )}"
         end
 
         def awesome_certificate(object)
@@ -193,14 +225,16 @@ module MooTool
         end
 
         def awesome_digest(object)
-          files = object.files.map {|f|f.fullname}
+          files = object.files.map do |f|
+            "#{' ' * @inspector.current_indentation}#{colorize('match', :args)}: #{colorize(f.fullname, :path)}"
+          end
           formatted = if object.integer?
-            colorize(object.inspect, :integer)
-          elsif object.hint
-            properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
-            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
-          else
-            "#{colorize(object.inspect, :digest)}"
+                        colorize(object.inspect, :integer)
+                      elsif object.hint
+                        properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
+                        "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
+                      else
+                        colorize(object.inspect, :digest).to_s
                       end
 
           if files.any?

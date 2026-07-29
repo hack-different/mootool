@@ -66,8 +66,8 @@ module MooTool
       end
 
       attr_reader :manifests
-      
-      MANIFEST_ROOTS = [:asmb, :'manifest-properties', :'secure-boot-hashes'].freeze
+
+      MANIFEST_ROOTS = %i[asmb manifest-properties secure-boot-hashes].freeze
 
       def initialize(device_tree_data)
         data = CFPropertyList.native_types CFPropertyList::List.new(data: device_tree_data).value
@@ -78,10 +78,9 @@ module MooTool
         @data.delete :IOKitDiagnostics
 
         @entries = @data[:'device-tree'][:chosen]
-        @manifests = @entries[:'manifest-properties'].to_h.merge(@entries[:'secure-boot-hashes'].to_h ).merge( @entries[:'asmb'].to_h).map do |k,v|
-          [ k, v.is_a?(String) ? v.unpack1('H*').upcase : v ]
-        end.to_h
-
+        @manifests = @entries[:'manifest-properties'].to_h.merge(@entries[:'secure-boot-hashes'].to_h).merge(@entries[:asmb].to_h).transform_values do |v|
+          v.is_a?(String) ? v.unpack1('H*').upcase : v
+        end
       end
 
       def properties_with_hash(hash)

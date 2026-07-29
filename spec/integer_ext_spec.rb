@@ -5,7 +5,7 @@ require 'spec_helper'
 
 describe Integer do
   describe '#align' do
-    it 'should align to the nearest multiple of 2 alignment' do
+    it 'aligns to the nearest multiple of 2 alignment' do
       expect(1.align(2)).to eq(2)
       expect(2.align(2)).to eq(2)
       expect(3.align(2)).to eq(4)
@@ -16,7 +16,7 @@ describe Integer do
       expect(8.align(2)).to eq(8)
     end
 
-    it 'should return the identity when aligning to one' do
+    it 'returns the identity when aligning to one' do
       expect(0.align(1)).to eq(0)
       expect(1.align(1)).to eq(1)
       expect(2.align(1)).to eq(2)
@@ -28,7 +28,7 @@ describe Integer do
       expect(8.align(1)).to eq(8)
     end
 
-    it 'should align to the nearest multiple of 4 alignment' do
+    it 'aligns to the nearest multiple of 4 alignment' do
       expect(0.align(4)).to eq(0)
       expect(1.align(4)).to eq(4)
       expect(2.align(4)).to eq(4)

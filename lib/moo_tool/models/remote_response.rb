@@ -11,12 +11,11 @@ module MooTool
         body = raw_data.match(MATCHER_REGEX).named_captures['body']
 
         @result = case body
-        when /-----BEGIN CERTIFICATE-----/
-          body.scan(/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m).map do |text|
-            ::MooTool::Models::Certificate.new OpenSSL::X509::Certificate.new(text)
-          end
-        end
-
+                  when /-----BEGIN CERTIFICATE-----/
+                    body.scan(/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m).map do |text|
+                      ::MooTool::Models::Certificate.new OpenSSL::X509::Certificate.new(text)
+                    end
+                  end
       end
 
       def to_h

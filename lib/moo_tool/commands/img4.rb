@@ -3,7 +3,6 @@
 module MooTool
   module Commands
     class IMG4 < Thor
-
       method_option :manifest, type: :string, required: false, default: nil
       method_option :friendly, type: :boolean, default: true
       desc 'print', 'Parses and prints pretty versions of an img4/DER'
