@@ -111,22 +111,50 @@ module MooTool
         OpenSSL::PKey::EC::Point.new(curve, point)
       end
 
+      class EncryptedPayload
+        include Helpers::IMG4
+
+        def initialize(payload)
+          @data = OpenSSL::ASN1.decode(payload)
+          @value = construct(@data)
+
+          @value[1][4].hint ||= 'ECCEncryptedData'
+
+          @algorithm = ALGORITHMS[@value[0]]
+          @point = parse_point_any(@value[1][1])
+          @nonce = @value[1][0]
+        end
+
+
+        def parse_point_any(point)
+          mappings = ['prime256v1', 'secp384r1'].map do |group|
+            begin
+              group = OpenSSL::PKey::EC::Group.new(group)
+              OpenSSL::PKey::EC::Point.new(group, point)
+            rescue
+              nil
+            end
+          end.compact.first
+        end
+
+        def to_h
+          case @algorithm
+          when :ECC_HMQV
+            {
+              algorithm: @algorithm,
+              maybe_vuid: @value[1][2],
+              maybe_kuid: @value[1][3],
+              ecc_dh_mqv: Certificate::ECCMQVEncryption.new(@point, @nonce),
+              encrypted_data: @value[1][4]
+            }
+          else
+            { algorithm: @algorithm }
+          end
+        end
+      end
+
       def parse_certification(certification)
-        # certification[:"Ap,RemotePolicyNonceHash"] = Models::Digest.create(certification[:"Ap,RemotePolicyNonceHash"])
-
-        data = construct OpenSSL::ASN1.decode(certification)
-
-        data[1][4].hint ||= 'ECCEncryptedData'
-
-        {
-          algorithm: ALGORITHMS[data[0]],
-          signature: {
-            mqv: Certificate::ECCMQVEncryption.new(parse_point(data[1][1]), data[1][0]),
-            vuid: data[1][2],
-            kuid: data[1][3],
-            encrypted_data: data[1][4]
-          }
-        }
+        EncryptedPayload.new(certification)
       end
 
       def self.load(file)
@@ -142,6 +170,9 @@ module MooTool
         result = {}
         result[:activation_request] = @activation_request if @activation_request
         result[:recovery_kit] = @rk if @rk
+        result.deep_transform_values do |value|
+          value.to_h if value.respond_to? :to_h
+        end
       end
 
       def inspect

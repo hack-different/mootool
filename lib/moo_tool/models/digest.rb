@@ -179,7 +179,7 @@ module MooTool
 
         def awesome_ecc_encryption(encryption)
           values = encryption.to_h
-          "#{colorize('ECCEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
+          "#{colorize('ECCMQVEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
         end
 
         def awesome_point(point)
