@@ -140,24 +140,18 @@ module MooTool
           end
           other = values.reject { |_k, v| [true, false].include?(v) }
 
-          if other.any?
-            results = ["#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"]
-            results += digest.files.map do |file|
-              "#{' ' * @inspector.current_indentation}              #{colorize('file match',
-                                                                               :args)}: #{colorize(file, :path)}"
-            end
-            results += other.map do |key, value|
-              "#{' ' * @inspector.current_indentation}      #{colorize(key,
-                                                                       :symbol)}  #{colorize(value.hint,
-                                                                                             :class).rjust(24)} #{colorize(
-                                                                                               value.shasum, :digest
-                                                                                             )}"
-            end
-
-            results.join("\n")
-          else
-            "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"
+          results = ["#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"]
+          results += digest.files.map do |file|
+            "#{' ' * @inspector.current_indentation}              #{colorize('file match', :args)}: #{colorize(file.fullname, :path)}"
           end
+
+          if other.any?
+            results += other.map do |key, value|
+              "#{' ' * @inspector.current_indentation}      #{colorize(key, :symbol)}  #{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
+            end
+          end
+
+          results.join("\n")
         end
 
         def awesome_any_value(_input)
@@ -199,14 +193,20 @@ module MooTool
         end
 
         def awesome_digest(object)
-          files = object.files.map {|f|f.fullname}.join("\n")
-          if object.integer?
+          files = object.files.map {|f|f.fullname}
+          formatted = if object.integer?
             colorize(object.inspect, :integer)
           elsif object.hint
             properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
-            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}\n#{files}"
+            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
           else
-            "#{colorize(object.inspect, :digest)}\n#{files}"
+            "#{colorize(object.inspect, :digest)}"
+                      end
+
+          if files.any?
+            "#{formatted}\n#{files.join("\n")}"
+          else
+            formatted
           end
         end
 

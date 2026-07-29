@@ -123,8 +123,8 @@ module MooTool
     end
 
     class FirmwareEntry < PropertySequence
-      def inspect
-        self.ai
+      def to_h
+        { @key => self }
       end
     end
 
