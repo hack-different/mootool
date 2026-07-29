@@ -177,11 +177,11 @@ module MooTool
           @value = Models::Digest.create(@value)
         end
 
-        if DECODE_TAGS.include?(input.tag) && !@value.is_a?(Models::Certificate::ECCMQVEncryption)
+        if DECODE_TAGS.include?(input.tag) && !@value.is_a?(Models::Certificate::ECIESEncryption)
           @value = construct OpenSSL::ASN1.decode(OpenSSL::ASN1.decode(@value).value)
         end
 
-        @value = Models::Certificate::ECCMQVEncryption.new(@value) if SIGNATURE_TAGS.include?(input.tag)
+        @value = Models::Certificate::ECIESEncryption.new(@value) if SIGNATURE_TAGS.include?(input.tag)
       end
 
       def to_h

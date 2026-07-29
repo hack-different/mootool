@@ -129,7 +129,7 @@ module MooTool
             cast = :point
           when Certificate::ECCSignature
             cast = :ecc_signature
-          when Certificate::ECCMQVEncryption
+          when Certificate::ECIESEncryption
             cast = :ecc_encryption
           when :ALLOW_ANY_VALUE
             cast = :any_value
@@ -179,7 +179,7 @@ module MooTool
 
         def awesome_ecc_encryption(encryption)
           values = encryption.to_h
-          "#{colorize('ECCMQVEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
+          "#{colorize('ECCECIESEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
         end
 
         def awesome_point(point)

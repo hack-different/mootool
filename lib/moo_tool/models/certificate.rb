@@ -177,7 +177,7 @@ module MooTool
         end
       end
 
-      class ECCMQVEncryption
+      class ECIESEncryption
         include Helpers::IMG4
 
         def initialize(input, nonce)
