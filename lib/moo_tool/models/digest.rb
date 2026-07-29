@@ -3,12 +3,11 @@
 module MooTool
   module Models
     class Digest
-      attr_reader :value, :files
+      attr_reader :value
       attr_accessor :hint
 
       def initialize(value, hint = nil)
         @hint = hint
-        @files = []
 
         case value
         when String
@@ -29,6 +28,10 @@ module MooTool
 
       def integer?
         @integer
+      end
+
+      def files
+        @files ||= FileIndex.current.files_with_hash(shasum)
       end
 
       def self.parse(value)
@@ -89,16 +92,6 @@ module MooTool
 
       def to_json(*options)
         as_json(*options).to_json(*options)
-      end
-
-      def file_names(file_index)
-        if file_index.has_hash? shasum
-          @files = file_index.files_with_hash(shasum).map { |f| f.to_ref(shasum) }.uniq
-
-          { hash: self, files: @files }
-        else
-          self
-        end
       end
 
       def inspect
@@ -206,13 +199,14 @@ module MooTool
         end
 
         def awesome_digest(object)
+          files = object.files.map {|f|f.fullname}.join("\n")
           if object.integer?
             colorize(object.inspect, :integer)
           elsif object.hint
             properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
-            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
+            "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}\n#{files}"
           else
-            colorize(object.inspect, :digest)
+            "#{colorize(object.inspect, :digest)}\n#{files}"
           end
         end
 

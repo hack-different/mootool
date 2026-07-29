@@ -33,7 +33,7 @@ module MooTool
           @type = input.value[1].value
           @description = input.value[2].value
           @payload = MooTool::Decompressor.new(input.value[3].value)
-          @keybag = parse_keybags(input.value[4].value) if input.value[4]
+          @keybag = parse_keybag(input.value[4]) if input.value[4]
 
           if input.value[5]
             @extensions = construct(input.value[5]).map do |extension|
@@ -42,9 +42,12 @@ module MooTool
           end
         end
 
-        def parse_keybags(input)
+        def parse_keybag(input)
+          value = construct(OpenSSL::ASN1.decode(input))
 
-          construct(OpenSSL::ASN1.decode(input)).map do |keybag|
+          return value unless value.all? { |a| a.is_a?(OpenSSL::ASN1) }
+
+          value.map do |keybag|
             iv = Models::Digest.create(keybag[1].raw, 'IV')
             { KEYBAG_TYPES[keybag[0]] => { iv: iv, key: keybag[2] } }
           end.reduce(&:merge)
@@ -59,7 +62,9 @@ module MooTool
         end
 
         def inspect
-          to_h.ai
+          to_h.transform_values do |value|
+            value.inspect
+          end.ai
         end
 
         def to_bytes
@@ -68,7 +73,9 @@ module MooTool
 
         def hashes
           results = [OpenSSL::Digest::SHA384.digest(to_bytes)]
-          results += @payload.hashes.map {|h| h.value}
+          @payload.hashes.each do |hash|
+            results << hash
+          end
           results.uniq.map { |h| Models::Digest.create(h)}
         end
       end
@@ -96,9 +103,9 @@ module MooTool
         def to_h
           {
             version: @version,
-            body: @body.map(&:to_h),
+            body: @body,
             signature: @signature,
-            certificates: @certificates.map(&:to_h)
+            certificates: @certificates
           }
         end
 
@@ -111,7 +118,11 @@ module MooTool
         end
 
         def hashes
-          [Models::Digest.create(::Digest::SHA384.digest(to_bytes)), Models::Digest.create(::Digest::SHA384.digest(@data.to_der))]
+          [
+            Models::Digest.create(::Digest::SHA384.digest(to_bytes)),
+            Models::Digest.create(::Digest::SHA384.digest(@data.to_der)),
+            Models::Digest.create(::Digest::SHA384.digest(@data.value[2].to_der))
+          ]
         end
       end
 
@@ -147,16 +158,16 @@ module MooTool
 
         def to_h
           content = @content.transform_values do |value|
-            value.respond_to?(:to_h) ? value.to_h : value
+            value.inspect
           end
 
-          content.merge({
-                          hashes: self.hashes
-                        })
+          content[:file_type] = @type
+          content[:hashes] = self.hashes
+          content
         end
 
         def initialize(der, filename = nil)
-          @file_index = Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
+          Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
           @filename = filename
 
           raw_data = der.is_a?(Models::Digest) ? der.value : der
@@ -204,8 +215,6 @@ module MooTool
         def validate_signature
           leaf_certificate = validted_certificate_chain
           [ OpenSSL::Digest.new('SHA384'), OpenSSL::Digest.new('SHA256')].flat_map do |digest|
-
-
 
           values = %i[IM4M IM4P].map do |kind|
             @content[kind]&.to_bytes
@@ -284,11 +293,11 @@ module MooTool
 
           result += @content[:IM4P].hashes if @content[:IM4P]
 
-          result
+          result.map { |h| h.respond_to?(:value) ? h.value : h }.uniq.map { |h| Models::Digest.create(h)}
         end
 
         def print(friendly)
-          output = to_h.dup.deep_symbolize_keys
+          output = inspect.dup.deep_symbolize_keys
           if friendly
             mappings = IMG4.mappings
 

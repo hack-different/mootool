@@ -105,6 +105,10 @@ module MooTool
 
       attr_reader :index
 
+      def self.current
+        @index ||= load('/Users/rickmark/Desktop/index.json')
+      end
+
       def self.load(path)
         json_data = JSON.parse(File.read(path))
 
@@ -112,7 +116,7 @@ module MooTool
           FileLocation.from_hash entry
         end
 
-        new index_data
+        @index = new(index_data)
       rescue StandardError
         new([])
       end

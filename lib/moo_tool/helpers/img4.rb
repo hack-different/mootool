@@ -17,7 +17,7 @@ module MooTool
 
       OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk cons])
       KVP_TAGS = parse_4cc(
-        %w[mmap rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas
+        %w[mmap kcep kclf kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas
            cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih], []
       )
       SEQUENCE_TAGS = parse_4cc(%w[ADCL MANB MANP OBJP PAYP])
@@ -123,25 +123,8 @@ module MooTool
     end
 
     class FirmwareEntry < PropertySequence
-      def file_names(index)
-        @file_index = index
-
-        case @value
-        when Hash
-          @value.each_value do |v|
-            v.file_names @file_index if v.respond_to? :file_names
-          end
-        end
-
-        self
-      end
-
-      def files
-        @file_index.files_with_hash(@value[:DGST].shasum)
-      end
-
-      def to_h
-        { @key => self }
+      def inspect
+        self.ai
       end
     end
 
@@ -186,7 +169,7 @@ module MooTool
       end
 
       def inspect
-        to_h.ai
+        to_h.inspect
       end
     end
   end
