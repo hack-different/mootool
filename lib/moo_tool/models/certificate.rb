@@ -180,26 +180,49 @@ module MooTool
       class ECIESEncryption
         include Helpers::IMG4
 
+        attr_reader :point, :nonce
+
         def initialize(input, nonce)
           if input.is_a?(OpenSSL::PKey::EC::Point)
-            hex = input.to_octet_string(:uncompressed)
+            # Recall that uncompressed points start with 0x04 to indicate that they are uncompressed
+            # To get the proper X / Y we must trip this off first, then divide the string in half
+            hex = input.to_octet_string(:uncompressed)[1..-1]
             pair = hex[0..hex.length / 2], hex[hex.length / 2..-1]
+            @point = input
             @e_x = Models::Digest.create pair[0]
             @e_y = Models::Digest.create pair[1]
 
-            @n = Models::Digest.create(nonce)
+            @nonce = Models::Digest.create(nonce)
           else
             @values = construct(OpenSSL::ASN1::decode(input.value))
+            @point = parse_point_any(OpenSSL::PKey::EC::Point.new(@values[0], @values[1]))
             @values = @values.map { |v| Models::Digest.create(v) }
             @values.each do |v|
               v.hint = 'ECCDH'
             end
-            @e_x, @e_y, @n = @values
+            @e_x, @e_y, @nonce = @values
           end
         end
 
+        def parse_point_any(point)
+          mappings = ['prime256v1', 'secp384r1'].map do |group|
+            begin
+              group = OpenSSL::PKey::EC::Group.new(group)
+              OpenSSL::PKey::EC::Point.new(group, point)
+            rescue
+              nil
+            end
+          end
+
+          mappings.compact.first
+        end
+
+        def group
+          @point.group.curve_name
+        end
+
         def to_h
-          { e_x: @e_x.shasum, e_y: @e_y.shasum, n: @n.shasum }
+          { e_x: @e_x.shasum, e_y: @e_y.shasum, n: @nonce.shasum }
         end
 
         def inspect

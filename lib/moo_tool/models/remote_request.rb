@@ -11,7 +11,7 @@ module MooTool
 
       PRIME_CURVE = OpenSSL::PKey::EC::Group.new('prime256v1')
 
-      ALGORITHMS = { 0 => :RSA, 1 => :ECC_MQV, 2 => :ECC_ECIES }.freeze
+      ALGORITHMS = { 0 => :SHA1, 1 => :SHA256, 2 => :SHA384 }.freeze
 
       PUBLIC_KEY_PROPERTIES = {
         UIKPub: :prime256v1,
@@ -138,20 +138,16 @@ module MooTool
         end
 
         def to_h
-          case @algorithm
-          when :ECC_ECIES
-            {
-              algorithm: @algorithm,
-              maybe_vuid: @value[1][2],
-              maybe_kuid: @value[1][3],
-              ecc_dh_mqv: Certificate::ECIESEncryption.new(@point, @nonce),
-              encrypted_data: @value[1][4]
-            }
-          else
-            { algorithm: @algorithm }
+          {
+            hmac_function: @algorithm,
+            maybe_vuid: @value[1][2],
+            maybe_kuid: @value[1][3],
+            ecc_dh_mqv: Certificate::ECIESEncryption.new(@point, @nonce),
+            encrypted_data: @value[1][4]
+          }
           end
         end
-      end
+
 
       def parse_certification(certification)
         EncryptedPayload.new(certification)

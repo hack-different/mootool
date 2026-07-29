@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor'
   spec.add_dependency 'uuidtools'
+  spec.add_dependency 'ecies'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

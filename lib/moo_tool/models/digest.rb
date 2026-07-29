@@ -167,10 +167,7 @@ module MooTool
           colorize('*** SPLAT ***', :trueclass)
         end
 
-        def awesome_ecc_encryption(input)
-          values  = input.to_h
-          "#{colorize('ECCEncryption', :class)} e0x=#{colorize(values[:e_x], :integer)}, e0y=#{colorize(values[:e_y], :integer)}, e1x=#{colorize(values[:n], :integer)}"
-        end
+
 
         def awesome_ecc_signature(signature)
           values = signature.to_h
@@ -179,7 +176,7 @@ module MooTool
 
         def awesome_ecc_encryption(encryption)
           values = encryption.to_h
-          "#{colorize('ECCECIESEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
+          "#{colorize('ECIESEncryption', :class)} #{colorize(encryption.group, :args)} (x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}), n=#{colorize(values[:n], :integer)}"
         end
 
         def awesome_point(point)

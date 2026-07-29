@@ -7,6 +7,7 @@ PATH
       activesupport
       amazing_print
       colorize
+      ecies
       lzfse
       lzss
       plist
@@ -50,6 +51,7 @@ GEM
     connection_pool (3.0.2)
     diff-lcs (1.6.2)
     drb (2.2.3)
+    ecies (0.4.0)
     erubi (1.13.1)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
@@ -137,14 +139,14 @@ GEM
     rubyzip (3.4.1)
     securerandom (0.4.1)
     simplecov (1.0.3)
-    sorbet (0.6.13365)
-      sorbet-static (= 0.6.13365)
-    sorbet-runtime (0.6.13365)
-    sorbet-static (0.6.13365-universal-darwin)
-    sorbet-static (0.6.13365-x86_64-linux)
-    sorbet-static-and-runtime (0.6.13365)
-      sorbet (= 0.6.13365)
-      sorbet-runtime (= 0.6.13365)
+    sorbet (0.6.13367)
+      sorbet-static (= 0.6.13367)
+    sorbet-runtime (0.6.13367)
+    sorbet-static (0.6.13367-universal-darwin)
+    sorbet-static (0.6.13367-x86_64-linux)
+    sorbet-static-and-runtime (0.6.13367)
+      sorbet (= 0.6.13367)
+      sorbet-runtime (= 0.6.13367)
     spoom (1.8.5)
       erubi (>= 1.10.0)
       prism (>= 0.28.0)
