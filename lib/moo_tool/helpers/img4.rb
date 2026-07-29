@@ -15,12 +15,12 @@ module MooTool
 
       HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
-      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk])
+      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk cons])
       KVP_TAGS = parse_4cc(
-        %w[time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas
+        %w[mmap rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng caos casy csos tbms vnum clas
            cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih], []
       )
-      SEQUENCE_TAGS = parse_4cc(%w[ADCL MANB MANP OBJP])
+      SEQUENCE_TAGS = parse_4cc(%w[ADCL MANB MANP OBJP PAYP])
       FIRMWARE_TAGS = parse_4cc(%w[scrt appv FSCl fCfg dCfg hop0 HmCA NvMR lcrt pcrt cphy ibd1 rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF
                                    bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
@@ -123,7 +123,6 @@ module MooTool
     end
 
     class FirmwareEntry < PropertySequence
-
       def file_names(index)
         @file_index = index
 
@@ -142,7 +141,7 @@ module MooTool
       end
 
       def to_h
-        { @key => self}
+        { @key => self }
       end
     end
 
@@ -167,15 +166,13 @@ module MooTool
 
         @value = @value.first if @value.is_a?(Array)
 
-        #@value = SPLAT_SENINEL if @value.nil?
-        #@value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-        @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value == nil
+        # @value = SPLAT_SENINEL if @value.nil?
+        # @value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
+        @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
 
         return if @value == SPLAT_SENINEL
 
-        if OCTET_TAGS.include?(input.tag) && !@value.is_a?(Models::Digest)
-          @value = Models::Digest.create(@value)
-        end
+        @value = Models::Digest.create(@value) if OCTET_TAGS.include?(input.tag) && !@value.is_a?(Models::Digest)
 
         if DECODE_TAGS.include?(input.tag) && !@value.is_a?(Models::Certificate::ECIESEncryption)
           @value = construct OpenSSL::ASN1.decode(OpenSSL::ASN1.decode(@value).value)

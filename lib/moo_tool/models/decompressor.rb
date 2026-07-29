@@ -44,12 +44,11 @@ module MooTool
                  data
                end
       begin
-        @parsed =  construct(OpenSSL::ASN1.decode(@value))
+        @parsed = construct(OpenSSL::ASN1.decode(@value))
         @compression = :asn1
-      rescue
+      rescue StandardError
         @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
       end
-
     end
 
     def hashes

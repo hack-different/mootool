@@ -36,7 +36,7 @@ module MooTool
       end
 
       def self.create(input, hint = nil)
-        if input.is_a?(String) && input.length == 16
+        if input.is_a?(String) && input.length == 16 && hint.nil?
           UUIDTools::UUID.parse_raw input
         elsif input.is_a?(Array)
           input.map { |i| create(i, hint) }
@@ -137,37 +137,39 @@ module MooTool
           cast
         end
 
-        def awesome_firmware_entry(entry, options={})
+        def awesome_firmware_entry(entry, _options = {})
           values = entry.value
           digest = values[:DGST]
           values.delete(:DGST)
-          booleans = values.select{ |k,v| [true, false].include?(v)}.map do |key, value|
+          booleans = values.select { |_k, v| [true, false].include?(v) }.map do |key, value|
             color = value ? :trueclass : :falseclass
-            "#{colorize(key, color)}"
+            colorize(key, color).to_s
           end
-          other = values.select { |k,v| not [true, false].include?(v) }
+          other = values.reject { |_k, v| [true, false].include?(v) }
 
           if other.any?
-            results = [ "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}" ]
+            results = ["#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"]
             results += digest.files.map do |file|
-              "#{" " * @inspector.current_indentation}              #{colorize('file match', :args)}: #{colorize(file, :path)}"
+              "#{' ' * @inspector.current_indentation}              #{colorize('file match',
+                                                                               :args)}: #{colorize(file, :path)}"
             end
             results += other.map do |key, value|
-               "#{" " * @inspector.current_indentation}      #{colorize(key, :symbol)}  #{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
+              "#{' ' * @inspector.current_indentation}      #{colorize(key,
+                                                                       :symbol)}  #{colorize(value.hint,
+                                                                                             :class).rjust(24)} #{colorize(
+                                                                                               value.shasum, :digest
+                                                                                             )}"
             end
 
             results.join("\n")
           else
             "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"
           end
-
         end
 
-        def awesome_any_value(input)
+        def awesome_any_value(_input)
           colorize('*** SPLAT ***', :trueclass)
         end
-
-
 
         def awesome_ecc_signature(signature)
           values = signature.to_h
@@ -176,7 +178,13 @@ module MooTool
 
         def awesome_ecc_encryption(encryption)
           values = encryption.to_h
-          "#{colorize('ECIESEncryption', :class)} #{colorize(encryption.group, :args)} (x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}), n=#{colorize(values[:n], :integer)}"
+          "#{colorize('ECIESEncryption',
+                      :class)} #{colorize(encryption.group,
+                                          :args)} (x=#{colorize(values[:e_x],
+                                                                :integer)}, y=#{colorize(values[:e_y],
+                                                                                         :integer)}), n=#{colorize(
+                                                                                           values[:n], :integer
+                                                                                         )}"
         end
 
         def awesome_point(point)
@@ -201,7 +209,7 @@ module MooTool
           if object.integer?
             colorize(object.inspect, :integer)
           elsif object.hint
-            properties = object.properties.any? ? " (#{object.properties.join(',')})" : ""
+            properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
             "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
           else
             colorize(object.inspect, :digest)

@@ -10,7 +10,6 @@ module MooTool
   module Models
     # Module for Apple's IMG4 encryption and signing format
     module IMG4
-
       def self.parse_4cc(input)
         input.map do |value|
           value.b.unpack1('N')
@@ -20,30 +19,73 @@ module MooTool
       HASH_FILENAME = /(?<hash>\h{96})/
 
       class IMG4Payload
+        include Helpers::IMG4
+
+        attr_reader :signature
+
+        KEYBAG_TYPES = {
+          1 => :PROD,
+          2 => :DEV
+        }
+
         def initialize(input)
+          @input = input
           @type = input.value[1].value
           @description = input.value[2].value
           @payload = MooTool::Decompressor.new(input.value[3].value)
+          @keybag = parse_keybags(input.value[4].value) if input.value[4]
+
+          if input.value[5]
+            @extensions = construct(input.value[5]).map do |extension|
+              { extension[0] => extension[1].map{|v| v.to_h}.reduce({}, :merge) }
+            end.reduce(&:merge)
+          end
+        end
+
+        def parse_keybags(input)
+
+          construct(OpenSSL::ASN1.decode(input)).map do |keybag|
+            iv = Models::Digest.create(keybag[1].raw, 'IV')
+            { KEYBAG_TYPES[keybag[0]] => { iv: iv, key: keybag[2] } }
+          end.reduce(&:merge)
         end
 
         def to_h
-          { type: @type, description: @description, payload: @payload }
+          result = { type: @type, description: @description, payload: @payload }
+
+          result[:keybag] = @keybag if @keybag
+          result[:extensions] = @extensions if @extensions
+          result
         end
 
         def inspect
           to_h.ai
         end
 
+        def to_bytes
+          @input.to_der
+        end
+
         def hashes
-          @payload.hashes
+          results = [OpenSSL::Digest::SHA384.digest(to_bytes)]
+          results += @payload.hashes.map {|h| h.value}
+          results.uniq.map { |h| Models::Digest.create(h)}
         end
       end
 
       class IMG4Manifest
         include Helpers::IMG4
 
+        attr_reader :certificates, :signature
+
         def initialize(input)
-          @data = input
+          @input = input
+
+          if @input.value.size == 1
+            @data = input.value[0]
+          else
+            @data = input
+          end
 
           @version = @data.value[1].value.to_i
           @body = construct(@data.value[2])
@@ -64,8 +106,12 @@ module MooTool
           to_h.ai
         end
 
+        def to_bytes
+          @input.to_der
+        end
+
         def hashes
-          [ Models::Digest.create(::Digest::SHA384.digest(@data.to_der)) ]
+          [Models::Digest.create(::Digest::SHA384.digest(to_bytes)), Models::Digest.create(::Digest::SHA384.digest(@data.to_der))]
         end
       end
 
@@ -100,12 +146,14 @@ module MooTool
         end
 
         def to_h
-          @content.transform_values do |value|
+          content = @content.transform_values do |value|
             value.respond_to?(:to_h) ? value.to_h : value
           end
+
+          content.merge({
+                          hashes: self.hashes
+                        })
         end
-
-
 
         def initialize(der, filename = nil)
           @file_index = Models::FileIndex.load '/Users/rickmark/Desktop/index.json'
@@ -125,7 +173,7 @@ module MooTool
             @content[:IM4M] = IMG4Manifest.new(@data)
           when 'IMG4'
             @content[:IM4P] = IMG4Payload.new(@data.value[1])
-            @content[:IM4M] = IMG4Manifest.new(@data.value[2].value[0])
+            @content[:IM4M] = IMG4Manifest.new(@data.value[2])
           when 'secb'
             @value = construct(@data)
             @content[:secb] = @value.drop(1).map do |entry|
@@ -145,6 +193,53 @@ module MooTool
           else
             @content = @value.map(&:to_h).reduce(&:merge)
           end
+
+          #@content[:validity] = validate_signature
+        end
+
+        def validted_certificate_chain
+          @content[:IM4M].certificates.last
+        end
+
+        def validate_signature
+          leaf_certificate = validted_certificate_chain
+          [ OpenSSL::Digest.new('SHA384'), OpenSSL::Digest.new('SHA256')].flat_map do |digest|
+
+
+
+          values = %i[IM4M IM4P].map do |kind|
+            @content[kind]&.to_bytes
+          end.compact
+
+          hashes = values.map do |value|
+            OpenSSL::Digest::SHA384.digest(value)
+          end.compact
+
+          signatures = %i[IM4P IM4M].map do |kind|
+            signature = @content[kind]&.signature
+            signature.respond_to?(:value) ? signature.value : signature
+          end.compact
+
+          signatures.flat_map do |signature|
+            value_result = values.map do |value|
+              { digest.hexdigest(value) => leaf_certificate.public_key.verify(digest, signature, value) }
+            end
+
+            hashes_result = hashes.map do |hash|
+              { digest.hexdigest(hash) => leaf_certificate.public_key.verify(digest, signature, hash) }
+            end
+
+            hash_hashes_result = hashes.map do |hash|
+              { digest.hexdigest(hash) => leaf_certificate.public_key.verify(digest, signature, digest.digest(hash)) }
+            end
+
+            join_result = [
+              { digest.hexdigest(hashes.join) => leaf_certificate.public_key.verify(digest, signature, hashes.join) }
+            ]
+
+            value_result + hashes_result + hash_hashes_result + join_result
+          end
+          end.reduce(&:merge)
         end
 
         def inspect
@@ -183,19 +278,13 @@ module MooTool
         def hashes
           result = @hashes.dup
 
-          if @content[:comb]
-            result += @content[:comb].flat_map { |_k,v| v.hashes }
-          end
+          result += @content[:comb].flat_map { |_k, v| v.hashes } if @content[:comb]
 
-          if @content[:IM4M]
-            result += @content[:IM4M].hashes
-          end
+          result += @content[:IM4M].hashes if @content[:IM4M]
 
-          if @content[:IM4P]
-            result += @content[:IM4P].hashes
-          end
+          result += @content[:IM4P].hashes if @content[:IM4P]
 
-          result.reject { |h| h.nil? }.uniq(&:value)
+          result
         end
 
         def print(friendly)
@@ -218,13 +307,9 @@ module MooTool
                 value
               end
             end
-
-            ap(output)
-          else
-            ap(output)
           end
 
-
+          ap(output)
         end
       end
 

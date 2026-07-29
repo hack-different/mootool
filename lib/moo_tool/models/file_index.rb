@@ -25,7 +25,6 @@ module MooTool
           File.join(@location, @filename)
         end
 
-
         def hashes_from_build_identity(path)
           parsed = CFPropertyList.native_types(CFPropertyList::List.new(file: path).value).deep_symbolize_keys
 
@@ -39,7 +38,6 @@ module MooTool
         end
 
         def generate_hashes
-
           @hashes = begin
             IMG4::File.load("#{@location}/#{filename}").hashes
           rescue StandardError

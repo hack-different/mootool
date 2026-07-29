@@ -21,6 +21,14 @@ module MooTool
         end.reduce(&:merge)
       end
 
+      def openssl_certificate
+        @certificate
+      end
+
+      def public_key
+        @certificate.public_key
+      end
+
       def self.oid_properties(oid)
         match = APPLE_OID_MAP.dig :oids, oid.to_sym
 
@@ -44,8 +52,8 @@ module MooTool
                 when :keyUsage
                   construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
-                  extension.value
-                when :"1.2.840.113635.100.6.16"
+                  extension.value.include?("\n") ? extension.value.split("\n") : extension.value
+                when :'1.2.840.113635.100.6.16'
                   construct(OpenSSL::ASN1.decode(extension.value_der)).split(';')
                 when :appleDeviceAttestationKeyUsageProperties
                   result = construct(OpenSSL::ASN1.decode(extension.value_der))
@@ -114,17 +122,15 @@ module MooTool
           [ entry[0], entry[1]]
         end.to_h['CN']
 
-        if /^[0-9a-z]*$/.match(common_name)
-          Models::Digest.create [common_name].pack('H*')
-        else
-          nil
-        end
+        return unless /^[0-9a-z]*$/.match(common_name)
+
+        Models::Digest.create [common_name].pack('H*')
       end
 
       def to_h
         result = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
 
-        result[:key_id] = self.key_id if self.key_id
+        result[:key_id] = key_id if key_id
 
         result[:extensions] = @extensions
         result
@@ -137,7 +143,10 @@ module MooTool
       class ECCSignature
         include Helpers::IMG4
 
+        attr_reader :value
+
         def initialize(signature)
+          @value = signature
           @values = construct(OpenSSL::ASN1.decode(signature))
           @r, @s = @values
         end
@@ -161,6 +170,7 @@ module MooTool
 
       class ECCPublicKey
         include Helpers::IMG4
+
         def initialize(key)
           @value = OpenSSL::ASN1.decode(key)
 
@@ -186,15 +196,15 @@ module MooTool
           if input.is_a?(OpenSSL::PKey::EC::Point)
             # Recall that uncompressed points start with 0x04 to indicate that they are uncompressed
             # To get the proper X / Y we must trip this off first, then divide the string in half
-            hex = input.to_octet_string(:uncompressed)[1..-1]
-            pair = hex[0..hex.length / 2], hex[hex.length / 2..-1]
+            hex = input.to_octet_string(:uncompressed)[1..]
+            pair = hex[0..(hex.length / 2)], hex[(hex.length / 2)..]
             @point = input
             @e_x = Models::Digest.create pair[0]
             @e_y = Models::Digest.create pair[1]
 
             @nonce = Models::Digest.create(nonce)
           else
-            @values = construct(OpenSSL::ASN1::decode(input.value))
+            @values = construct(OpenSSL::ASN1.decode(input.value))
             @point = parse_point_any(OpenSSL::PKey::EC::Point.new(@values[0], @values[1]))
             @values = @values.map { |v| Models::Digest.create(v) }
             @values.each do |v|
@@ -205,13 +215,11 @@ module MooTool
         end
 
         def parse_point_any(point)
-          mappings = ['prime256v1', 'secp384r1'].map do |group|
-            begin
-              group = OpenSSL::PKey::EC::Group.new(group)
-              OpenSSL::PKey::EC::Point.new(group, point)
-            rescue
-              nil
-            end
+          mappings = %w[prime256v1 secp384r1].map do |group|
+            group = OpenSSL::PKey::EC::Group.new(group)
+            OpenSSL::PKey::EC::Point.new(group, point)
+          rescue StandardError
+            nil
           end
 
           mappings.compact.first

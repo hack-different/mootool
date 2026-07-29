@@ -41,7 +41,7 @@ module MooTool
         end
 
         if @data.key? :RKCertification
-          @rk[:certification] = parse_certification(@data[:RKCertification])
+          @rk[:certification] = parse_certification(@data[:RKCertification]).to_h
           @data.delete :RKCertification
         end
 
@@ -68,7 +68,7 @@ module MooTool
 
         return unless @data.key? :RKSigning
 
-        @rk[:signing] = parse_certification(@data[:RKSigning])
+        @rk[:signing] = parse_certification(@data[:RKSigning]).to_h
         @data.delete :RKSigning
       end
 
@@ -140,9 +140,9 @@ module MooTool
         def to_h
           {
             hmac_function: @algorithm,
-            maybe_vuid: @value[1][2],
-            maybe_kuid: @value[1][3],
-            ecc_dh_mqv: Certificate::ECIESEncryption.new(@point, @nonce),
+            ecies_iv: Models::Digest.create(@value[1][2].raw, 'AES128IV'),
+            data_iv: Models::Digest.create(@value[1][3].raw, 'AES128IV'),
+            ecies: Certificate::ECIESEncryption.new(@point, @nonce),
             encrypted_data: @value[1][4]
           }
           end
@@ -166,9 +166,7 @@ module MooTool
         result = {}
         result[:activation_request] = @activation_request if @activation_request
         result[:recovery_kit] = @rk if @rk
-        result.deep_transform_values do |value|
-          value.to_h if value.respond_to? :to_h
-        end
+
       end
 
       def inspect

@@ -42,6 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'amazing_print'
   spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'
+  spec.add_dependency 'ecies'
   spec.add_dependency 'lzfse'
   spec.add_dependency 'lzss'
   spec.add_dependency 'plist'
@@ -50,7 +51,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor'
   spec.add_dependency 'uuidtools'
-  spec.add_dependency 'ecies'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

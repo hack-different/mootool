@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cfpropertylist'
 
 module MooTool
@@ -11,11 +13,8 @@ module MooTool
           node.delete :IORegistryEntryChildren
           node.delete :IORegistryEntryName
 
-          children_nodes = @children.map { |child| [child[:IORegistryEntryName].to_sym, Node.new(child) ] }.to_h
+          children_nodes = @children.to_h { |child| [child[:IORegistryEntryName].to_sym, Node.new(child)] }
           @properties = node
-
-
-
 
           @properties.transform_values! do |value|
             case value
@@ -41,8 +40,8 @@ module MooTool
           @data.delete(key)
         end
 
-        def select(&block)
-          @data.select(&block)
+        def select(&)
+          @data.select(&)
         end
 
         def to_h
@@ -64,10 +63,11 @@ module MooTool
         else
           IOReg.new `ioreg -a -p IODeviceTree -l`
         end
-
       end
 
       attr_reader :manifests
+      
+      MANIFEST_ROOTS = [:asmb, :'manifest-properties', :'secure-boot-hashes'].freeze
 
       def initialize(device_tree_data)
         data = CFPropertyList.native_types CFPropertyList::List.new(data: device_tree_data).value
@@ -85,9 +85,7 @@ module MooTool
       end
 
       def properties_with_hash(hash)
-        matching = @manifests.select { |key, value| value == hash }.map {|k,v| k}
-
-        matching
+        @manifests.select { |_key, value| value == hash }.map { |k, _v| k }
       end
     end
   end
