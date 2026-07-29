@@ -27,7 +27,7 @@ module MooTool
         end.map do |_hash, certificate|
           { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint, hash: certificate.hash}
         end.uniq do |entry|
-          entry[:hash]
+          entry[:hash].value
         end
       end
 

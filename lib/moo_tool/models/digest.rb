@@ -93,7 +93,7 @@ module MooTool
         if other.is_a?(Models::Digest)
           value == other.value
         elsif other.is_a?(String)
-          shasum == other.unpack1('H*').upcase
+          hex == other.unpack1('H*').upcase || hex == other
         else
           value == other
         end
