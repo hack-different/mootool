@@ -57,8 +57,10 @@ module MooTool
           end
         when *KVP_TAGS
           KeyValueProperty.new input
-        when *SEQUENCE_TAGS, *FIRMWARE_TAGS
+        when *SEQUENCE_TAGS
           PropertySequence.new input
+        when *FIRMWARE_TAGS
+          FirmwareEntry.new input
         when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED
           input.value.map { |v| construct(v) }
         when OpenSSL::ASN1::SEQUENCE
@@ -121,6 +123,24 @@ module MooTool
     end
 
     class FirmwareEntry < PropertySequence
+
+      def file_names(index)
+        @file_index = index
+
+        case @value
+        when Hash
+          @value.each_value do |v|
+            v.file_names @file_index if v.respond_to? :file_names
+          end
+        end
+
+        self
+      end
+
+      def files
+        @file_index.files_with_hash(@value[:DGST].shasum)
+      end
+
       def to_h
         { @key => self}
       end

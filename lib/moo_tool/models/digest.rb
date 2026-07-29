@@ -3,11 +3,12 @@
 module MooTool
   module Models
     class Digest
-      attr_reader :value
+      attr_reader :value, :files
       attr_accessor :hint
 
       def initialize(value, hint = nil)
         @hint = hint
+        @files = []
 
         case value
         when String
@@ -92,13 +93,12 @@ module MooTool
 
       def file_names(file_index)
         if file_index.has_hash? shasum
-          { hash: self,
-            files:
-              file_index.files_with_hash(shasum).map { |f| f.to_ref(shasum) }.uniq }
+          @files = file_index.files_with_hash(shasum).map { |f| f.to_ref(shasum) }.uniq
+
+          { hash: self, files: @files }
         else
           self
-                end
-
+        end
       end
 
       def inspect
@@ -146,11 +146,16 @@ module MooTool
             "#{colorize(key, color)}"
           end
           other = values.select { |k,v| not [true, false].include?(v) }
+
           if other.any?
             results = [ "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}" ]
+            results += digest.files.map do |file|
+              "#{" " * @inspector.current_indentation}              #{colorize('file match', :args)}: #{colorize(file, :path)}"
+            end
             results += other.map do |key, value|
                "#{" " * @inspector.current_indentation}      #{colorize(key, :symbol)}  #{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
             end
+
             results.join("\n")
           else
             "#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"
@@ -174,7 +179,7 @@ module MooTool
 
         def awesome_ecc_encryption(encryption)
           values = encryption.to_h
-          "#{colorize('ECCEncryption', :class)} n=#{colorize(values[:n].shasum, :integer)}, x=#{colorize(values[:e_x].shasum, :integer)}, y=#{colorize(values[:e_y].shasum, :integer)}"
+          "#{colorize('ECCEncryption', :class)} n=#{colorize(values[:n], :integer)}, x=#{colorize(values[:e_x], :integer)}, y=#{colorize(values[:e_y], :integer)}"
         end
 
         def awesome_point(point)

@@ -52,7 +52,12 @@ module MooTool
         end
 
         def to_h
-          { version: @version, body: @body, signature: @signature, certificates: @certificates }
+          {
+            version: @version,
+            body: @body.map(&:to_h),
+            signature: @signature,
+            certificates: @certificates.map(&:to_h)
+          }
         end
 
         def inspect
@@ -88,7 +93,9 @@ module MooTool
 
         def self.parse_certificates(certificates)
           certificates.map do |certificate|
-            Models::Certificate.new OpenSSL::X509::Certificate.new(certificate)
+            certificate_data = certificate.value if certificate.is_a?(Models::Digest)
+            certificate_data = certificate.to_der if certificate.respond_to?(:to_der)
+            Models::Certificate.new OpenSSL::X509::Certificate.new(certificate_data)
           end
         end
 
@@ -120,6 +127,7 @@ module MooTool
             @content[:IM4P] = IMG4Payload.new(@data.value[1])
             @content[:IM4M] = IMG4Manifest.new(@data.value[2].value[0])
           when 'secb'
+            @value = construct(@data)
             @content[:secb] = @value.drop(1).map do |entry|
               case entry[0]
               when 'trst', 'rssl'
@@ -172,14 +180,6 @@ module MooTool
           ::File.write(output_path, @payload)
         end
 
-        def print_value
-          result = @content.merge(hashes: hashes).to_h
-          if result[:comb]
-            result[:comb] = result[:comb].map { |k,v| [k, v.print_value] }.to_h
-          end
-          result
-        end
-
         def hashes
           result = @hashes.dup
 
@@ -199,7 +199,7 @@ module MooTool
         end
 
         def print(friendly)
-          output = print_value.deep_symbolize_keys
+          output = to_h.dup.deep_symbolize_keys
           if friendly
             mappings = IMG4.mappings
 
@@ -212,13 +212,19 @@ module MooTool
               case value
               when MooTool::Models::Digest
                 value.file_names @file_index
+              when MooTool::Helpers::FirmwareEntry
+                value.file_names @file_index
               else
                 value
               end
             end
+
+            ap(output)
+          else
+            ap(output)
           end
 
-          ap(output)
+
         end
       end
 
