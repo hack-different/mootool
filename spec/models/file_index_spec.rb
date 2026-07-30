@@ -26,8 +26,10 @@ RSpec.describe MooTool::Models::FileIndex do
       end
 
       it 'is populated with hashes' do
-        expect(populated_hashes.index).not_to be_empty
-        expect(populated_hashes.index).to all(have_hash)
+        aggregate_failures do
+          expect(populated_hashes.index).not_to be_empty
+          expect(populated_hashes.index).to all(have_hash)
+        end
       end
     end
   end

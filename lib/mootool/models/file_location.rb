@@ -51,6 +51,19 @@ module MooTool
         { path: fullname, location: @location, filename: @filename, hashes: @hashes }
       end
 
+      def to_s
+        fullname
+      end
+
+      def img4?
+        case File.basename(fullname)
+        when /\.img4/, /\.im4m/, /\.im4p/, /apticket.*\.der/
+          true
+        else
+          false
+        end
+      end
+
       def hash?(hash)
         hash = MooTool::Models::Digest.create(hash) unless hash.is_a?(MooTool::Models::Digest)
         @hashes.any? { |h| h == hash }

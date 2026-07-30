@@ -14,4 +14,8 @@ class Integer
       (self | alignment) + 1
     end
   end
+
+  def to_4cc
+    [to_s(16)].pack('H*').to_sym
+  end
 end

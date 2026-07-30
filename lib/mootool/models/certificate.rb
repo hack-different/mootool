@@ -39,12 +39,28 @@ module MooTool
         @certificate
       end
 
+      def ==(other)
+        case other
+        when Certificate
+          @certificate == other.openssl_certificate
+        when OpenSSL::X509::Certificate
+          @certificate == other
+        end
+      end
+
       def public_key
         @certificate.public_key
       end
 
       def self.load(path)
-        new(File.read(path))
+        file_data = File.read(path)
+        if file_data.include?('-----BEGIN CERTIFICATE-----')
+          file_data.scan(/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m).map do |text|
+            ::MooTool::Models::Certificate.new OpenSSL::X509::Certificate.new(text)
+          end
+        else
+          [::MooTool::Models::Certificate.new(OpenSSL::X509::Certificate.new(file_data))]
+        end
       end
 
       def self.oid_properties(oid)

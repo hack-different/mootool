@@ -7,15 +7,8 @@ module MooTool
       option :friendly, type: :boolean, default: true
       desc 'print', 'Prints the certificate'
       def print(file)
-        file_data = File.read(file)
-        @certificates = if file_data.include?('-----BEGIN CERTIFICATE-----')
-                          file_data.scan(/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m).map do |text|
-                            ::MooTool::Models::Certificate.new OpenSSL::X509::Certificate.new(text)
-                          end
+        @certificates = Models::Certificate.load(file)
 
-                        else
-                          [::MooTool::Models::Certificate.new(OpenSSL::X509::Certificate.new(file_data))]
-                        end
 
         friendly = options[:friendly]
         mappings = Models::IMG4.mappings
@@ -29,8 +22,8 @@ module MooTool
         end
 
         @certificates.each do |certificate|
-          ap certificate
-        end
+          ap c
+          end
       end
 
       method_option :save_file, type: :string, default: nil

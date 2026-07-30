@@ -7,99 +7,96 @@ require 'compress/lzss'
 
 require 'sorbet-runtime'
 
-class Integer
-  def to_4cc
-    [to_s(16)].pack('H*').to_sym
-  end
-end
-
 module MooTool
-  # The magic Apple decompressor (as in it uses magics)
-  class Decompressor
-    COMPRESSION_LZSS = 'lzss'
-    COMPRESSION_LZVN = 'lzvn'
-    COMPRESSION_LZFSE = 'bvx2'
-    COMPRESSION_LZMA = 'lzma'
+  module Models
+    # The magic Apple decompressor (as in it uses magics)
+    class Decompressor
+      COMPRESSION_LZSS = 'lzss'
+      COMPRESSION_LZVN = 'lzvn'
+      COMPRESSION_LZFSE = 'bvx2'
+      COMPRESSION_LZMA = 'lzma'
 
-    attr_reader :value, :generate_hashes
+      attr_reader :value, :generate_hashes, :data
 
-    def self.load(filename)
-      new File.binread(filename)
-    end
-
-    include Helpers::IMG4
-
-    def initialize(data, hint)
-      @hint = hint.to_sym
-      data = data.value if data.is_a? Models::Digest
-      @hash = Models::Digest.create(::Digest::SHA384.digest(data))
-      @value = case data[0..3]
-               when COMPRESSION_LZFSE
-                 @compression = :lzfse
-                 LZFSE.lzfse_decompress(data)
-               when COMPRESSION_LZVN
-                 @compression = :lzvn
-                 LZFSE.lzvn_decompress(data)
-               when COMPRESSION_LZSS
-                 @compression = :lzss
-                 OpenSSL::Digest::DSS.decompress(data)
-               when COMPRESSION_LZMA
-                 @compression = :lzma
-                 Net::DNS::QueryTypes::ATMA.decompress(data)
-               else
-                 @compression = :raw
-                 data
-               end
-
-      parse_based_on_hint(@value, @hint)
-
-      @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
-    end
-
-    def parse_based_on_hint(value, hint)
-      @compression = :raw
-      begin
-        @asn1 = OpenSSL::ASN1.decode(value)
-        @constructed = construct(@asn1)
-        @compression = :asn1
-
-        @parsed = case hint
-                  when :scrt, :lcrt
-                    {
-                      unk1: @constructed[0],
-                      unk2: @constructed[1],
-                      signature: Models::Digest.create(@constructed[2]),
-                      certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
-                      unk4: @constructed[4]
-                    }
-                  when :FSC2
-                    @constructed.map do |item|
-                      case item
-                      when Integer
-                        item.to_4cc
-                      when Hash
-                        item.transform_keys(&:to_4cc)
-                      end
-                    end
-                  else
-                    { hint => @asn1 }
-                  end
-      rescue StandardError => e
-        @parsed = { value: value, error: e }
+      def self.load(filename)
+        new File.binread(filename)
       end
-    end
 
-    def hashes
-      [@hash, @decompressed_hash].compact.uniq
-    end
+      include MooTool::Helpers::IMG4
 
-    def inspect
-      result = { length: @value.size, generate_hashes: @hash, parsed: @parsed }
-      result[:compression] = @compression if @compression != :raw
-      result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
-      result[:parsed] = @parsed if @parsed
-      result[:hint] = @hint if @hint
-      result.ai
+      def initialize(data, hint)
+        @hint = hint.to_sym
+        data = data.value if data.is_a? MooTool::Models::Digest
+        @hash = MooTool::Models::Digest.create(::Digest::SHA384.digest(data))
+        @data = data
+        @value = case data[0..3]
+                 when COMPRESSION_LZFSE
+                   @compression = :lzfse
+                   LZFSE.lzfse_decompress(data)
+                 when COMPRESSION_LZVN
+                   @compression = :lzvn
+                   LZFSE.lzvn_decompress(data)
+                 when COMPRESSION_LZSS
+                   @compression = :lzss
+                   OpenSSL::Digest::DSS.decompress(data)
+                 when COMPRESSION_LZMA
+                   @compression = :lzma
+                   Net::DNS::QueryTypes::ATMA.decompress(data)
+                 else
+                   @compression = :raw
+                   data
+                 end
+
+        parse_based_on_hint(@value, @hint)
+
+        @decompressed_hash = MooTool::Models::Digest.create(::Digest::SHA384.digest(@value))
+      end
+
+      def parse_based_on_hint(value, hint)
+        @compression = :raw
+        begin
+          @asn1 = OpenSSL::ASN1.decode(value)
+          @constructed = construct(@asn1)
+          @compression = :asn1
+
+          @parsed = case hint
+                    when :scrt, :lcrt
+                      {
+                        unk1: @constructed[0],
+                        unk2: @constructed[1],
+                        signature: Models::Digest.create(@constructed[2]),
+                        certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
+                        unk4: @constructed[4]
+                      }
+                    when :FSC2
+                      @constructed.map do |item|
+                        case item
+                        when Integer
+                          item.to_4cc
+                        when Hash
+                          item.transform_keys(&:to_4cc)
+                        end
+                      end
+                    else
+                      { hint => @asn1 }
+                    end
+        rescue StandardError => e
+          @parsed = { value: value, error: e }
+        end
+      end
+
+      def hashes
+        [@hash, @decompressed_hash].compact.uniq
+      end
+
+      def inspect
+        result = { length: @value.size, generate_hashes: @hash, parsed: @parsed }
+        result[:compression] = @compression if @compression != :raw
+        result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
+        result[:parsed] = @parsed if @parsed
+        result[:hint] = @hint if @hint
+        result.ai
+      end
     end
   end
 end

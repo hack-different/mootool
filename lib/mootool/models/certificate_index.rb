@@ -9,6 +9,10 @@ module MooTool
         @index = {}
       end
 
+      def add_certificate(certificate)
+        @index[certificate.hash] = certificate
+      end
+
       def self.current
         unless @certificate_index
           @certificate_index = new

@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 # typed: true
 
-require 'sorbet-runtime'
-
 module MooTool
   module Models
     class DeviceTree
-      extend T::Sig
-
       NODE_FORMAT = 'VV'
       PROP_FORMAT = 'A32V'
 
@@ -16,19 +12,16 @@ module MooTool
 
       # Represents a single node in the device tree
       class Node
-        extend T::Sig
-
         attr_reader :children, :properties
 
-        sig { params(tree: DeviceTree, data: T.any(IO, StringIO)).void }
         def initialize(tree, data)
           @tree = tree
-          vals = T.must(data.read(8)).unpack(NODE_FORMAT)
-          property_count = T.cast(vals[0], Integer)
-          child_count = T.cast(vals[1], Integer)
+          vals = data.read(8).unpack(NODE_FORMAT)
+          property_count = vals[0]
+          child_count = vals[1]
 
-          @properties = T.let({}, T::Hash[String, Property])
-          @children = T.let([], T::Array[Node])
+          @properties = {}
+          @children = []
 
           property_count.times do
             prop = Property.new(data)
@@ -51,16 +44,13 @@ module MooTool
 
       # Represents a single property and it's value
       class Property
-        extend T::Sig
-
         attr_accessor :name, :value
 
-        sig { params(data: T.any(StringIO, IO)).void }
         def initialize(data)
-          args = T.must(data.read(36)).unpack(PROP_FORMAT)
+          args = data.read(36).unpack(PROP_FORMAT)
 
-          @name = T.let(T.cast(args[0], String), String)
-          @size = T.let(T.cast(args[1], Integer), Integer)
+          @name = args[0]
+          @size = args[1]
 
           if @size & 0x80000000 != 0
             @template = true
@@ -87,18 +77,17 @@ module MooTool
       attr_reader :root
 
       # @param [String] data
-      sig { params(data: T.any(IO, String, StringIO, Pathname)).void }
       def initialize(data)
         @handles = {}
         case data
         when Pathname
-          data = T.assert_type!(data, Pathname)
           @data = File.open(data.realpath, 'rb')
         when String
-          data = T.assert_type!(data, String)
           @data = StringIO.new(data)
         when IO
-          @data = T.let(data, T.any(IO, StringIO))
+          @data = data
+        when MooTool::Models::Decompressor
+          @data = StringIO.new data.data
         end
         @root = Node.new(self, @data)
       end
@@ -107,9 +96,8 @@ module MooTool
         @handles[handle] = node
       end
 
-      sig { params(path: String).returns(DeviceTree) }
-      def self.open(path)
-        MooTool::DeviceTree.new(Pathname.new(path))
+      def self.load(path)
+        MooTool::Models::DeviceTree.new(Pathname.new(path))
       end
 
       def to_h

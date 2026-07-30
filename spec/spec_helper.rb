@@ -14,3 +14,5 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+FIXTURE_PATH = File.realpath(File.join(File.dirname(__FILE__), 'fixtures'))
