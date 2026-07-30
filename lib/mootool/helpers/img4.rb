@@ -24,7 +24,7 @@ module MooTool
       FIRMWARE_TAGS = parse_4cc(%w[lcrt scrt caos casy csos appv FSCl fCfg dCfg hop0 HmCA NvMR pcrt cphy ibd1 rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF
                                    bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
-      SIGNATURE_TAGS = parse_4cc(%w[prid])
+      SIGNATURE_TAGS = parse_4cc(%w[])
 
       DECODE_TAGS = parse_4cc(%w[])
 
@@ -126,6 +126,8 @@ module MooTool
         return unless SIGNATURE_TAGS.include?(input.tag)
 
         @value = construct(OpenSSL::ASN1.decode(input.value[0].value[1].value))
+      rescue => e
+        raise MooTool::Error, "Failure to parse KeyValueProperty: #{@key} with value #{@value}"
       end
 
       def to_h

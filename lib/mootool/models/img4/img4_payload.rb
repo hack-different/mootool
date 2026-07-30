@@ -6,7 +6,7 @@ module MooTool
       class IMG4Payload
         include MooTool::Helpers::IMG4
 
-        attr_reader :signature, :payload
+        attr_reader :signature, :payload, :type
 
         KEYBAG_TYPES = {
           1 => :PROD,

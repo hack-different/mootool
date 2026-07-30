@@ -39,6 +39,14 @@ module MooTool
           end
         end
 
+        def payload_type
+          @content[:IM4P]&.type&.to_sym
+        end
+
+        def manifest_type
+          @content[:IM4M]&.type&.to_sym
+        end
+
         def to_h
           content = @content.transform_values(&:inspect)
 
@@ -79,6 +87,7 @@ module MooTool
               end
             end.reduce(&:merge)
           when 'comb'
+            @value = construct(@data)
             @content[:comb] = @value.drop(1).map do |entry|
               { entry[0] => File.new(entry[1]) }
             end.reduce(&:merge)
@@ -145,6 +154,17 @@ module MooTool
           input.value.to_a.each_slice(2).to_h do |key, value|
             [key.value, value]
           end
+        end
+
+        def types
+          result = [payload_type]
+          if @content[:comb]
+            result += @content[:comb].keys
+          end
+          if @content[:secb]
+            result += @content[:secb].keys
+          end
+          result.compact.map { |r| r.to_sym }
         end
 
         def payload

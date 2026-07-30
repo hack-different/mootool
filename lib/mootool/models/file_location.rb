@@ -56,8 +56,8 @@ module MooTool
       end
 
       def img4?
-        case File.basename(fullname)
-        when /\.img4/, /\.im4m/, /\.im4p/, /apticket.*\.der/
+        case fullname
+        when /\.img4$/, /\.im4m$/, /\.im4p$/, /apticket.*\.der/, /com\.apple\.factorydata/
           true
         else
           false

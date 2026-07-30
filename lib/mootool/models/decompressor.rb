@@ -81,7 +81,7 @@ module MooTool
                       { hint => @asn1 }
                     end
         rescue StandardError => e
-          @parsed = { value: value, error: e }
+          @parsed = { value: Models::Digest.create(value), error: e }
         end
       end
 

@@ -19,12 +19,38 @@ module MooTool
       desc :index, 'Index for any relevant files on a live system'
       def index
         indexer = Models::FileIndex.new
+        indexer.perform
 
         indexer.generate_hashes if options[:generate_hashes]
 
         File.write options[:save_file], JSON.pretty_generate(indexer.index) if options[:save_file]
 
         ap indexer.index
+      end
+
+      desc :index, 'Index for any relevant files on a live system'
+      def types
+        indexer = Models::FileIndex.new
+        indexer.perform
+
+        results = {}
+
+        indexer.index.select(&:img4?).flat_map do |file|
+          loaded = Models::IMG4::File.load(file)
+          loaded.types.compact.map do |type|
+            results[type] ||= []
+            results[type] << file.fullname
+          end
+        end
+
+        results = results.map do |key, value|
+          info = Models::IMG4.mappings[key] || {}
+          info[:examples] = value
+          [key, info]
+        end.to_h
+
+
+        ap({ unique_payload_types: results })
       end
 
       method_option :path, type: :string, default: nil
