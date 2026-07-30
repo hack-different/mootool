@@ -92,9 +92,6 @@ module MooTool
       end
     end
 
-
-
-
     class KeyValueProperty
       include Helpers::IMG4
 
@@ -124,13 +121,11 @@ module MooTool
 
         @value = Models::Digest.create(@value) if OCTET_TAGS.include?(input.tag) && !@value.is_a?(Models::Digest)
 
-        if DECODE_TAGS.include?(input.tag)
-          @value = OpenSSL::ASN1.decode(@value).value[0]
-        end
+        @value = OpenSSL::ASN1.decode(@value).value[0] if DECODE_TAGS.include?(input.tag)
 
-        if SIGNATURE_TAGS.include?(input.tag)
-          @value = construct(OpenSSL::ASN1.decode(input.value[0].value[1].value))
-        end
+        return unless SIGNATURE_TAGS.include?(input.tag)
+
+        @value = construct(OpenSSL::ASN1.decode(input.value[0].value[1].value))
       end
 
       def to_h

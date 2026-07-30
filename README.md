@@ -12,6 +12,12 @@ that is pure (meaning it needs no dependencies other than a Ruby runtime).
 As a secondary goal every command should provide output both in human-readable and machine-readable (YAML/JSON)
 format making it suitable for use in scripting.
 
+### But why RUBY?
+
+Ruby is a powerful language that is portable outside the Apple ecosystem, thereby breaking the monoculture problem 
+whereby Apple security can only be asserted on Apple devices.  It's only used due the rapid ability to prototype
+and experiment, and will be replaced with `rust` code once formats are fully understood.
+
 ## Installation
 
 Install this utility by running `gem install mootool` for the current version on RubyGems.

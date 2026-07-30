@@ -9,7 +9,7 @@ require 'sorbet-runtime'
 
 class Integer
   def to_4cc
-    [self.to_s(16)].pack('H*').to_sym
+    [to_s(16)].pack('H*').to_sym
   end
 end
 
@@ -62,30 +62,29 @@ module MooTool
         @asn1 = OpenSSL::ASN1.decode(value)
         @constructed = construct(@asn1)
         @compression = :asn1
-        
-        @parsed = case hint
-        when :scrt, :lcrt
-          {
-            unk1: @constructed[0],
-            unk2: @constructed[1],
-            signature: Models::Digest.create(@constructed[2]),
-            certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
-            unk4: @constructed[4],
-          }
-        when :FSC2
-          @constructed.map do |item|
-            case item
-            when Integer
-              item.to_4cc
-            when Hash
-              item.transform_keys { |k| k.to_4cc }
-            end
-          end
-        else
-          { hint => @asn1 }
-                  end
 
-      rescue => e
+        @parsed = case hint
+                  when :scrt, :lcrt
+                    {
+                      unk1: @constructed[0],
+                      unk2: @constructed[1],
+                      signature: Models::Digest.create(@constructed[2]),
+                      certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
+                      unk4: @constructed[4]
+                    }
+                  when :FSC2
+                    @constructed.map do |item|
+                      case item
+                      when Integer
+                        item.to_4cc
+                      when Hash
+                        item.transform_keys(&:to_4cc)
+                      end
+                    end
+                  else
+                    { hint => @asn1 }
+                  end
+      rescue StandardError => e
         @parsed = { value: value, error: e }
       end
     end

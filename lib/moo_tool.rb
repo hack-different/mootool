@@ -21,7 +21,7 @@ loader.inflector.inflect(
   'io_reg' => 'IOReg',
   'ec_point_formatter' => 'ECPointFormatter',
   'ec_public_key' => 'ECPublicKey',
-  'ecc_encryption_formatter' => 'ECCEncryptionFormatter',
+  'ecc_encryption_formatter' => 'ECCEncryptionFormatter'
 )
 
 loader.setup
@@ -39,6 +39,7 @@ end
 module AmazingPrint
   class Formatter
     include MooTool::Formatters
+
     MooTool::Formatters.constants.each do |constant|
       include MooTool::Formatters.const_get(constant)
     end

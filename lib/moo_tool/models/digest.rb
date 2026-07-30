@@ -62,7 +62,7 @@ module MooTool
       end
 
       def shasum
-        self.hex
+        hex
       end
 
       def hex
@@ -106,8 +106,6 @@ module MooTool
       def inspect
         to_s.unpack1('H*').upcase
       end
-
-
     end
   end
 end

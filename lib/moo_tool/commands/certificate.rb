@@ -40,9 +40,7 @@ module MooTool
           Models.file_guesser(file.fullname)
         end
 
-        if options[:save_file]
-          Models::CertificateIndex.current.save options[:save_file]
-        end
+        Models::CertificateIndex.current.save options[:save_file] if options[:save_file]
 
         ap(Models::CertificateIndex.current.index)
       end

@@ -4,8 +4,6 @@ require 'cfpropertylist'
 
 module MooTool
   module Models
-
-
     class Certificate
       include Helpers::IMG4
 
@@ -20,7 +18,7 @@ module MooTool
       def initialize(certificate)
         @certificate = certificate
         @hash = Models::Digest.digest(@certificate.to_der)
-        @fingerprint = ::Digest::SHA1.hexdigest(@certificate.to_der).scan(/../).join(":").upcase
+        @fingerprint = ::Digest::SHA1.hexdigest(@certificate.to_der).scan(/../).join(':').upcase
 
         @extensions = certificate.extensions.map do |extension|
           parse_extension(extension)
@@ -30,12 +28,11 @@ module MooTool
       end
 
       def identifiers
-        [ @fingerprint, @extensions[:subjectKeyIdentifier] ]
+        [@fingerprint, @extensions[:subjectKeyIdentifier]]
       end
 
-
       def formatted_public_key(find_matches: false)
-        Certificate.formatted_public_key(self.public_key, find_matches: find_matches)
+        Certificate.formatted_public_key(public_key, find_matches: find_matches)
       end
 
       def openssl_certificate
@@ -149,21 +146,21 @@ module MooTool
 
       def self.formatted_public_key(key, find_matches: false)
         result_key = case key
-        when OpenSSL::PKey::EC, OpenSSL::PKey::EC::Point
-          ECCPublicKey.new key
-        when OpenSSL::PKey::RSA
-          Models::Digest.create key.to_der, 'RSAPublicKey'
-        else
-          { class: key.class, key: key}
-        end
+                     when OpenSSL::PKey::EC, OpenSSL::PKey::EC::Point
+                       ECCPublicKey.new key
+                     when OpenSSL::PKey::RSA
+                       Models::Digest.create key.to_der, 'RSAPublicKey'
+                     else
+                       { class: key.class, key: key }
+                     end
 
         if find_matches
           matches = CertificateIndex.current.matching_key(key)
           if matches.any?
-          { key: result_key, matches: matches }
+            { key: result_key, matches: matches }
           else
             result_key
-            end
+          end
         else
           result_key
         end
@@ -201,8 +198,6 @@ module MooTool
       def inspect
         to_h
       end
-
-
     end
   end
 end

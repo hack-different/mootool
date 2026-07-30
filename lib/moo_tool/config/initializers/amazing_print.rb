@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'amazing_print'
 
 AmazingPrint.defaults = ({
@@ -38,4 +40,3 @@ AmazingPrint.defaults = ({
     path: :blue
   }
 })
-

@@ -1,3 +1,1 @@
-RSpec.describe MooTool::Models::Certificate do
-
-end
+# frozen_string_literal: true
