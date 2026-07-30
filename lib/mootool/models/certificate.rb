@@ -7,7 +7,7 @@ module MooTool
     class Certificate
       include Helpers::IMG4
 
-      attr_reader :hash, :fingerprint
+      attr_reader :generate_hashes, :fingerprint
 
       def self.load_oid_map(path)
         YAML.load_file(path).deep_symbolize_keys
@@ -111,7 +111,7 @@ module MooTool
                     IMG4::File.new(extension.value_der).to_h
                   when :scalar
                     construct(OpenSSL::ASN1.decode(extension.value_der)).first
-                  when :hash
+                  when :generate_hashes
                     construct(OpenSSL::ASN1.decode(extension.value_der)).map(&:to_h).reduce(&:merge)
                   when :sequence
                     resequence(construct(OpenSSL::ASN1.decode(extension.value_der)))

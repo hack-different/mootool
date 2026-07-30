@@ -1,10 +1,8 @@
 # typed: strict
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'sorbet-runtime'
-require 'moo_tool'
-require 'rspec/core'
+require 'zeitwerk'
+require_relative '../lib/mootool'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

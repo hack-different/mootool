@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in moo_tool.gemspec
+# Specify your gem's dependencies in mootool.gemspec
 gemspec
 
 group :development, :test do

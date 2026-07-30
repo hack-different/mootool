@@ -1321,7 +1321,7 @@ class Spoom::Coverage::SnapshotPrinter < ::Spoom::Printer
   def percent(value, total); end
 
   # source://spoom//lib/spoom/coverage/snapshot.rb#147
-  sig { params(hash: T::Hash[::String, ::Integer], total: ::Integer).void }
+  sig { params(generate_hashes: T::Hash[::String, ::Integer], total: ::Integer).void }
   def print_map(hash, total); end
 end
 

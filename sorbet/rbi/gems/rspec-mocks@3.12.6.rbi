@@ -94,7 +94,7 @@ module RSpec::Mocks
     # @param subject the subject to which the message will be added
     # @param message a symbol, representing the message that will be
     #   added.
-    # @param opts a hash of options, :expected_from is used to set the
+    # @param opts a generate_hashes of options, :expected_from is used to set the
     #   original call site
     # @yield an optional implementation for the allowance
     #
@@ -120,7 +120,7 @@ module RSpec::Mocks
     # @param subject the subject on which the message will be expected
     # @param message a symbol, representing the message that will be
     #   expected.
-    # @param opts a hash of options, :expected_from is used to set the
+    # @param opts a generate_hashes of options, :expected_from is used to set the
     #   original call site
     # @yield an optional implementation for the expectation
     #

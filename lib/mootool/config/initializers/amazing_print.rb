@@ -26,7 +26,7 @@ AmazingPrint.defaults = ({
     uuid: :yellowish,
     integer: :blue,
     float: :blue,
-    hash: :whiteish,
+    generate_hashes: :whiteish,
     keyword: :cyan,
     method: :purpleish,
     nilclass: :red,

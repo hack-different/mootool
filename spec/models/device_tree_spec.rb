@@ -16,14 +16,14 @@ YAML_OUT_FILE = File.join(TMP_DIR, 'output_data.yaml')
 
 FileUtils.mkdir_p TMP_DIR
 
-describe MooTool::DeviceTree do
+describe MooTool::Models::DeviceTree do
   it 'is able to parse a device tree' do
     device_tree = described_class.open(DEVICE_TREE_D49AP)
     expect(device_tree).not_to be_nil
   end
 
   it 'parses a device tree from a IMG4 file' do
-    image = MooTool::Img4::File.new(DEVICE_TREE_IM4P_D49AP)
+    image = MooTool::Models::IMG4::File.new(DEVICE_TREE_IM4P_D49AP)
     device_tree = described_class.new(image.payload)
     expect(device_tree).not_to be_nil
   end

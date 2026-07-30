@@ -14,13 +14,13 @@ module MooTool
 
       desc :save_file, 'The file to save the results too'
       method_option :save_file, type: :string, required: false, default: nil
-      desc :hash, 'If the contents should be hashed'
-      method_option :hash, type: :boolean, required: false, default: true
+      desc :generate_hashes, 'If the contents should be hashed'
+      method_option :generate_hashes, type: :boolean, required: false, default: true
       desc :index, 'Index for any relevant files on a live system'
       def index
         indexer = Models::FileIndex.new
 
-        indexer.hash if options[:hash]
+        indexer.generate_hashes if options[:generate_hashes]
 
         File.write options[:save_file], JSON.pretty_generate(indexer.index) if options[:save_file]
 

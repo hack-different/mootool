@@ -2,16 +2,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'moo_tool/version'
+require 'mootool/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'moo_tool'
+  spec.name = 'mootool'
   spec.version = MooTool::VERSION
   spec.authors = ['Rick Mark']
   spec.email = ['rickmark@outlook.com']
 
   spec.summary = "Mach-O's Other Tool"
-  spec.description = 'moo_tool is a swiss army knife for dealing with Apple Mach-O files'
+  spec.description = 'mootool is a swiss army knife for dealing with Apple Mach-O files'
   spec.homepage = 'https://github.com/hack-different/mootool'
   spec.license = 'MIT'
 

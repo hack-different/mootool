@@ -24,9 +24,10 @@ module MooTool
         index.select do |_hash, certificate|
           key == certificate.formatted_public_key
         end.map do |_hash, certificate|
-          { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint, hash: certificate.hash }
+          { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
+            generate_hashes: certificate.generate_hashes }
         end.uniq do |entry|
-          entry[:hash].value
+          entry[:generate_hashes].value
         end
       end
 
@@ -37,7 +38,7 @@ module MooTool
       end
 
       def self.add_certificate(certificate)
-        current.index[certificate.hash] = certificate
+        current.index[certificate.generate_hashes] = certificate
       end
 
       def save(path)
@@ -46,7 +47,7 @@ module MooTool
           pkey = case pkey
                  when Models::Digest
                    pkey.shasum
-                 when Models::Certificate::ECCPublicKey
+                 when Models::ECCPublicKey
                    point_data = pkey.point.to_octet_string(:uncompressed)
                    cartisian_data = point_data[1..]
                    x_data = cartisian_data[0..(cartisian_data.size / 2)]
@@ -62,7 +63,7 @@ module MooTool
                  end
 
           {
-            hash: hash.shasum,
+            generate_hashes: hash.shasum,
             pkey: pkey,
             **certificate.to_h
           }

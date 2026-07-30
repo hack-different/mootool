@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'cfpropertylist'
-require 'moo_tool/models/certificate'
-
 module MooTool
   module Models
     class RemoteRequest
@@ -63,7 +60,7 @@ module MooTool
         end
 
         if @data.key? :RKPropertiesSignature
-          @rk[:properties_signature] = Certificate::ECCSignature.create(@data[:RKPropertiesSignature])
+          @rk[:properties_signature] = Models::ECCSignature.create(@data[:RKPropertiesSignature])
           @data.delete :RKPropertiesSignature
         end
 
@@ -158,7 +155,7 @@ module MooTool
             hmac_function: @algorithm,
             ecies_iv: Models::Digest.create(@value[1][2].raw, 'IV AES128'),
             data_iv: Models::Digest.create(@value[1][3].raw, 'IV AES128'),
-            ecies: Certificate::ECIESEncryption.new(@point, @nonce),
+            ecies: Models::ECIESEncryption.new(@point, @nonce),
             encrypted_data: @value[1][4]
           }
         end

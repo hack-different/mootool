@@ -2688,7 +2688,7 @@ class Tapioca::RepoIndex
 
   class << self
     # source://tapioca//lib/tapioca/repo_index.rb#18
-    sig { params(hash: T::Hash[::String, T::Hash[T.untyped, T.untyped]]).returns(Tapioca::RepoIndex) }
+    sig { params(generate_hashes: T::Hash[::String, T::Hash[T.untyped, T.untyped]]).returns(Tapioca::RepoIndex) }
     def from_hash(hash); end
 
     # source://tapioca//lib/tapioca/repo_index.rb#13

@@ -8,9 +8,9 @@ module MooTool
       desc 'print', 'Prints the certificate'
       def print(file)
         @data = if file.ends_with? 'request.txt'
-                  Models::RemoteRequest.load(file)
+                  MooTool::Models::RemoteRequest.load(file)
                 else
-                  Models::RemoteResponse.load(file)
+                  MooTool::Models::RemoteResponse.load(file)
                 end
 
         ap(@data)

@@ -21,7 +21,7 @@ module MooTool
     COMPRESSION_LZFSE = 'bvx2'
     COMPRESSION_LZMA = 'lzma'
 
-    attr_reader :value, :hash
+    attr_reader :value, :generate_hashes
 
     def self.load(filename)
       new File.binread(filename)
@@ -94,7 +94,7 @@ module MooTool
     end
 
     def inspect
-      result = { length: @value.size, hash: @hash, parsed: @parsed }
+      result = { length: @value.size, generate_hashes: @hash, parsed: @parsed }
       result[:compression] = @compression if @compression != :raw
       result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
       result[:parsed] = @parsed if @parsed

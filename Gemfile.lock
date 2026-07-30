@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    moo_tool (0.2.8)
+    mootool (0.2.8)
       CFPropertyList
       activemodel
       activesupport
@@ -177,7 +177,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  moo_tool!
+  mootool!
   overcommit
   pry
   rake

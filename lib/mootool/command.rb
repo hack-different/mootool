@@ -4,7 +4,7 @@ require 'thor'
 
 module MooTool
   class Command < Thor
-    package_name 'moo_tool'
+    package_name 'mootool'
 
     desc 'img4', 'Commands for img4, apticket, lpol'
     subcommand :img4, MooTool::Commands::IMG4
