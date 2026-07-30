@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-# typed: true
-
-# rubocop:disable Style/Documentation
 
 class Integer
   def align(alignment = nil)

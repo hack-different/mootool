@@ -7,6 +7,12 @@ require 'compress/lzss'
 
 require 'sorbet-runtime'
 
+class Integer
+  def to_4cc
+    [self.to_s(16)].pack('H*').to_sym
+  end
+end
+
 module MooTool
   # The magic Apple decompressor (as in it uses magics)
   class Decompressor
@@ -23,7 +29,8 @@ module MooTool
 
     include Helpers::IMG4
 
-    def initialize(data)
+    def initialize(data, hint)
+      @hint = hint.to_sym
       data = data.value if data.is_a? Models::Digest
       @hash = Models::Digest.create(::Digest::SHA384.digest(data))
       @value = case data[0..3]
@@ -43,11 +50,43 @@ module MooTool
                  @compression = :raw
                  data
                end
+
+      parse_based_on_hint(@value, @hint)
+
+      @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
+    end
+
+    def parse_based_on_hint(value, hint)
+      @compression = :raw
       begin
-        @parsed = construct(OpenSSL::ASN1.decode(@value))
+        @asn1 = OpenSSL::ASN1.decode(value)
+        @constructed = construct(@asn1)
         @compression = :asn1
-      rescue StandardError
-        @decompressed_hash = Models::Digest.create(::Digest::SHA384.digest(@value))
+        
+        @parsed = case hint
+        when :scrt, :lcrt
+          {
+            unk1: @constructed[0],
+            unk2: @constructed[1],
+            signature: Models::Digest.create(@constructed[2]),
+            certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
+            unk4: @constructed[4],
+          }
+        when :FSC2
+          @constructed.map do |item|
+            case item
+            when Integer
+              item.to_4cc
+            when Hash
+              item.transform_keys { |k| k.to_4cc }
+            end
+          end
+        else
+          { hint => @asn1 }
+                  end
+
+      rescue => e
+        @parsed = { value: value, error: e }
       end
     end
 
@@ -56,10 +95,11 @@ module MooTool
     end
 
     def inspect
-      result = { length: @value.size, hash: @hash }
+      result = { length: @value.size, hash: @hash, parsed: @parsed }
       result[:compression] = @compression if @compression != :raw
       result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
       result[:parsed] = @parsed if @parsed
+      result[:hint] = @hint if @hint
       result.ai
     end
   end

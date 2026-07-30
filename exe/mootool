@@ -2,6 +2,6 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'mootool'
+require 'moo_tool'
 
 MooTool::Command.start

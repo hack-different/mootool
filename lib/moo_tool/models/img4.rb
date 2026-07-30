@@ -32,7 +32,7 @@ module MooTool
           @input = input
           @type = input.value[1].value
           @description = input.value[2].value
-          @payload = MooTool::Decompressor.new(input.value[3].value)
+          @payload = MooTool::Decompressor.new(input.value[3].value, @type)
           @keybag = parse_keybag(input.value[4]) if input.value[4]
 
           return unless input.value[5]
@@ -142,7 +142,7 @@ module MooTool
           if signature.size > 128
             Models::Digest.create(signature, 'RSASignature')
           else
-            ::MooTool::Models::Certificate::ECCSignature.create(signature)
+            ::MooTool::Models::ECCSignature.create(signature)
           end
         end
 
@@ -249,7 +249,7 @@ module MooTool
         def to_h
           result = @content.dup
           result[:hashes] = hashes
-          result
+          result.deep_symbolize_keys
         end
 
         def parse_element(element)
@@ -294,24 +294,13 @@ module MooTool
         end
 
         def print(friendly)
-          output = inspect.dup.deep_symbolize_keys
+          output = to_h
           if friendly
             mappings = IMG4.mappings
 
             output.deep_transform_keys! do |key|
               new_key = mappings.dig(key.to_s, 'title') || mappings.dig(key.to_s, 'description') || key
               new_key.respond_to?(:to_sym) ? new_key.to_sym : new_key
-            end
-
-            output.deep_transform_values! do |value|
-              case value
-              when MooTool::Models::Digest
-                value.file_names @file_index
-              when MooTool::Helpers::FirmwareEntry
-                value.file_names @file_index
-              else
-                value
-              end
             end
           end
 

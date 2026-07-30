@@ -4,74 +4,7 @@ require 'cfpropertylist'
 
 module MooTool
   module Models
-    class CertificateIndex
-      attr_accessor :index
-      def initialize(path = nil)
-        @index = {}
-      end
 
-      def self.current
-        unless @certificate_index
-          @certificate_index = CertificateIndex.new
-          Models::FileIndex.current.index.each do |file|
-            Models.file_guesser(file.fullname)
-          end
-        end
-        @certificate_index
-      end
-
-      def matching_key(key)
-        key = Certificate.formatted_public_key(key)
-        index.select do |_hash, certificate|
-          key == certificate.formatted_public_key
-        end.map do |_hash, certificate|
-          { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint, hash: certificate.hash}
-        end.uniq do |entry|
-          entry[:hash].value
-        end
-      end
-
-      def with_identifier(id)
-        index.select do |_hash, certificate|
-          certificate.identifiers.include? id
-        end
-      end
-
-      def self.add_certificate(certificate)
-        current.index[certificate.hash] = certificate
-      end
-
-      def save(path)
-        data = index.map do |hash, certificate|
-          pkey = certificate.formatted_public_key
-          pkey = case pkey
-                 when Models::Digest
-                   pkey.shasum
-                 when Models::Certificate::ECCPublicKey
-                   point_data = pkey.point.to_octet_string(:uncompressed)
-                   cartisian_data = point_data[1..-1]
-                   x_data, y_data = cartisian_data[0..cartisian_data.size/2], cartisian_data[cartisian_data.size/2..-1]
-                   {
-                     curve: pkey.curve.curve_name,
-                     point: Models::Digest.create(point_data).hex,
-                     x: Models::Digest.create( x_data).hex,
-                     y: Models::Digest.create( y_data).hex
-                   }
-                 else
-                   pkey.to_h
-                 end
-
-          {
-            hash: hash.shasum,
-            pkey: pkey,
-            **certificate.to_h,
-          }
-        end
-
-        json = JSON.pretty_generate(data)
-        File.write(path, json)
-      end
-    end
 
     class Certificate
       include Helpers::IMG4
@@ -219,9 +152,9 @@ module MooTool
         when OpenSSL::PKey::EC, OpenSSL::PKey::EC::Point
           ECCPublicKey.new key
         when OpenSSL::PKey::RSA
-          Models::Digest.create key.n.to_i, 'RSAPublicKey'
+          Models::Digest.create key.to_der, 'RSAPublicKey'
         else
-          key
+          { class: key.class, key: key}
         end
 
         if find_matches
@@ -269,113 +202,7 @@ module MooTool
         to_h
       end
 
-      class ECCSignature
-        include Helpers::IMG4
 
-        attr_reader :value
-
-        def initialize(signature)
-          @value = signature
-          @values = construct(OpenSSL::ASN1.decode(signature))
-          @r, @s = @values
-        end
-
-        def to_h
-          { r: @r, s: @s }
-        end
-
-        def self.create(signature)
-          size = signature.is_a?(Models::Digest) ? signature.value.size : signature.size
-          if size > 128
-            # RSA Signature
-            signature.hint = 'RSASignature' if signature.respond_to?(:hint)
-            signature
-          else
-            value = signature.respond_to?(:value) ? signature.value : signature
-            ECCSignature.new(value)
-          end
-        end
-      end
-
-      class ECCPublicKey
-        include Helpers::IMG4
-
-        attr_reader :value, :curve, :point
-
-        def initialize(key)
-          if key.is_a?(OpenSSL::PKey::EC::Point)
-            @value = key
-            @curve = @value.group
-            @point = @value
-          else
-            @value = OpenSSL::ASN1.decode(key)
-
-            @curve = OpenSSL::PKey::EC::Group.new @value.value[0].value[1].value
-            @point = OpenSSL::PKey::EC::Point.new @curve, @value.value[1].value
-          end
-
-        end
-
-        def ==(other)
-          case other
-          when ECCPublicKey
-            @curve == other.curve && @point == other.point
-          when OpenSSL::PKey::EC
-            @curve == other.group && @point = other.public_key
-          end
-        end
-      end
-
-      class ECIESEncryption
-        include Helpers::IMG4
-
-        attr_reader :point, :nonce
-
-        def initialize(input, nonce)
-          if input.is_a?(OpenSSL::PKey::EC::Point)
-            # Recall that uncompressed points start with 0x04 to indicate that they are uncompressed
-            # To get the proper X / Y we must trip this off first, then divide the string in half
-            hex = input.to_octet_string(:uncompressed)[1..]
-            pair = hex[0..(hex.length / 2)], hex[(hex.length / 2)..]
-            @point = input
-            @e_x = Models::Digest.create pair[0]
-            @e_y = Models::Digest.create pair[1]
-
-            @nonce = Models::Digest.create(nonce)
-          else
-            @values = construct(OpenSSL::ASN1.decode(input.value))
-            @point = parse_point_any(OpenSSL::PKey::EC::Point.new(@values[0], @values[1]))
-            @values = @values.map { |v| Models::Digest.create(v) }
-            @values.each do |v|
-              v.hint = 'ECCDH'
-            end
-            @e_x, @e_y, @nonce = @values
-          end
-        end
-
-        def parse_point_any(point)
-          mappings = %w[prime256v1 secp384r1].map do |group|
-            group = OpenSSL::PKey::EC::Group.new(group)
-            OpenSSL::PKey::EC::Point.new(group, point)
-          rescue StandardError
-            nil
-          end
-
-          mappings.compact.first
-        end
-
-        def group
-          @point.group.curve_name
-        end
-
-        def to_h
-          { e_x: @e_x.shasum, e_y: @e_y.shasum, n: @nonce.shasum }
-        end
-
-        def inspect
-          to_h.ai
-        end
-      end
     end
   end
 end

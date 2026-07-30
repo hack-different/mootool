@@ -17,16 +17,16 @@ module MooTool
 
       OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk cons])
       KVP_TAGS = parse_4cc(
-        %w[mmap kcep kclf kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng tbms vnum clas
+        %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng tbms vnum clas
            cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih], []
       )
-      SEQUENCE_TAGS = parse_4cc(%w[ADCL MANB MANP OBJP PAYP])
-      FIRMWARE_TAGS = parse_4cc(%w[scrt caos casy csos appv FSCl fCfg dCfg hop0 HmCA NvMR lcrt pcrt cphy ibd1 rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF
+      SEQUENCE_TAGS = parse_4cc(%w[MANB MANP OBJP PAYP])
+      FIRMWARE_TAGS = parse_4cc(%w[lcrt scrt caos casy csos appv FSCl fCfg dCfg hop0 HmCA NvMR pcrt cphy ibd1 rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF
                                    bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
 
       SIGNATURE_TAGS = parse_4cc(%w[prid])
 
-      DECODE_TAGS = parse_4cc(%w[clid])
+      DECODE_TAGS = parse_4cc(%w[])
 
       def construct_object(input)
         nil if input.nil? || input.value.nil?
@@ -58,9 +58,9 @@ module MooTool
         when *KVP_TAGS
           KeyValueProperty.new input
         when *SEQUENCE_TAGS
-          PropertySequence.new input
+          MooTool::Models::PropertySequence.new input
         when *FIRMWARE_TAGS
-          FirmwareEntry.new input
+          MooTool::Models::FirmwareEntry.new input
         when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED
           input.value.map { |v| construct(v) }
         when OpenSSL::ASN1::SEQUENCE
@@ -92,41 +92,8 @@ module MooTool
       end
     end
 
-    class PropertySequence
-      include Helpers::IMG4
 
-      attr_reader :value, :key
 
-      def initialize(input)
-        construction = construct(input.value.first)
-        @key = construction[0].to_sym
-        value = construction[1]
-        case value
-        when Array, Hash
-          @value = value
-        when PropertySequence
-          @value = { value.key => value.value }
-        end
-
-        return unless @value.is_a?(Array)
-
-        @value = @value.map(&:to_h).reduce({}, :merge)
-      end
-
-      def to_h
-        { @key => @value }
-      end
-
-      def inspect
-        to_h.ai
-      end
-    end
-
-    class FirmwareEntry < PropertySequence
-      def to_h
-        { @key => self }
-      end
-    end
 
     class KeyValueProperty
       include Helpers::IMG4
@@ -157,11 +124,13 @@ module MooTool
 
         @value = Models::Digest.create(@value) if OCTET_TAGS.include?(input.tag) && !@value.is_a?(Models::Digest)
 
-        if DECODE_TAGS.include?(input.tag) && !@value.is_a?(Models::Certificate::ECIESEncryption)
-          @value = construct OpenSSL::ASN1.decode(OpenSSL::ASN1.decode(@value).value)
+        if DECODE_TAGS.include?(input.tag)
+          @value = OpenSSL::ASN1.decode(@value).value[0]
         end
 
-        @value = Models::Certificate::ECIESEncryption.new(@value) if SIGNATURE_TAGS.include?(input.tag)
+        if SIGNATURE_TAGS.include?(input.tag)
+          @value = construct(OpenSSL::ASN1.decode(input.value[0].value[1].value))
+        end
       end
 
       def to_h

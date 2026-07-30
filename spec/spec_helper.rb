@@ -3,7 +3,7 @@
 
 require 'bundler/setup'
 require 'sorbet-runtime'
-require 'mootool'
+require 'moo_tool'
 require 'rspec/core'
 
 RSpec.configure do |config|

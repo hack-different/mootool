@@ -5,7 +5,7 @@ require 'spec_helper'
 
 DEVICE_TREE_D49AP_IM4P = File.join(File.dirname(__FILE__), '..', 'fixtures', 'DeviceTree.d49ap.im4p')
 
-describe MooTool::Img4::File do
+describe MooTool::IMG4::File do
   it 'loads an im4p file' do
     file = described_class.new(DEVICE_TREE_D49AP_IM4P)
     expect(file).not_to be_nil
