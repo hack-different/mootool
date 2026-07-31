@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 module MooTool
-  module Controllers
-    class Sections < ControllerBase
+  module Commands
+    class Sections < Thor
     end
   end
 end

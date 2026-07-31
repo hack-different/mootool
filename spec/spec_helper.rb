@@ -16,3 +16,7 @@ RSpec.configure do |config|
 end
 
 FIXTURE_PATH = File.realpath(File.join(File.dirname(__FILE__), 'fixtures'))
+
+def fixture_file(file)
+  File.join(FIXTURE_PATH, file)
+end

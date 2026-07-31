@@ -26,10 +26,10 @@ report_unchecked = lambda do |unchecked|
   unchecked.each { |dir| puts "  #{dir}" }
   puts
 
-  puts <<~EOS
+  puts <<~ERROR
     You may verify them manually, or add them to config.eager_load_paths
     in config/application.rb and run zeitwerk:check again.
-  EOS
+  ERROR
   puts
 end
 
@@ -41,7 +41,7 @@ namespace :zeitwerk do
     begin
       unchecked = MooTool::ZeitwerkChecker.check
     rescue Zeitwerk::NameError => e
-      abort e.message.sub(/#{Regexp.escape(Rails.root.to_s)}./, '')
+      abort e.message
     end
 
     if unchecked.empty?

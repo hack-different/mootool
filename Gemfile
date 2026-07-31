@@ -17,4 +17,7 @@ group :development, :test do
   gem 'rubocop-rspec'
   gem 'simplecov'
   gem 'spoom'
+  gem 'steep'
+  gem 'typeprof'
+  gem 'yard'
 end

@@ -4,6 +4,7 @@
 module MooTool
   module Models
     module IMG4
+      # An IMG4 file, or, occasionally, a file read in from another source
       class File
         attr_reader :payload, :manifest, :file_index
 
@@ -158,13 +159,9 @@ module MooTool
 
         def types
           result = [payload_type]
-          if @content[:comb]
-            result += @content[:comb].keys
-          end
-          if @content[:secb]
-            result += @content[:secb].keys
-          end
-          result.compact.map { |r| r.to_sym }
+          result += @content[:comb].keys if @content[:comb]
+          result += @content[:secb].keys if @content[:secb]
+          result.compact.map(&:to_sym)
         end
 
         def payload

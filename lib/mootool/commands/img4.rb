@@ -2,6 +2,7 @@
 
 module MooTool
   module Commands
+    # IMG4 parsing and related commands
     class IMG4 < Thor
       method_option :manifest, type: :string, required: false, default: nil
       method_option :friendly, type: :boolean, default: true
@@ -43,12 +44,11 @@ module MooTool
           end
         end
 
-        results = results.map do |key, value|
+        results = results.to_h do |key, value|
           info = Models::IMG4.mappings[key] || {}
           info[:examples] = value
           [key, info]
-        end.to_h
-
+        end
 
         ap({ unique_payload_types: results })
       end

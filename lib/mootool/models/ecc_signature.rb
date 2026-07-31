@@ -2,6 +2,7 @@
 
 module MooTool
   module Models
+    # Elliptic Curve Cryptography Signature
     class ECCSignature
       include MooTool::Helpers::IMG4
 

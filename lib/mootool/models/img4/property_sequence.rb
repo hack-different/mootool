@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MooTool
-  module Models
+  module Models::IMG4
     class PropertySequence
       include MooTool::Helpers::IMG4
 

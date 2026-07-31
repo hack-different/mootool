@@ -9,4 +9,6 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'JSON'
   inflect.acronym 'MooTool'
   inflect.acronym 'IPSW'
+  inflect.acronym 'VERSION'
+  inflect.acronym 'DWARF'
 end

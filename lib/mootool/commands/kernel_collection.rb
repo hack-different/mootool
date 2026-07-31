@@ -2,12 +2,10 @@
 # frozen_string_literal: true
 
 module MooTool
-  module Controllers
+  module Commands
     # Controller for extracting or viewing a KernelCollection (.kc file)
-    class KernelCollection < ControllerBase
-      command 'kc'
-      description 'Kernel Collections'
-
+    class KernelCollection < Thor
+      desc 'extract', 'Extracts a KernelCollection (.kc file)'
       def extract(command, output_folder)
         file = command.file
         input = File.open(command.file, 'rb')

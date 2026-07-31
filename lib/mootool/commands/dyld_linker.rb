@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 module MooTool
-  module Controllers
-    class DyldLinker < ControllerBase
+  module Commands
+    class DyldLinker < Thor
     end
   end
 end

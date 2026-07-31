@@ -3,6 +3,7 @@
 require 'thor'
 
 module MooTool
+  # Base top level command, subcommands are referenced from here
   class Command < Thor
     package_name 'mootool'
 
@@ -14,5 +15,8 @@ module MooTool
 
     desc 'activation', 'MobileActivation parsing and handling'
     subcommand :activation, MooTool::Commands::Activation
+
+    desc 'kc', 'Kernel Collections'
+    subcommand :kc, MooTool::Commands::KernelCollection
   end
 end

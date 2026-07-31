@@ -2,6 +2,7 @@
 
 module MooTool
   module Commands
+    # Commands for interacting with activation records (/System/Volumes/Hardware/MobileActivation)
     class Activation < Thor
       desc 'friendly', 'Print in a friendly way'
       option :friendly, type: :boolean, default: true

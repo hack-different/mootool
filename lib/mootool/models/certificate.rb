@@ -7,7 +7,7 @@ module MooTool
     class Certificate
       include Helpers::IMG4
 
-      attr_reader :generate_hashes, :fingerprint
+      attr_reader :hash, :fingerprint
 
       def self.load_oid_map(path)
         YAML.load_file(path).deep_symbolize_keys
@@ -59,7 +59,7 @@ module MooTool
             ::MooTool::Models::Certificate.new OpenSSL::X509::Certificate.new(text)
           end
         else
-          [::MooTool::Models::Certificate.new(OpenSSL::X509::Certificate.new(file_data))]
+          ::MooTool::Models::Certificate.new(OpenSSL::X509::Certificate.new(file_data))
         end
       end
 
@@ -96,8 +96,15 @@ module MooTool
                   end
                 when :subjectKeyIdentifier
                   extension.value.include?("\n") ? extension.value.split("\n") : extension.value
+                when :'1.2.840.113635.100.6.17'
+                  data = construct(OpenSSL::ASN1.decode(extension.value_der))
+                  Certificate.parse_sik(data)
                 when :'1.2.840.113635.100.6.16'
-                  construct(OpenSSL::ASN1.decode(extension.value_der)).split(';')
+                  construct(OpenSSL::ASN1.decode(extension.value_der)).split(';').map do |entry|
+                    command, value = entry.split(':')
+                    direction, config = command.split('/')
+                    { direction: direction, config: config, value: Certificate.parse_sik(value) }
+                  end
                 when :appleDeviceAttestationKeyUsageProperties
                   result = construct(OpenSSL::ASN1.decode(extension.value_der))
 
@@ -112,7 +119,9 @@ module MooTool
                       item
                     end
                   end
-                when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning, :appleDeviceAttestationHardwareProperties
+                when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
+                  :appleDeviceAttestationHardwareProperties
+
                   resequence(construct(OpenSSL::ASN1.decode(extension.value_der))).transform_keys do |key|
                     if key.is_a?(Symbol)
                       key
@@ -127,7 +136,7 @@ module MooTool
                     IMG4::File.new(extension.value_der).to_h
                   when :scalar
                     construct(OpenSSL::ASN1.decode(extension.value_der)).first
-                  when :generate_hashes
+                  when :hashes
                     construct(OpenSSL::ASN1.decode(extension.value_der)).map(&:to_h).reduce(&:merge)
                   when :sequence
                     resequence(construct(OpenSSL::ASN1.decode(extension.value_der)))
@@ -140,6 +149,28 @@ module MooTool
           { oid_properties[:name].to_sym => { critical: extension.critical?, value: value } }
         else
           { oid_properties[:name].to_sym => value }
+        end
+      end
+
+      def self.parse_sik(key)
+        key = case key
+              when MooTool::Models::Digest
+                key.value
+              when UUIDTools::UUID
+                key.raw
+              when nil
+                return nil
+              else
+                key
+              end
+
+        return key unless key.start_with? 'sik-'
+
+        parts = key.split('-')
+        if parts.size == 3
+          { type: :sik, serial: parts[1], hash: Models::Digest.from_hex(parts[2]) }
+        elsif parts.size == 4
+          { type: :sik, chip: parts[1], ecid: parts[2], hash: Models::Digest.from_hex(parts[3]) }
         end
       end
 

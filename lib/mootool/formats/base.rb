@@ -1,9 +1,8 @@
-# typed: strict
 # frozen_string_literal: true
 
 module MooTool
-  module Commands
-    class FatBinary < Thor
+  module Formats
+    class Base
     end
   end
 end

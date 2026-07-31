@@ -2,6 +2,7 @@
 
 module MooTool
   module Formatters
+    # Formatters for ECC encryption related data
     module ECCEncryptionFormatter
       def awesome_ecc_encryption(encryption)
         values = encryption.to_h

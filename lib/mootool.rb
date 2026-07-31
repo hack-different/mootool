@@ -21,7 +21,6 @@ module MooTool
   class Error < StandardError; end
 end
 
-__dir__ ||= File.dirname(__FILE__)
 Dir["#{__dir__}/mootool/config/initializers/*.rb"].each do |file|
   require_relative file
 end
@@ -34,12 +33,10 @@ loader.inflector = ActiveSupport::Inflector
 loader.setup
 loader.eager_load_dir("#{__dir__}/mootool/formatters")
 
-module AmazingPrint
-  class Formatter
-    include MooTool::Formatters
+AmazingPrint::Formatter.class_eval do
+  include MooTool::Formatters
 
-    MooTool::Formatters.constants.each do |constant|
-      include MooTool::Formatters.const_get(constant)
-    end
+  MooTool::Formatters.constants.each do |constant|
+    include MooTool::Formatters.const_get(constant)
   end
 end

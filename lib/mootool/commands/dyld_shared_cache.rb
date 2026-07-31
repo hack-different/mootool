@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 module MooTool
-  module Controllers
-    class DyldSharedCache < ControllerBase
+  module Commands
+    class DyldSharedCache < Thor
     end
   end
 end

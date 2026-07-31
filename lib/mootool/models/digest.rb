@@ -2,6 +2,7 @@
 
 module MooTool
   module Models
+    # Digest is a misnomer, this is a generic holder of binary data
     class Digest
       attr_reader :value
       attr_accessor :hint
@@ -41,6 +42,10 @@ module MooTool
       def self.digest(value)
         hash = ::Digest::SHA384.digest value
         new hash, 'SHA384'
+      end
+
+      def self.from_hex(value)
+        new [value].pack('H*')
       end
 
       def self.create(input, hint = nil)

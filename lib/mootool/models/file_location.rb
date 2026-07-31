@@ -38,7 +38,7 @@ module MooTool
         results.uniq.map { |h| Models::Digest.create(h) }
       end
 
-      def generate_hashes
+      def hashes
         @hashes = begin
           IMG4::File.load("#{@location}/#{filename}").hashes
         rescue StandardError

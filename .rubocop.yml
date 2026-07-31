@@ -6,6 +6,11 @@ AllCops:
   TargetRubyVersion: 4.0
   NewCops: enable
 
+RSpec/SpecFilePathFormat:
+  Enabled: true
+  CustomTransform:
+    MooTool: mootool
+
 Metrics/BlockLength:
   Max: 35
   Exclude:

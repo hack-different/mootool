@@ -2,13 +2,13 @@
 
 module MooTool
   module Commands
+    # Commands for interacting with certificates
     class Certificate < Thor
       desc 'friendly', 'Print in a friendly way'
       option :friendly, type: :boolean, default: true
       desc 'print', 'Prints the certificate'
       def print(file)
         @certificates = Models::Certificate.load(file)
-
 
         friendly = options[:friendly]
         mappings = Models::IMG4.mappings
@@ -21,9 +21,9 @@ module MooTool
           end
         end
 
-        @certificates.each do |certificate|
+        @certificates.each do |_certificate|
           ap c
-          end
+        end
       end
 
       method_option :save_file, type: :string, default: nil

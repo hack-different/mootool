@@ -15,18 +15,34 @@ module MooTool
 
       HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
-      OCTET_TAGS = parse_4cc(%w[prid CHIP ECID tstp trpk cons])
-      KVP_TAGS = parse_4cc(
-        %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID bmac srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3 smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst prid spih hrlp stng tbms vnum clas
-           cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt tstp love kuid vuid rolp nish lobo nsih], []
-      )
-      SEQUENCE_TAGS = parse_4cc(%w[MANB MANP OBJP PAYP])
-      FIRMWARE_TAGS = parse_4cc(%w[lcrt scrt caos casy csos appv FSCl fCfg dCfg hop0 HmCA NvMR pcrt cphy ibd1 rtsc sePk cssy rdsk bsys trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF
-                                   bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu rtrx sepi siof lpol trxm trst tmuf])
-
       SIGNATURE_TAGS = parse_4cc(%w[])
 
-      DECODE_TAGS = parse_4cc(%w[])
+      KEY_INSTANCE_TAGS = parse_4cc(%w[inst])
+
+      DECODE_TAGS = parse_4cc(%w[prid])
+
+      OCTET_TAGS = parse_4cc(%w[CHIP ECID tstp trpk cons])
+
+      SEQUENCE_TAGS = parse_4cc(%w[MANB MANP OBJP PAYP])
+
+      KVP_TAGS = parse_4cc(
+        %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID
+           srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3
+           smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst
+           prid spih hrlp stng tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH
+           EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt
+           tstp love kuid vuid rolp nish lobo nsih bmac]
+      )
+
+      FIRMWARE_TAGS = parse_4cc(
+        %w[lcrt scrt caos casy csos appv FSCl fCfg dCfg hop0 HmCA NvMR pcrt cphy ibd1 rtsc sePk cssy rdsk
+           trca trcs anef ansf aubt aopf aupr avef bat0 bat1 batF bstc chg0 chg1 ciof stg1 csys dtre dcp2 dcpf
+           isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw mtpf pmcf
+           pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo bstc chg0 chg1 ciof stg1 csys dtre
+           dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw
+           mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu
+           rtrx sepi siof lpol trxm trst tmuf bsys]
+      )
 
       def construct_object(input)
         nil if input.nil? || input.value.nil?
@@ -56,11 +72,11 @@ module MooTool
             input.value
           end
         when *KVP_TAGS
-          KeyValueProperty.new input
+          MooTool::Models::IMG4::KeyValueProperty.new input
         when *SEQUENCE_TAGS
-          MooTool::Models::PropertySequence.new input
+          MooTool::Models::IMG4::PropertySequence.new input
         when *FIRMWARE_TAGS
-          MooTool::Models::FirmwareEntry.new input
+          MooTool::Models::IMG4::FirmwareEntry.new input
         when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED
           input.value.map { |v| construct(v) }
         when OpenSSL::ASN1::SEQUENCE
@@ -73,8 +89,16 @@ module MooTool
                     construct(input.value)
                   end
 
-          { input.tag => value }
-
+          cc_tag = input.tag.to_4cc
+          case cc_tag
+          when :SPAY
+            values = value[0].map do |entry|
+              { key: entry[0].to_4cc, unk: value[1], value: entry[2] }
+            end
+            { cc_tag => values }
+          else
+            { cc_tag => value }
+          end
         end
       end
 
@@ -90,52 +114,19 @@ module MooTool
           construct_object(input)
         end
       end
-    end
 
-    class KeyValueProperty
-      include Helpers::IMG4
-
-      attr_reader :key, :value, :object
-
-      SPLAT_SENINEL = :ALLOW_ANY_VALUE
-
-      def initialize(input)
-        unless input.tag_class == :PRIVATE && input.is_a?(OpenSSL::ASN1::ASN1Data)
-          raise 'Input must be a private instance of ASN1Data'
-        end
-
-        @object = input
-
-        construction = construct(input.value.first)
-
-        @key = construction.first.to_sym
-        @value = construction.last
-
-        @value = @value.first if @value.is_a?(Array)
-
-        # @value = SPLAT_SENINEL if @value.nil?
-        # @value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-        @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-
-        return if @value == SPLAT_SENINEL
-
-        @value = Models::Digest.create(@value) if OCTET_TAGS.include?(input.tag) && !@value.is_a?(Models::Digest)
-
-        @value = OpenSSL::ASN1.decode(@value).value[0] if DECODE_TAGS.include?(input.tag)
-
-        return unless SIGNATURE_TAGS.include?(input.tag)
-
-        @value = construct(OpenSSL::ASN1.decode(input.value[0].value[1].value))
-      rescue => e
-        raise MooTool::Error, "Failure to parse KeyValueProperty: #{@key} with value #{@value}"
-      end
-
-      def to_h
-        { @key => @value }
-      end
-
-      def inspect
-        to_h.inspect
+      def decode_construct(input)
+        decode_target = case input
+                        when MooTool::Models::Digest, OpenSSL::ASN1::OctetString
+                          input.value
+                        when UUIDTools::UUID
+                          input.raw
+                        when nil
+                          return nil
+                        else
+                          input
+                        end
+        construct(OpenSSL::ASN1.decode(decode_target))
       end
     end
   end

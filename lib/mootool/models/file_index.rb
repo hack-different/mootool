@@ -91,7 +91,7 @@ module MooTool
       end
 
       def generate_hashes
-        @index.each(&:generate_hashes)
+        @index.each(&:hashes)
       end
     end
   end

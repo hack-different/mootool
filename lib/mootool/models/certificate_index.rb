@@ -29,9 +29,9 @@ module MooTool
           key == certificate.formatted_public_key
         end.map do |_hash, certificate|
           { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
-            generate_hashes: certificate.generate_hashes }
+            hash: certificate.hash }
         end.uniq do |entry|
-          entry[:generate_hashes].value
+          entry[:hash].value
         end
       end
 
@@ -42,7 +42,7 @@ module MooTool
       end
 
       def self.add_certificate(certificate)
-        current.index[certificate.generate_hashes] = certificate
+        current.index[certificate.hash] = certificate
       end
 
       def save(path)
@@ -67,7 +67,7 @@ module MooTool
                  end
 
           {
-            generate_hashes: hash.shasum,
+            hash: hash.shasum,
             pkey: pkey,
             **certificate.to_h
           }

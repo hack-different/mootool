@@ -17,7 +17,7 @@ module MooTool
         :uuid
       when OpenSSL::PKey::EC::Point
         :point
-      when MooTool::Models::FirmwareEntry
+      when MooTool::Models::IMG4::FirmwareEntry
         :firmware_entry
       when MooTool::Models::Digest
         :digest

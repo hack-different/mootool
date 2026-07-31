@@ -2,6 +2,7 @@
 
 module MooTool
   module Models
+    # Elliptic Curve Integrated Encryption Scheme Encryption
     class ECIESEncryption
       include MooTool::Helpers::IMG4
 

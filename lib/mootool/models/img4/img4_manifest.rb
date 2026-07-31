@@ -3,6 +3,8 @@
 module MooTool
   module Models
     module IMG4
+      # IMG4 Manifests are used in multiple ways, such as an APTicket which is a combined set of acceptable hashes,
+      # or as additional properties included in data such as FDR.
       class IMG4Manifest
         include MooTool::Helpers::IMG4
 
