@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mootool (0.2.8)
+    mootool (0.4.0)
       CFPropertyList
       activemodel
       activesupport

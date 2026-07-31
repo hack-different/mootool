@@ -24,7 +24,7 @@ describe MooTool::Models::DeviceTree do
 
   it 'parses a device tree from a IMG4 file' do
     image = MooTool::Models::IMG4::File.load(DEVICE_TREE_IM4P_D49AP)
-    device_tree = described_class.new(image.payload)
+    device_tree = described_class.new(image.payload.value)
     expect(device_tree).not_to be_nil
   end
 

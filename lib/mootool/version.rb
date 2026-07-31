@@ -2,5 +2,5 @@
 # frozen_string_literal: true
 
 module MooTool
-  VERSION = '0.2.8'
+  VERSION = '0.4.0'
 end
