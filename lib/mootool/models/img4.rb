@@ -19,7 +19,7 @@ module MooTool
       HASH_FILENAME = /(?<hash>\h{96})/
 
       def self.mappings
-        mappings_data = YAML.load_file('/Users/rickmark/Sites/apple-knowledge/_data/img4.yaml')
+        mappings_data = YAML.load_file(::File.join(DATA_PATH, 'img4.yaml'))
         mappings_data['property_collections'].map do |p|
           mappings_data[p]
         end.reduce(&:merge).deep_symbolize_keys.with_indifferent_access

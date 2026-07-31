@@ -9,11 +9,11 @@ module MooTool
 
       attr_reader :hash, :fingerprint
 
-      def self.load_oid_map(path)
-        YAML.load_file(path).deep_symbolize_keys
+      def self.load_oid_map
+        YAML.load_file(File.join(DATA_PATH, 'pki.yaml')).deep_symbolize_keys
       end
 
-      APPLE_OID_MAP = load_oid_map('/Users/rickmark/Sites/apple-knowledge/_data/pki.yaml')
+      APPLE_OID_MAP = load_oid_map
 
       def initialize(certificate)
         @certificate = certificate

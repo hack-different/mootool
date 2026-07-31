@@ -19,6 +19,7 @@ require 'zeitwerk'
 # MooTool
 module MooTool
   class Error < StandardError; end
+  DATA_PATH = File.join(__dir__, '../data/apple-knowledge/_data')
 end
 
 Dir["#{__dir__}/mootool/config/initializers/*.rb"].each do |file|
