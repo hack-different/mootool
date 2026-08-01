@@ -5,8 +5,6 @@ require 'lzfse'
 require 'lzma'
 require 'compress/lzss'
 
-require 'sorbet-runtime'
-
 module MooTool
   module Models
     # The magic Apple decompressor (as in it uses magics)

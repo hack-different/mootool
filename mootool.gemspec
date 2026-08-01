@@ -5,8 +5,8 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'mootool/version'
 
 DATA_FILE_DIR = 'data/apple-knowledge'
-DATA_FILES = Dir.chdir(File.expand_path(File.join(__dir__, ::DATA_FILE_DIR))) do
-  `git ls-files -z`.split("\x0").select { |f| f.match(%r{(_data)/}) }.map { |f| File.join(::DATA_FILE_DIR, f) }
+DATA_FILES = Dir.chdir(File.expand_path(File.join(__dir__, DATA_FILE_DIR))) do
+  `git ls-files -z`.split("\x0").select { |f| f.match(%r{(_data)/}) }.map { |f| File.join(DATA_FILE_DIR, f) }
 end
 
 Gem::Specification.new do |spec|
@@ -44,7 +44,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activemodel'
-  spec.add_dependency 'activesupport'
   spec.add_dependency 'amazing_print'
   spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'

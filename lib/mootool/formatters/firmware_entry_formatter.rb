@@ -2,42 +2,52 @@
 
 module MooTool
   module Formatters
+    # Formatter to display firmware entries (those with DGST)
     module FirmwareEntryFormatter
       def awesome_firmware_entry(entry, _options = {})
-        values = entry.value
-        digest = values[:DGST]
-        values.delete(:DGST)
-        booleans = values.select { |_k, v| [true, false].include?(v) }.map do |key, value|
+        digest = digest_dgst(entry)
+        booleans = digest_booleans(entry)
+        other = digest_other(entry)
+
+        results = ["#{colorize('Firmware', :class)} #{colorize(digest.shasum, :digest)} #{booleans.join(' ')}"]
+        results += digest.files.map do |file|
+          "#{indent}    #{colorize('match', :args)}: #{colorize(file.fullname, :path)}"
+        end
+
+        results += other.map { |k, v| format_other(k, v) }
+
+        results.join("\n")
+      end
+
+      private
+
+      def indent
+        ' ' * @inspector.current_indentation
+      end
+
+      def format_other(key, value)
+        case value
+        when MooTool::Models::Digest
+          "#{indent}      #{colorize(key, :symbol)}  " \
+          "#{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
+        else
+          "#{indent}  #{colorize(key, :symbol)}: #{value.ai}"
+        end
+      end
+
+      def digest_dgst(entry)
+        entry.value[:DGST]
+      end
+
+      def digest_booleans(entry)
+        entry.value.select { |_k, v| [true, false].include?(v) }.map do |key, value|
           color = value ? :trueclass : :falseclass
           colorize(key, color).to_s
         end
-        other = values.reject { |_k, v| [true, false].include?(v) }
+      end
 
-        results = ["#{colorize('Firmware', :class)} #{booleans.join(' ')} #{colorize(digest.shasum, :digest)}"]
-        results += digest.files.map do |file|
-          "#{' ' * @inspector.current_indentation}                          #{colorize('match',
-                                                                                       :args)}: #{colorize(
-                                                                                         file.fullname, :path
-                                                                                       )}"
-        end
-
-        if other.any?
-          results += other.map do |key, value|
-            case value
-            when MooTool::Models::Digest
-
-              "#{' ' * @inspector.current_indentation}      #{colorize(key,
-                                                                       :symbol)}  #{colorize(value.hint,
-                                                                                             :class).rjust(24)} #{colorize(
-                                                                                               value.shasum, :digest
-                                                                                             )}"
-            else
-              "#{' ' * @inspector.current_indentation}  #{colorize(key, :symbol)}: #{value.ai}"
-            end
-          end
-        end
-
-        results.join("\n")
+      def digest_other(entry)
+        entry.value.reject { |k, v| k == :DGST || [true, false].include?(v) }
       end
     end
   end

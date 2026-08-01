@@ -3,10 +3,10 @@
 
 require 'spec_helper'
 
-DEVICE_TREE_D49AP_IM4P = fixture_file( 'DeviceTree.d49ap.im4p')
+DEVICE_TREE_D49AP_IM4P = fixture_file('DeviceTree.d49ap.im4p')
 
 describe MooTool::Models::IMG4::File do
-  context 'IM4P device tree' do
+  context 'with IM4P device tree' do
     it 'loads an im4p file' do
       file = described_class.load(DEVICE_TREE_D49AP_IM4P)
       expect(file).not_to be_nil

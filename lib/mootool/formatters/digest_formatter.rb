@@ -2,24 +2,27 @@
 
 module MooTool
   module Formatters
+    # Formatter to display Hash/Digests with matching files
     module DigestFormatter
       def awesome_digest(object)
-        files = object.files.map do |f|
-          "#{' ' * @inspector.current_indentation}#{colorize('match', :args)}: #{colorize(f.fullname, :path)}"
-        end
+        files = digest_files object
         formatted = if object.integer?
                       colorize(object.inspect, :integer)
                     elsif object.hint
                       properties = object.properties.any? ? " (#{object.properties.join(',')})" : ''
-                      "#{colorize(object.hint, :class)}#{properties} #{colorize(object.inspect, :digest)}"
+                      "#{colorize(object.hint, :class)} #{colorize(object.inspect, :digest)}#{properties}"
                     else
                       colorize(object.inspect, :digest).to_s
                     end
 
-        if files.any?
-          "#{formatted}\n#{files.join("\n")}"
-        else
-          formatted
+        files.any? ? "#{formatted}\n#{files.join("\n")}" : formatted
+      end
+
+      private
+
+      def digest_files(object)
+        object.files.map do |f|
+          "#{' ' * @inspector.current_indentation}    #{colorize('match', :args)}: #{colorize(f.fullname, :path)}"
         end
       end
     end

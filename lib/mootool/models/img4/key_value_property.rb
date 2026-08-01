@@ -10,48 +10,16 @@ module MooTool
 
         attr_reader :key, :value, :object
 
-        SPLAT_SENINEL = :ALLOW_ANY_VALUE
+        SPLAT_SENTINEL = :ALLOW_ANY_VALUE
 
         def initialize(input)
-          unless input.tag_class == :PRIVATE && input.is_a?(OpenSSL::ASN1::ASN1Data)
-            raise 'Input must be a private instance of ASN1Data'
-          end
-          @key = input.tag.to_4cc
+          KeyValueProperty.validate! input
 
+          @key = input.tag.to_4cc
           @object = input
 
-          unless input.value.size == 1 &&
-                 input.value[0].value.size == 2
-            raise MooTool::Error,
-                  "The sequence must have two values #{input.value[0].value.size}"
-          end
-
           construction = construct(input.value.first)
-
-          @key = construction.first.to_sym
-          @value = construction.last
-
-          @value = @value.first if @value.is_a?(Array)
-
-          # @value = SPLAT_SENINEL if @value.nil?
-          # @value = nil if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-          @value = SPLAT_SENINEL if @value.is_a?(OpenSSL::ASN1::ASN1Data) && @value.value.nil?
-
-          return if @value == SPLAT_SENINEL
-
-          if KEY_INSTANCE_TAGS.include?(input.tag) && !@value.nil?
-            @value = MooTool::Models::Certificate.parse_sik(@value)
-          end
-
-          @value = decode_construct(@value) if DECODE_TAGS.include?(input.tag)
-
-          if OCTET_TAGS.include?(input.tag) && !@value.is_a?(MooTool::Models::Digest)
-            @value = MooTool::Models::Digest.create(@value)
-          end
-
-          return unless SIGNATURE_TAGS.include?(input.tag)
-
-          @value = decode_construct(input.value[0].value[1].value)
+          @value = resolve_value construction.last, input.tag
         rescue StandardError
           raise MooTool::Error,
                 "Failure to parse KeyValueProperty: #{@key} with value #{@value} of type #{@value.class}"
@@ -63,6 +31,45 @@ module MooTool
 
         def inspect
           to_h.inspect
+        end
+
+        def self.validate!(input)
+          unless input.tag_class == :PRIVATE && input.is_a?(OpenSSL::ASN1::ASN1Data)
+            raise 'Input must be a private instance of ASN1Data'
+          end
+
+          unless input.value.size == 1 &&
+                 input.value[0].value.size == 2
+            raise MooTool::Error,
+                  "The sequence must have two values #{input.value[0].value.size}"
+          end
+        end
+
+        private
+
+        def resolve_value_tag(value, tag)
+          case tag
+          when *KEY_INSTANCE_TAGS
+            value.nil? ? nil : MooTool::Models::Certificate.parse_sik(value)
+          when *DECODE_TAGS
+            decode_construct(value)
+          when *OCTET_TAGS
+            value.is_a?(MooTool::Models::Digest) ? value : MooTool::Models::Digest.create(value)
+          when *SIGNATURE_TAGS
+            decode_construct(input.value[0].value[1].value)
+          else
+            value
+          end
+        end
+
+        def resolve_value(value, tag)
+          value = value.first if value.is_a?(Array)
+          case value
+          when OpenSSL::ASN1::ASN1Data, nil
+            SPLAT_SENTINEL
+          else
+            resolve_value_tag(value, tag)
+          end
         end
       end
     end

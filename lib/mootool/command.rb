@@ -18,5 +18,8 @@ module MooTool
 
     desc 'kc', 'Kernel Collections'
     subcommand :kc, MooTool::Commands::KernelCollection
+
+    desc 'env', 'Environment Variables'
+    subcommand :env, Commands::Environment
   end
 end
