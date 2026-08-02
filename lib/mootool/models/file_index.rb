@@ -2,7 +2,10 @@
 
 module MooTool
   module Models
+    # Represents a series of file locations with the various hashes inside that file
     class FileIndex
+      include Helpers::File
+
       PATHS = %w[
         /System/Volumes/Hardware/FactoryData/System/Library/Caches/com.apple.factorydata
       ].freeze
@@ -20,26 +23,25 @@ module MooTool
         *.im4p *.dmg *.der *.img4 *.pem *request.txt *response.txt dmg.*
       ].freeze
 
-      def initialize(index = nil)
-        @index = index || []
+      def initialize(index = nil, path = nil)
+        @path = path
+        if index.is_a?(Array)
+          @index = index
+        else
+          json_data = JSON.parse(index)
+
+          @index = json_data.map do |entry|
+            FileLocation.from_hash entry
+          end
+        end
+      rescue StandardError
+        new([])
       end
 
       attr_reader :index
 
       def self.current
         @current ||= load('/Users/rickmark/Desktop/index.json')
-      end
-
-      def self.load(path)
-        json_data = JSON.parse(File.read(path))
-
-        index_data = json_data.map do |entry|
-          FileLocation.from_hash entry
-        end
-
-        @index = new(index_data)
-      rescue StandardError
-        new([])
       end
 
       def mounts
@@ -80,7 +82,7 @@ module MooTool
         as_json(*options).to_json(*options)
       end
 
-      def has_hash?(hash)
+      def hash?(hash)
         @index.any? do |entry|
           entry.hash? hash
         end

@@ -21,6 +21,7 @@ module MooTool
 
           @version = @data.value[1].value.to_i
           @body = construct(@data.value[2])
+          @body = @body.first if @body.is_a? Array
           @signature = File.parse_signature(@data.value[3]) if @data.value[3]
           @certificates = File.parse_certificates(@data.value[4]) if @data.value[4]
         end

@@ -5,7 +5,7 @@ module MooTool
     # A structured instance of a firmware entry tag.  These entries always have a `DGST` for the hash of the payload.
     class FirmwareEntry < MooTool::Models::IMG4::PropertySequence
       def to_h
-        { @key => self }
+        { Models::IMG4.key_name(@key) => self }
       end
     end
   end

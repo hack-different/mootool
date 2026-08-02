@@ -10,7 +10,8 @@ module MooTool
       def print(filename)
         Models::Digest.load_manifests(options[:manifest]) if options[:manifest]
         file = Models::IMG4::File.load(filename)
-        file.print(options[:friendly])
+        Models::IMG4.friendly = options[:friendly]
+        file.print
       end
 
       desc :save_file, 'The file to save the results too'

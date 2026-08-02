@@ -26,7 +26,7 @@ module MooTool
         end
 
         def to_h
-          { @key => @value }
+          { Models::IMG4.key_name(@key) => @value }
         end
 
         def inspect
@@ -49,13 +49,13 @@ module MooTool
 
         def resolve_value_tag(value, tag)
           case tag
-          when *KEY_INSTANCE_TAGS
+          when *self.class::KEY_INSTANCE_TAGS
             value.nil? ? nil : MooTool::Models::Certificate.parse_sik(value)
-          when *DECODE_TAGS
+          when *self.class::DECODE_TAGS
             decode_construct(value)
-          when *OCTET_TAGS
+          when *self.class::OCTET_TAGS
             value.is_a?(MooTool::Models::Digest) ? value : MooTool::Models::Digest.create(value)
-          when *SIGNATURE_TAGS
+          when *self.class::SIGNATURE_TAGS
             decode_construct(input.value[0].value[1].value)
           else
             value

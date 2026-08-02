@@ -2,6 +2,7 @@
 
 module MooTool
   module Models::IMG4
+    # A class representing a series of KeyValueProperties - mappable into a hash
     class PropertySequence
       include MooTool::Helpers::IMG4
 
@@ -24,7 +25,7 @@ module MooTool
       end
 
       def to_h
-        { @key => @value }
+        { Models::IMG4.key_name(@key) => @value.deep_transform_keys { |key| Models::IMG4.key_name(key) } }
       end
 
       def inspect

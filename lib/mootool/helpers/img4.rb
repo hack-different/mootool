@@ -1,29 +1,28 @@
 # frozen_string_literal: true
 
-require 'openssl'
-
 module MooTool
   module Helpers
+    # Helpers that refine ASN1 with IMG4 specific extensions
     module IMG4
-      def self.parse_4cc(input, raw_int = [])
-        mapped = input.map do |value|
-          value.b.unpack1('N')
-        end
+      extend ASN1::ClassMethods
 
-        raw_int + mapped
-      end
+      SIGNATURE_TAGS = [].freeze
 
-      HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
+      KEY_INSTANCE_TAGS = parse_4cc(
+        %w[inst]
+      )
 
-      SIGNATURE_TAGS = parse_4cc(%w[])
+      DECODE_TAGS = parse_4cc(
+        %w[prid]
+      )
 
-      KEY_INSTANCE_TAGS = parse_4cc(%w[inst])
+      OCTET_TAGS = parse_4cc(
+        %w[CHIP ECID tstp trpk cons]
+      )
 
-      DECODE_TAGS = parse_4cc(%w[prid])
-
-      OCTET_TAGS = parse_4cc(%w[CHIP ECID tstp trpk cons])
-
-      SEQUENCE_TAGS = parse_4cc(%w[MANB MANP OBJP PAYP])
+      SEQUENCE_TAGS = parse_4cc(
+        %w[MANB MANP OBJP PAYP]
+      )
 
       KVP_TAGS = parse_4cc(
         %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID
@@ -44,89 +43,8 @@ module MooTool
            rtrx sepi siof lpol trxm trst tmuf bsys]
       )
 
-      def construct_object(input)
-        nil if input.nil? || input.value.nil?
-
-        case input.tag
-        when OpenSSL::ASN1::NULL
-          nil
-        when OpenSSL::ASN1::INTEGER
-          construct(input.value)
-        when OpenSSL::ASN1::BOOLEAN, OpenSSL::ASN1::UTCTIME, OpenSSL::ASN1::GENERALIZEDTIME,
-          OpenSSL::ASN1::UTF8STRING, OpenSSL::ASN1::IA5STRING, OpenSSL::ASN1::OBJECT
-
-          input.value
-        when OpenSSL::ASN1::BIT_STRING
-          case input.value
-          when Array
-            input.value.map { |v| construct(v) }
-          when String
-            Models::Digest.create input.value
-          else
-            input.value
-          end
-        when OpenSSL::ASN1::OCTET_STRING
-          if HASH_LENGTHS.include?(input.value.size * 8) || (input.value.size * 8) > 1024
-            Models::Digest.create input.value
-          else
-            input.value
-          end
-        when *KVP_TAGS
-          MooTool::Models::IMG4::KeyValueProperty.new input
-        when *SEQUENCE_TAGS
-          MooTool::Models::IMG4::PropertySequence.new input
-        when *FIRMWARE_TAGS
-          MooTool::Models::IMG4::FirmwareEntry.new input
-        when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED
-          input.value.map { |v| construct(v) }
-        when OpenSSL::ASN1::SEQUENCE
-          input.value&.map { |v| construct(v) }
-        else
-          value = case input.value
-                  when Enumerable
-                    input.value.map { |v| construct(v) }
-                  else
-                    construct(input.value)
-                  end
-
-          cc_tag = input.tag.to_4cc
-          case cc_tag
-          when :SPAY
-            values = value[0].map do |entry|
-              { key: entry[0].to_4cc, unk: value[1], value: entry[2] }
-            end
-            { cc_tag => values }
-          else
-            { cc_tag => value }
-          end
-        end
-      end
-
-      def construct(input)
-        case input
-        when OpenSSL::ASN1::Null
-          nil
-        when OpenSSL::BN
-          input.to_i
-        when nil, true, false, String, Models::Digest, Integer, Hash, Array
-          input
-        else
-          construct_object(input)
-        end
-      end
-
-      def decode_construct(input)
-        decode_target = case input
-                        when MooTool::Models::Digest, OpenSSL::ASN1::OctetString
-                          input.value
-                        when UUIDTools::UUID
-                          input.raw
-                        when nil
-                          return nil
-                        else
-                          input
-                        end
-        construct(OpenSSL::ASN1.decode(decode_target))
+      def self.included(base)
+        base.include Helpers::ASN1
       end
     end
   end

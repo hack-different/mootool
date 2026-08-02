@@ -19,10 +19,28 @@ module MooTool
       HASH_FILENAME = /(?<hash>\h{96})/
 
       def self.mappings
-        mappings_data = YAML.load_file(::File.join(DATA_PATH, 'img4.yaml'))
+        file_path = ::File.join(ENV['APPLE_KNOWLEDGE'] || DATA_PATH, 'img4.yaml')
+        mappings_data = YAML.load_file(file_path)
         mappings_data['property_collections'].map do |p|
           mappings_data[p]
         end.reduce(&:merge).deep_symbolize_keys.with_indifferent_access
+      end
+
+      def self.friendly=(friendly)
+        @friendly = friendly
+      end
+
+      def self.friendly
+        @friendly ||= false
+      end
+
+      def self.key_name(key)
+        if friendly
+          string_result = mappings.dig(key, 'title') || mappings.dig(key, 'name') || mappings.dig(key, 'description')
+          return Models::DescriptorResult.new key, string_result if string_result
+        end
+
+        key
       end
     end
   end
