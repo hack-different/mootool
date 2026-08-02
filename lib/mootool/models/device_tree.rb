@@ -3,6 +3,7 @@
 
 module MooTool
   module Models
+    # DeviceTree is a bianry version of the device tree loaded by iBoot
     class DeviceTree
       NODE_FORMAT = 'VV'
       PROP_FORMAT = 'A32V'
@@ -29,7 +30,7 @@ module MooTool
           end
           child_count.times { @children << Node.new(tree, data) }
 
-          @tree.add_handle(self, T.must(@properties[PHANDLE_PROP]).value) if @properties.key? PHANDLE_PROP
+          @tree.add_handle(self, @properties[PHANDLE_PROP].value) if @properties.key? PHANDLE_PROP
         end
 
         def to_h
@@ -57,7 +58,7 @@ module MooTool
             @size &= 0x7fffffff
           end
 
-          @value = T.must(data.read(@size.align(4)))[0..(@size - 1)]
+          @value = data.read(@size.align(4))[0..(@size - 1)]
 
           normalize
         end

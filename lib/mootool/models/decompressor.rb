@@ -27,6 +27,12 @@ module MooTool
         data = data.value if data.is_a? MooTool::Models::Digest
         @hash = MooTool::Models::Digest.create(::Digest::SHA384.digest(data))
         @data = data
+        if data == "\0" && data.size == 1
+          @data = nil
+          @parsed = nil
+          @compression = :nil
+          return
+        end
         @value = case data[0..3]
                  when COMPRESSION_LZFSE
                    @compression = :lzfse
@@ -90,6 +96,8 @@ module MooTool
       end
 
       def inspect
+        return { value: nil, hash: @hash }.ai if @parsed.nil?
+
         result = { length: @value.size, hash: @hash, parsed: @parsed }
         result[:compression] = @compression if @compression != :raw
         result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash

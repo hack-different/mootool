@@ -20,6 +20,10 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35
 
+Style/Documentation:
+  Exclude:
+    - 'lib/mootool/config/initializers/*'
+
 Metrics/CyclomaticComplexity:
   Max: 15
 
