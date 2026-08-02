@@ -17,9 +17,6 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
     - '*.gemspec'
 
-Metrics/MethodLength:
-  Max: 35
-
 Style/Documentation:
   Exclude:
     - 'lib/mootool/config/initializers/*'
@@ -30,8 +27,14 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 15
 
-Metrics/AbcSize:
-  Max: 25
-
 Metrics/ModuleLength:
   Max: 200
+
+Metrics/ClassLength:
+  Max: 250
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/AbcSize:
+  Max: 35

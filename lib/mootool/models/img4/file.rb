@@ -11,6 +11,7 @@ module MooTool
         include MooTool::Helpers::IMG4
         include Helpers::Signature
         include Helpers::File
+        include Helpers::Hashing
 
         def payload_type
           @content[:IM4P]&.type&.to_sym
@@ -26,20 +27,23 @@ module MooTool
 
           raw_data = der.is_a?(MooTool::Models::Digest) ? der.value : der
 
-          @hashes = [MooTool::Models::Digest.create(::Digest::SHA384.digest(raw_data))]
+          @hash_data = [raw_data]
           @data = OpenSSL::ASN1.decode(raw_data)
           @type = @data.value[0].value
           @content = {}
           parse
         end
 
-        def validted_certificate_chain
+        def validated_certificate_chain
           @content[:IM4M].certificates.last
         end
 
         def to_h
           result = @content.dup
-          result[:hashes] = hashes
+          result[:comb] = @content[:comb].transform_values(&:to_h) if result[:comb]
+          result[:hashes] = named_hashes
+          result[:validation] = validate_signature
+          result[:certificate_validation] = @certificate_validation
           result.deep_symbolize_keys
         end
 
@@ -74,15 +78,28 @@ module MooTool
         end
 
         def hashes
-          result = @hashes.dup
+          raw_hashes.map do |hash_pair|
+            hash_kind = hash_pair[:kind]
+            hash = hash_pair[:value]
+            Models::Digest.new(::Digest::SHA384.digest(hash), hash_kind)
+          end
+        end
 
-          result += @content[:comb].flat_map { |_k, v| v.hashes } if @content[:comb]
+        def raw_hashes
+          results = []
+          results += @content[:IM4M]&.raw_hashes if @content[:IM4M]
+          results += @content[:IM4P]&.raw_hashes if @content[:IM4P]
 
-          result += @content[:IM4M].hashes if @content[:IM4M]
+          results.compact.uniq
+        end
 
-          result += @content[:IM4P].hashes if @content[:IM4P]
+        def public_keys
+          results = {}
+          results.merge! @content[:IM4M]&.public_keys if @content[:IM4M]
+          results.merge! @content[:secb]&.public_keys if @content[:secb]
+          results.merge! @content[:comb]&.public_keys if @content[:comb]
 
-          result.map { |h| h.respond_to?(:value) ? h.value : h }.uniq.map { |h| Models::Digest.create(h) }
+          results
         end
 
         def print
@@ -128,6 +145,26 @@ module MooTool
           else
             @content = @value.map(&:to_h).reduce(&:merge)
           end
+
+          validate
+        end
+
+        def validate
+          @content[:IM4P].validate @content[:IM4M] if @content[:IM4P] && @content[:IM4M]
+
+          return unless @content[:IM4M]
+
+          @certificate_validation = @content[:IM4M].validate
+        end
+
+        def signed_data
+          @content[:IM4M]&.signed_data
+        end
+
+        def signatures
+          results = []
+          results << { kind: :IM4M, value: @content[:IM4M]&.signature } if @content[:IM4M]
+          results
         end
       end
     end

@@ -9,6 +9,8 @@ module MooTool
   module Models
     # The magic Apple decompressor (as in it uses magics)
     class Decompressor
+      include Helpers::Hashing
+
       COMPRESSION_LZSS = 'lzss'
       COMPRESSION_LZVN = 'lzvn'
       COMPRESSION_LZFSE = 'bvx2'
@@ -25,7 +27,7 @@ module MooTool
       def initialize(data, hint)
         @hint = hint.to_sym
         data = data.value if data.is_a? MooTool::Models::Digest
-        @hash = MooTool::Models::Digest.create(::Digest::SHA384.digest(data))
+        @hash = data
         @data = data
         if data == "\0" && data.size == 1
           @data = nil
@@ -53,11 +55,27 @@ module MooTool
 
         parse_based_on_hint(@value, @hint)
 
-        @decompressed_hash = MooTool::Models::Digest.create(::Digest::SHA384.digest(@value))
+        @decompressed_hash = @value
+      end
+
+      def parse_point_any(point)
+        %w[prime256v1 secp384r1].map do |group|
+          group = OpenSSL::PKey::EC::Group.new(group)
+          OpenSSL::PKey::EC::Point.new(group, point)
+        rescue StandardError
+          nil
+        end.compact.first
       end
 
       def parse_based_on_hint(value, hint)
         @compression = :raw
+
+        if hint == :sePk
+          @compression = :ecc_point
+          @parsed = parse_point_any(value)
+          return
+        end
+
         begin
           @asn1 = OpenSSL::ASN1.decode(value)
           @constructed = construct(@asn1)
@@ -84,23 +102,32 @@ module MooTool
                         end
                       end
                     else
-                      { hint => @asn1 }
+                      { hint => construct(@asn1) }
                     end
         rescue StandardError => e
           @parsed = { value: Models::Digest.create(value), error: e }
         end
       end
 
-      def hashes
-        [@hash, @decompressed_hash].compact.uniq
+      def raw_hashes
+        results = [
+          { kind: 'IM4P:hash', value: @hash }
+        ]
+        if @decompressed_hash && @decompressed_hash != @hash
+          results << { kind: 'IM4P:decompressed',
+                       value: @decompressed_hash }
+        end
+        results << { kind: 'IM4P:ASN1', value: @asn1.to_der } if @asn1
+
+        results.compact.uniq { |entry| entry[:value] }
       end
 
       def inspect
-        return { value: nil, hash: @hash }.ai if @parsed.nil?
+        return { value: nil }.ai if @parsed.nil?
 
-        result = { length: @value.size, hash: @hash, parsed: @parsed }
+        result = { length: @value.size, hash: to_hash(@hash), parsed: @parsed }
         result[:compression] = @compression if @compression != :raw
-        result[:decompressed_hash] = @decompressed_hash if @decompressed_hash && @decompressed_hash != @hash
+        result[:decompressed_hash] = to_hash(@decompressed_hash) if @decompressed_hash && @decompressed_hash != @hash
         result[:parsed] = @parsed if @parsed
         result[:hint] = @hint if @hint
         result.ai

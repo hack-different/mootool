@@ -35,7 +35,7 @@ module MooTool
           end
         end
       rescue StandardError
-        new([])
+        @index = []
       end
 
       attr_reader :index

@@ -7,6 +7,7 @@ module MooTool
       # or as additional properties included in data such as FDR.
       class IMG4Manifest
         include MooTool::Helpers::IMG4
+        include Helpers::Hashing
 
         attr_reader :certificates, :signature
 
@@ -40,15 +41,57 @@ module MooTool
         end
 
         def to_bytes
-          @input.to_der
+          @data.to_der
         end
 
-        def hashes
+        def validate
+          @certificates.map do |certificate|
+            validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
+              validator_certificate.subject.to_s
+            end
+
+            validator_certs = validator_certs.uniq { |_hash, cert| cert.digest }
+            validations = validator_certs.map do |_hash, validator_certificate|
+              {
+                subject: validator_certificate.subject.to_s,
+                issuer: validator_certificate.issuer.to_s,
+                fingerprint: validator_certificate.fingerprint,
+                digest: validator_certificate.digest,
+                valid: certificate.validate(validator_certificate.public_key)
+              }
+            end
+            valid_certs = validations.select do |validation|
+              validation[:valid] || validation[:subject] == certificate.issuer.to_s
+            end
+
+            {
+              certificate.subject.to_s => {
+                issuer: certificate.issuer.to_s,
+                validations: valid_certs.uniq { |cert| cert[:digest].shasum }
+              }
+            }
+          end
+        end
+
+        def signed_data
+          @data.value[2].to_der
+        end
+
+        def raw_hashes
           [
-            Models::Digest.create(::Digest::SHA384.digest(to_bytes)),
-            Models::Digest.create(::Digest::SHA384.digest(@data.to_der)),
-            Models::Digest.create(::Digest::SHA384.digest(@data.value[2].to_der))
+            { kind: :manifest_hash, value: to_bytes },
+            { kind: :signed_data, value: signed_data }
           ]
+        end
+
+        def firmware_tag(type)
+          @body.to_h[:MANB][type.to_sym]
+        end
+
+        def public_keys
+          @certificates.to_h do |certificate|
+            [certificate.subject.to_s, certificate.public_key]
+          end
         end
       end
     end

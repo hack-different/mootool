@@ -8,6 +8,7 @@ module MooTool
       option :friendly, type: :boolean, default: true
       desc 'print', 'Prints the certificate'
       def print(file)
+        Models::CertificateIndex.load_default_certs
         @data = if file.ends_with? 'request.txt'
                   MooTool::Models::RemoteRequest.load(file)
                 else

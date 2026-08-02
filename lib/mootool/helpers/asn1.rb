@@ -99,9 +99,9 @@ module MooTool
         case cc_tag
         when :SPAY
           values = value[0].map do |entry|
-            { key: entry[0].to_4cc, unk: value[1], value: entry[2] }
+            Models::IMG4::SysCfgEntry.new(entry)
           end
-          { cc_tag => values }
+          { Models::IMG4.key_name(cc_tag) => values }
         else
           { cc_tag => value }
         end

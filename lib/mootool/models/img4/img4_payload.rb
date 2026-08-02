@@ -3,8 +3,10 @@
 module MooTool
   module Models
     module IMG4
+      # Represents an IM4P or payload
       class IMG4Payload
         include MooTool::Helpers::IMG4
+        include Helpers::Hashing
 
         attr_reader :signature, :payload, :type
 
@@ -19,6 +21,7 @@ module MooTool
           @description = input.value[2].value
           @payload = MooTool::Models::Decompressor.new(input.value[3].value, @type)
           @keybag = parse_keybag(input.value[4]) if input.value[4]
+          @validated = nil
 
           return unless input.value[5]
 
@@ -39,11 +42,25 @@ module MooTool
           end.reduce(&:merge)
         end
 
+        def validate(manifest)
+          firmware_tag = manifest.firmware_tag(@type)
+
+          match = hashes.select do |hash|
+            hash == firmware_tag.digest
+          end
+          @validated = {
+            valid: match.any?,
+            hash: match.first
+          }
+        end
+
         def to_h
           result = { type: @type, description: @description, payload: @payload }
 
           result[:keybag] = @keybag if @keybag
           result[:extensions] = @extensions if @extensions
+          result[:payload_hashes] = named_hashes
+          result[:validated] = @validated if @validated
           result
         end
 
@@ -55,12 +72,8 @@ module MooTool
           @input.to_der
         end
 
-        def hashes
-          results = [OpenSSL::Digest::SHA384.digest(to_bytes)]
-          @payload.hashes.each do |hash|
-            results << hash
-          end
-          results.uniq.map { |h| Models::Digest.create(h) }
+        def raw_hashes
+          [{ kind: 'IM4P:to_bytes', value: to_bytes }] + @payload.raw_hashes
         end
       end
     end

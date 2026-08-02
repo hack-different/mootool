@@ -29,6 +29,7 @@ module MooTool
       method_option :save_file, type: :string, default: nil
       desc 'index', 'Indexes certificates throughout the land'
       def index
+        CertificateIndex.load_default_certs
         Models::FileIndex.current.index.each do |file|
           Models.file_guesser(file.fullname)
         end

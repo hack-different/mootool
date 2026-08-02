@@ -2,6 +2,7 @@
 
 module MooTool
   module Models
+    # A combined index of certificates
     class CertificateIndex
       attr_accessor :index
 
@@ -9,8 +10,20 @@ module MooTool
         @index = {}
       end
 
+      def self.load_default_certs
+        Dir[File.join(DATA_PATH, '**/*.{cer,der}')].each do |path|
+          Models::Certificate.load path
+        end
+      end
+
       def add_certificate(certificate)
-        @index[certificate.hash] = certificate
+        case certificate
+        when Models::Certificate
+          @index[certificate.digest] = certificate
+        when OpenSSL::X509::Certificate
+          certificate = Certificate.new certificate
+          @index[certificate.digest] = certificate
+        end
       end
 
       def self.current
@@ -25,14 +38,14 @@ module MooTool
 
       def matching_key(key)
         key = MooTool::Models::Certificate.formatted_public_key(key)
-        index.select do |_hash, certificate|
+        results = index.select do |_hash, certificate|
           key == certificate.formatted_public_key
-        end.map do |_hash, certificate|
-          { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
-            hash: certificate.hash }
-        end.uniq do |entry|
-          entry[:hash].value
         end
+        results = results.map do |_hash, certificate|
+          { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
+            hash: certificate.digest }
+        end
+        results.uniq { |entry| entry[:hash].value }
       end
 
       def with_identifier(id)
@@ -42,7 +55,7 @@ module MooTool
       end
 
       def self.add_certificate(certificate)
-        current.index[certificate.hash] = certificate
+        current.index[certificate.digest] = certificate
       end
 
       def save(path)

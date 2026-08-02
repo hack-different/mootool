@@ -38,9 +38,7 @@ describe MooTool::Models::IMG4::File do
 
   context 'with a file index' do
     let(:target_files) do
-      index = MooTool::Models::FileIndex.new
-      index.perform
-      index.index.select(&:img4?)
+      img4_files
     end
 
     it 'matches many files' do
@@ -52,6 +50,14 @@ describe MooTool::Models::IMG4::File do
         target_files.each do |file|
           expect(described_class.load(file)).not_to be_nil
         end
+      end
+    end
+
+    img4_files.each do |file|
+      it "validates the file #{file}" do
+        file = described_class.load(file)
+
+        expect(file.valid_signature?).to be true if file.signature?
       end
     end
   end

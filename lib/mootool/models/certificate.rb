@@ -4,10 +4,12 @@ require 'cfpropertylist'
 
 module MooTool
   module Models
+    # A wrapper around OpenSSL::X509::Certificate with additional fuctionality
     class Certificate
       include Helpers::IMG4
+      include Helpers::Hashing
 
-      attr_reader :hash, :fingerprint
+      attr_reader :digest, :fingerprint
 
       def self.load_oid_map
         YAML.load_file(File.join(DATA_PATH, 'pki.yaml')).deep_symbolize_keys
@@ -17,7 +19,7 @@ module MooTool
 
       def initialize(certificate)
         @certificate = certificate
-        @hash = Models::Digest.digest(@certificate.to_der)
+        @digest = to_hash(certificate.to_der)
         @fingerprint = ::Digest::SHA1.hexdigest(@certificate.to_der).scan(/../).join(':').upcase
 
         @extensions = certificate.extensions.map do |extension|
@@ -29,6 +31,12 @@ module MooTool
 
       def identifiers
         [@fingerprint, @extensions[:subjectKeyIdentifier]]
+      end
+
+      def validate(public_key)
+        @certificate.verify(public_key)
+      rescue StandardError
+        false
       end
 
       def formatted_public_key(find_matches: false)
@@ -85,17 +93,8 @@ module MooTool
                   extension.value
                 when :keyUsage
                   construct(OpenSSL::ASN1.decode(extension.value_der))
-                when :authorityKeyIdentifier
-                  aki = extension.value.include?("\n") ? extension.value.split("\n") : extension.value
-                  matches = CertificateIndex.current.with_identifier(aki)
-
-                  if matches.any?
-                    { id: aki, matches: matches }
-                  else
-                    aki
-                  end
-                when :subjectKeyIdentifier
-                  extension.value.include?("\n") ? extension.value.split("\n") : extension.value
+                when :authorityKeyIdentifier, :subjectKeyIdentifier
+                  parse_identifiers extension
                 when :'1.2.840.113635.100.6.17'
                   data = construct(OpenSSL::ASN1.decode(extension.value_der))
                   Certificate.parse_sik(data)
@@ -106,49 +105,68 @@ module MooTool
                     { direction: direction, config: config, value: Certificate.parse_sik(value) }
                   end
                 when :appleDeviceAttestationKeyUsageProperties
-                  result = construct(OpenSSL::ASN1.decode(extension.value_der))
-
-                  result.map do |item|
-                    if item.is_a?(Hash)
-                      item.to_h do |key, value|
-                        tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
-                        tag = tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
-                        [tag, value.first]
-                      end
-                    else
-                      item
-                    end
-                  end
+                  parse_apple_device_attestation(extension)
                 when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
                   :appleDeviceAttestationHardwareProperties
 
-                  resequence(construct(OpenSSL::ASN1.decode(extension.value_der))).transform_keys do |key|
-                    if key.is_a?(Symbol)
-                      key
-                    else
-                      tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
-                      tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
-                    end
-                  end.transform_values(&:first)
+                  parse_apple_sequence(extension)
                 else
-                  case oid_properties[:type]
-                  when :img4
-                    IMG4::File.new(extension.value_der).to_h
-                  when :scalar
-                    construct(OpenSSL::ASN1.decode(extension.value_der)).first
-                  when :hashes
-                    construct(OpenSSL::ASN1.decode(extension.value_der)).map(&:to_h).reduce(&:merge)
-                  when :sequence
-                    resequence(construct(OpenSSL::ASN1.decode(extension.value_der)))
-                  else
-                    construct(OpenSSL::ASN1.decode(extension.value_der))
-                  end
+                  parse_other_extension(oid_properties, extension)
                 end
 
         if extension.critical?
           { oid_properties[:name].to_sym => { critical: extension.critical?, value: value } }
         else
           { oid_properties[:name].to_sym => value }
+        end
+      end
+
+      def parse_identifiers(extension)
+        identifiers = extension.value.include?("\n") ? extension.value.split("\n") : [extension.value]
+        identifiers.map do |id|
+          { id => CertificateIndex.current.with_identifier(id) }
+        end
+      end
+
+      def parse_apple_sequence(extension)
+        resequence(construct(OpenSSL::ASN1.decode(extension.value_der))).transform_keys do |key|
+          if key.is_a?(Symbol)
+            key
+          else
+            tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
+            tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
+          end
+        end.transform_values(&:first)
+      end
+
+      def parse_apple_device_attestation(extension)
+        result = construct(OpenSSL::ASN1.decode(extension.value_der))
+
+        result.map do |item|
+          if item.is_a?(Hash)
+            item.to_h do |key, value|
+              tag = APPLE_OID_MAP.dig(:extension_tags, key) || { name: key }
+              tag = tag[:name].respond_to?(:to_sym) ? tag[:name].to_sym : tag[:name]
+              [tag, value.first]
+            end
+          else
+            item
+          end
+        end
+      end
+
+      def parse_other_extension(oid_properties, extension)
+        case oid_properties[:type]
+        when :img4
+          IMG4::File.new(extension.value_der).to_h
+        when :scalar
+          construct(OpenSSL::ASN1.decode(extension.value_der)).first
+        when :hashes
+          construct(OpenSSL::ASN1.decode(extension.value_der)).map(&:to_h).reduce(&:merge)
+        when :sequence
+          resequence(construct(OpenSSL::ASN1.decode(extension.value_der)))
+        else
+          construct(OpenSSL::ASN1.decode(extension.value_der))
         end
       end
 
@@ -168,9 +186,9 @@ module MooTool
 
         parts = key.split('-')
         if parts.size == 3
-          { type: :sik, serial: parts[1], hash: Models::Digest.from_hex(parts[2]) }
+          { key_type: :sik, serial: parts[1], hash: Models::Digest.from_hex(parts[2]) }
         elsif parts.size == 4
-          { type: :sik, chip: parts[1], ecid: parts[2], hash: Models::Digest.from_hex(parts[3]) }
+          { key_type: :sik, chip: parts[1], ecid: parts[2], hash: Models::Digest.from_hex(parts[3]) }
         end
       end
 
@@ -231,12 +249,40 @@ module MooTool
         @certificate.subject
       end
 
+      def validations
+        validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
+          validator_certificate.subject.to_s
+        end
+        validator_certs = validator_certs.uniq { |_hash, cert| cert.digest }
+
+        validations = validator_certs.map do |_hash, validator_certificate|
+          {
+            subject: validator_certificate.subject.to_s,
+            issuer: validator_certificate.issuer.to_s,
+            fingerprint: validator_certificate.fingerprint,
+            digest: validator_certificate.digest,
+            valid: validate(validator_certificate.public_key)
+          }
+        end
+        valid_certs = validations.select do |validation|
+          validation[:valid] || validation[:subject] == issuer.to_s
+        end
+
+        {
+          subject.to_s => {
+            issuer: issuer.to_s,
+            validations: valid_certs.uniq { |cert| cert[:digest].shasum }
+          }
+        }
+      end
+
       def to_h
         result = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
 
         result[:key_id] = key_id if key_id
         result[:public_key] = formatted_public_key(find_matches: true)
         result[:fingerprint] = @fingerprint
+        result[:validations] = validations
 
         result[:extensions] = @extensions
         result

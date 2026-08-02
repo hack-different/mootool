@@ -40,8 +40,10 @@ module MooTool
            pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo bstc chg0 chg1 ciof stg1 csys dtre
            dcp2 dcpf isys dven ftap ftsp gfxf glyP ibdt ibec ibot ibss illb ispf ipdf rfta krnl logo msys mtfw
            mtpf pmcf pmpf rans rcio rdc2 rdcp rdtr recm rfts rkrn sptm rlg1 rlg2 rlgo rosi rsep tsep rspt rtmu
-           rtrx sepi siof lpol trxm trst tmuf bsys]
+           rtrx sepi siof lpol trxm trst tmuf bsys ADCL]
       )
+
+      ALGORITHMS = { 0 => :SHA1, 1 => :SHA256, 2 => :SHA384 }.freeze
 
       def self.included(base)
         base.include Helpers::ASN1

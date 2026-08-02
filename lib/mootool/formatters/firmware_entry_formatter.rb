@@ -4,6 +4,8 @@ module MooTool
   module Formatters
     # Formatter to display firmware entries (those with DGST)
     module FirmwareEntryFormatter
+      SKIP_KEYS = %i[DGST clas].freeze
+
       def awesome_firmware_entry(entry, _options = {})
         digest = digest_dgst(entry)
         booleans = digest_booleans(entry)
@@ -47,7 +49,7 @@ module MooTool
       end
 
       def digest_other(entry)
-        entry.value.reject { |k, v| k == :DGST || [true, false].include?(v) }
+        entry.value.reject { |k, v| SKIP_KEYS.include?(k) || [true, false].include?(v) }
       end
     end
   end

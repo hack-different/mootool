@@ -6,21 +6,37 @@ module MooTool
     module Signature
       extend ActiveSupport::Concern
 
+      def valid_signature?
+        signatures = validate_signature
+        if signatures
+          signatures.any? { |_key, entry| entry[:valid] == true }
+        else
+          true
+        end
+      end
+
+      def signature?
+        validate_signature.present?
+      end
+
       def validate_signature
-        leaf_certificate = validted_certificate_chain
-        digest = OpenSSL::Digest.new('SHA384')
-        values = %i[IM4M IM4P].map do |kind|
-          OpenSSL::Digest::SHA384.digest(@content[kind]&.to_bytes)
-        end.compact
+        signatures.flat_map do |signature_pair|
+          signature_kind = signature_pair[:kind]
+          signature = signature_pair[:value]
+          signature = signature.value if signature.is_a?(Models::ECCSignature)
+          public_keys.flat_map do |fingerprint, public_key|
+            raw_hashes.map do |hash_pairing|
+              hash_kind = hash_pairing[:kind]
+              raw_hash = hash_pairing[:value]
+              printable_hash = Models::Digest.new(::Digest::SHA384.digest(raw_hash))
 
-        signatures = %i[IM4P IM4M].map do |kind|
-          signature = @content[kind]&.signature
-          signature.respond_to?(:value) ? signature.value : signature
-        end.compact
-
-        signatures.flat_map do |signature|
-          values.map do |value|
-            { digest.hexdigest(value) => leaf_certificate.public_key.verify(digest, signature, value) }
+              raw_hash = raw_hash.value if raw_hash.is_a?(Models::Digest)
+              signature = signature.value if signature.is_a?(Models::Digest)
+              result = public_key.verify('SHA384', signature, raw_hash)
+              {
+                "#{signature_kind}:#{fingerprint}:#{hash_kind}": { hash: printable_hash, valid: result }
+              }
+            end
           end
         end.reduce(&:merge)
       end

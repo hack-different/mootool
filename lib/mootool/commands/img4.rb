@@ -9,6 +9,7 @@ module MooTool
       desc 'print', 'Parses and prints pretty versions of an img4/DER'
       def print(filename)
         Models::Digest.load_manifests(options[:manifest]) if options[:manifest]
+        Models::CertificateIndex.load_default_certs
         file = Models::IMG4::File.load(filename)
         Models::IMG4.friendly = options[:friendly]
         file.print

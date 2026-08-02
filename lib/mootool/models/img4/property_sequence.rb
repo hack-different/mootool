@@ -28,6 +28,10 @@ module MooTool
         { Models::IMG4.key_name(@key) => @value.deep_transform_keys { |key| Models::IMG4.key_name(key) } }
       end
 
+      def [](key)
+        @value[key]
+      end
+
       def inspect
         to_h.ai
       end

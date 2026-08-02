@@ -2,14 +2,13 @@
 
 module MooTool
   module Models
+    # A remote signing request for certificates / activation
     class RemoteRequest
       include Helpers::IMG4
 
       MATCHER_REGEX = /---------REQUEST START---------\n.*BODY: \n(?<body>.*)\n\n----------REQUEST END----------/m
 
       PRIME_CURVE = OpenSSL::PKey::EC::Group.new('prime256v1')
-
-      ALGORITHMS = { 0 => :SHA1, 1 => :SHA256, 2 => :SHA384 }.freeze
 
       PUBLIC_KEY_PROPERTIES = {
         UIKPub: :prime256v1,
@@ -30,13 +29,7 @@ module MooTool
         @data = @original.dup
 
         @rk = {}
-        if @data.key? :ActivationInfoXML
-          @activation_request = CFPropertyList.native_types(CFPropertyList::List.new(data: @data[:ActivationInfoXML]).value).deep_symbolize_keys
-          @activation_request[:UIKCertification][:'Ap,RemotePolicyNonceHash'] = Models::Digest.create(@activation_request[:UIKCertification][:'Ap,RemotePolicyNonceHash'])
-          @activation_request[:UIKCertification][:UIKCertification] =
-            parse_certification(@activation_request[:UIKCertification][:UIKCertification])
-          @data.delete :ActivationInfoXML
-        end
+        handle_activation_token
 
         if @data.key? :RKCertification
           @rk[:certification] = parse_certification(@data[:RKCertification]).to_h
@@ -48,11 +41,7 @@ module MooTool
           @data.delete :RKSignature
         end
 
-        if @data.key? :RKProperties
-          properties = CFPropertyList.native_types(CFPropertyList::List.new(data: @data[:RKProperties]).value).deep_symbolize_keys
-          @data.delete :RKProperties
-          @rk[:properties] = parse_properties properties
-        end
+        handle_rk_properties
 
         if @data.key? :RKSigningPub
           @rk[:signing_pub] = parse_point_with_match(@data[:RKSigningPub])
@@ -68,6 +57,30 @@ module MooTool
 
         @rk[:signing] = parse_certification(@data[:RKSigning]).to_h
         @data.delete :RKSigning
+      end
+
+      def handle_rk_properties
+        return unless @data.key? :RKProperties
+
+        properties = CFPropertyList.native_types(CFPropertyList::List.new(
+          data: @data[:RKProperties]
+        ).value).deep_symbolize_keys
+        @data.delete :RKProperties
+        @rk[:properties] = parse_properties properties
+      end
+
+      def handle_activation_token
+        return unless @data.key? :ActivationInfoXML
+
+        @activation_request = CFPropertyList.native_types(CFPropertyList::List.new(
+          data: @data[:ActivationInfoXML]
+        ).value).deep_symbolize_keys
+        @activation_request[:UIKCertification][:'Ap,RemotePolicyNonceHash'] = Models::Digest.create(
+          @activation_request[:UIKCertification][:'Ap,RemotePolicyNonceHash']
+        )
+        @activation_request[:UIKCertification][:UIKCertification] =
+          parse_certification(@activation_request[:UIKCertification][:UIKCertification])
+        @data.delete :ActivationInfoXML
       end
 
       def parse_properties(properties)

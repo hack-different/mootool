@@ -2,8 +2,9 @@
 
 module MooTool
   module Models
+    # Represents a file location and its associated hashes.
     class FileLocation
-      attr_accessor :location, :filename, :hashes
+      attr_accessor :location, :filename
 
       def initialize(location, filename, hashes = nil)
         @location = location
@@ -18,7 +19,7 @@ module MooTool
         end
       end
 
-      def has_hash?
+      def hashed?
         @hashes&.any?
       end
 
