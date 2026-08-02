@@ -2,8 +2,8 @@
 
 `mootool` operates as an experimental system with low friction to extension and experimentation.  This allows reverse
 engineering of undocumented Apple formats, such as IMG4 / DER data for yet unknown formats.  It specializes in newer
-concepts such as `LocalPolicy`, `FDR` and the SEP / SE.  It pairs perfectly with 
-[`apple-knowledge`](https://github.com/hack-different/apple-knowledge) to offload the data vs the code. 
+concepts such as `LocalPolicy`, `FDR` and the SEP / SE.  It pairs perfectly with
+[`apple-knowledge`](https://github.com/hack-different/apple-knowledge) to offload the data vs the code.
 
 `mootool` is also an attempt at an open source replacement to the legendary `jtool2` allowing it to continue to progress
 with the Apple research community. Ruby was selected as [Homebrew](https://brew.sh) maintains a good Mach-O parser
@@ -12,9 +12,11 @@ that is pure (meaning it needs no dependencies other than a Ruby runtime).
 As a secondary goal every command should provide output both in human-readable and machine-readable (YAML/JSON)
 format making it suitable for use in scripting.
 
-### But why RUBY?
+![Example LocalPolicy](doc/images/example.png)
 
-Ruby is a powerful language that is portable outside the Apple ecosystem, thereby breaking the monoculture problem 
+## But why RUBY
+
+Ruby is a powerful language that is portable outside the Apple ecosystem, thereby breaking the monoculture problem
 whereby Apple security can only be asserted on Apple devices.  It's only used due the rapid ability to prototype
 and experiment, and will be replaced with `rust` code once formats are fully understood.
 
@@ -27,8 +29,8 @@ The code can also be used as a library with `gem 'mootool'`
 The development version can be installed with:
 
 ```bash
-$ bundle install
-$ rake install
+bundle install
+rake install
 ```
 
 ## Usage
@@ -40,10 +42,11 @@ $ rake install
   * `index` - Creates an index of loose certificates, as well as those in IMG4 payloads
   * `print` - Displays a certificate, its linked resources, and decodes X509 extensions
 * `activation` - `MobileActivation`
-  * `print` - Shows decoded data from MobileActivation requests such as the issuance of `dcrt`, `scrt`, `sdcrt`, `ucrt`
-     `KeyRecoveryAssistant` and more.  Parses both requests and responses from `/System/Volumes/Hardware/MobileActivation`
+  * `print` - Shows decoded data from MobileActivation requests such as the issuance of `dcrt`, `scrt`, `sdcrt`,
+    `ucrt`, `KeyRecoveryAssistant` and more.  Parses both requests and responses from
+    `/System/Volumes/Hardware/MobileActivation`
 * `kc` - KernelCollections
-    * `list`
+  * `list`
 
 ## Development
 
@@ -56,7 +59,8 @@ push git commits and tags, and push the `.gem` file to [rubygems.org](https://ru
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mootool. This project is intended
+Bug reports and pull requests are welcome on GitHub at
+[https://github.com/rickmark/mootool](https://github.com/rickmark/mootool). This project is intended
 to be a safe, welcoming space for collaboration, and contributors are expected to adhere to
 the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 

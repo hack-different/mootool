@@ -17,10 +17,10 @@ end
 
 report_unchecked = lambda do |unchecked|
   puts
-  puts <<~EOS
+  puts <<~ERROR
     WARNING: The following directories will only be checked if you configure
     them to be eager loaded:
-  EOS
+  ERROR
   puts
 
   unchecked.each { |dir| puts "  #{dir}" }

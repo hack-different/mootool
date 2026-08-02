@@ -16,6 +16,8 @@ class Integer
   end
 
   def to_4cc
+    return self if self <= 65_535
+
     [to_s(16)].pack('H*').to_sym
   end
 end

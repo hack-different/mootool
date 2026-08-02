@@ -22,7 +22,7 @@ module MooTool
 
       def digest_files(object)
         object.files.map do |f|
-          "#{' ' * @inspector.current_indentation}    #{colorize('match', :args)}: #{colorize(f.fullname, :path)}"
+          "#{' ' * @inspector.current_indentation}   #{colorize('match', :args)}: #{colorize(f.fullname, :path)}"
         end
       end
     end
