@@ -6,7 +6,7 @@ module MooTool
       # Represents a SysCfg Key + Value with protection settings
       class SysCfgEntry
         def initialize(input)
-          @key = input[0].to_4cc(true)
+          @key = input[0].to_4cc(reverse: true)
           @protection = input[1]
           @value = input[2]
         end

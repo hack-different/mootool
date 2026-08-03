@@ -4,6 +4,7 @@
 /coverage/
 /doc/
 !/doc/images/*
+!/doc/tapes/*
 /pkg/
 /spec/reports/
 /tmp/
