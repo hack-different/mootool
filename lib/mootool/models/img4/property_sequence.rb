@@ -10,22 +10,32 @@ module MooTool
 
       def initialize(input)
         construction = construct(input.value.first)
-        @key = construction[0].to_sym
+        @key = Models::IMG4.key_name(construction[0])
         value = construction[1]
-        case value
-        when Array, Hash
-          @value = value
-        when PropertySequence
-          @value = { value.key => value.value }
+
+        @value = value.to_h(&:to_pair)
+      end
+
+      def to_tree
+        node = Helpers::TreeNode.new(Models::IMG4.key_name(@key).ai)
+
+        @value.each do |key, value|
+          node.children << if value.respond_to? :to_tree
+                             Helpers::TreeNode.new(Models::IMG4.key_name(key).ai, [value.to_tree])
+                           else
+                             Helpers::TreeNode.new(Models::IMG4.key_name(key).ai, [Helpers::TreeNode.new(value.ai)])
+                           end
         end
 
-        return unless @value.is_a?(Array)
-
-        @value = @value.map(&:to_h).reduce({}, :merge)
+        node
       end
 
       def to_h
         { Models::IMG4.key_name(@key) => @value.deep_transform_keys { |key| Models::IMG4.key_name(key) } }
+      end
+
+      def to_pair
+        [Models::IMG4.key_name(@key), self]
       end
 
       def [](key)

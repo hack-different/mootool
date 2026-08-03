@@ -55,6 +55,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-macho'
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor'
+  spec.add_dependency 'tty'
   spec.add_dependency 'uuidtools'
   spec.add_dependency 'zeitwerk'
 

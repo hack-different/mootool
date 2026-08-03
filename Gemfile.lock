@@ -14,6 +14,7 @@ PATH
       ruby-macho
       rubyzip
       thor
+      tty
       uuidtools
       zeitwerk
 
@@ -55,6 +56,7 @@ GEM
     diff-lcs (1.6.2)
     drb (2.2.3)
     ecies (0.4.0)
+    equatable (0.5.0)
     erubi (1.13.1)
     ffi (1.17.4-arm64-darwin)
     ffi (1.17.4-x86_64-darwin)
@@ -93,6 +95,7 @@ GEM
       tomlrb
     mixlib-shellout (3.4.10)
       chef-utils
+    necromancer (0.3.0)
     nkf (0.3.0)
     overcommit (0.72.0)
       childprocess (>= 0.6.3, < 6)
@@ -102,6 +105,9 @@ GEM
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
+    pastel (0.6.1)
+      equatable (~> 0.5.0)
+      tty-color (~> 0.3.0)
     plist (3.7.2)
     prism (1.9.0)
     pry (0.16.0)
@@ -117,7 +123,7 @@ GEM
     rbi (0.4.2)
       prism (~> 1.0)
       rbs (>= 4.0.1)
-    rbs (4.1.1)
+    rbs (4.1.2)
       logger
       prism (>= 1.6.0)
       tsort
@@ -206,6 +212,47 @@ GEM
     thor (1.5.0)
     tomlrb (2.0.4)
     tsort (0.2.0)
+    tty (0.5.0)
+      equatable (~> 0.5.0)
+      pastel (~> 0.6.0)
+      tty-color (~> 0.3.0)
+      tty-command (~> 0.1.0)
+      tty-cursor (~> 0.3.0)
+      tty-pager (~> 0.4.0)
+      tty-platform (~> 0.1.0)
+      tty-progressbar (~> 0.9.0)
+      tty-prompt (~> 0.6.0)
+      tty-screen (~> 0.5.0)
+      tty-spinner (~> 0.2.0)
+      tty-table (~> 0.5.0)
+      tty-which (~> 0.1.0)
+    tty-color (0.3.0)
+    tty-command (0.1.0)
+      pastel (~> 0.6.0)
+    tty-cursor (0.3.0)
+    tty-pager (0.4.0)
+      tty-screen (~> 0.5.0)
+      tty-which (~> 0.1.0)
+      verse (~> 0.4.0)
+    tty-platform (0.1.0)
+    tty-progressbar (0.9.0)
+      tty-screen (~> 0.5.0)
+    tty-prompt (0.6.0)
+      necromancer (~> 0.3.0)
+      pastel (~> 0.6.0)
+      tty-cursor (~> 0.3.0)
+      tty-platform (~> 0.1.0)
+      wisper (~> 1.6.1)
+    tty-screen (0.5.1)
+    tty-spinner (0.2.0)
+    tty-table (0.5.0)
+      equatable (~> 0.5.0)
+      necromancer (~> 0.3.0)
+      pastel (~> 0.6.0)
+      tty-screen (~> 0.5.0)
+      unicode_utils (~> 1.4.0)
+      verse (~> 0.4.0)
+    tty-which (0.1.0)
     typeprof (0.32.0)
       prism (>= 1.4.0)
       rbs (>= 3.6.0)
@@ -214,8 +261,12 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
+    unicode_utils (1.4.0)
     uri (1.1.1)
     uuidtools (3.0.0)
+    verse (0.4.0)
+      unicode_utils (~> 1.4.0)
+    wisper (1.6.1)
     yard (0.9.45)
     zeitwerk (2.8.3)
 

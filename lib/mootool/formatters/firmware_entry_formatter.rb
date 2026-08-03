@@ -13,7 +13,7 @@ module MooTool
 
         results = ["#{colorize('Firmware', :class)} #{colorize(digest.shasum, :digest)} #{booleans.join(' ')}"]
         results += digest.files.map do |file|
-          "#{indent}    #{colorize('match', :args)}: #{colorize(file.fullname, :path)}"
+          "#{colorize('match', :args)}: #{colorize(file.fullname, :path)}"
         end
 
         results += other.map { |k, v| format_other(k, v) }
@@ -23,17 +23,13 @@ module MooTool
 
       private
 
-      def indent
-        ' ' * @inspector.current_indentation
-      end
-
       def format_other(key, value)
         case value
         when MooTool::Models::Digest
-          "#{indent}      #{colorize(key, :symbol)}  " \
+          "#{colorize(key, :symbol)}  " \
           "#{colorize(value.hint, :class).rjust(24)} #{colorize(value.shasum, :digest)}"
         else
-          "#{indent}  #{colorize(key, :symbol)}: #{value.ai}"
+          "#{colorize(key, :symbol)}: #{value.ai}"
         end
       end
 

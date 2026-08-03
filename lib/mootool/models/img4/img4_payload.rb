@@ -15,6 +15,14 @@ module MooTool
           2 => :DEV
         }.freeze
 
+        def to_tree
+          Helpers::TreeNode.new(Models::IMG4.key_name(:IM4P).ai, [
+                                  Helpers::TreeNode.new("Type: #{Models::IMG4.key_name(@type).ai}"),
+                                  Helpers::TreeNode.new("Description: #{@description.ai}"),
+                                  @payload.to_tree
+                                ])
+        end
+
         def initialize(input)
           @input = input
           @type = input.value[1].value

@@ -35,6 +35,8 @@ module MooTool
       end
 
       def self.key_name(key)
+        key = key.to_sym unless key.is_a?(Symbol)
+
         if friendly
           string_result = mappings.dig(key, 'title') || mappings.dig(key, 'name') || mappings.dig(key, 'description')
           return Models::DescriptorResult.new key, string_result if string_result

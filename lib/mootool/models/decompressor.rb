@@ -83,11 +83,13 @@ module MooTool
 
           @parsed = case hint
                     when :scrt, :lcrt
+                      certificate = OpenSSL::ASN1.decode(@asn1.value[3].value)
+
                       {
                         unk1: @constructed[0],
                         unk2: @constructed[1],
-                        signature: Models::Digest.create(@constructed[2]),
-                        certificate: OpenSSL::X509::Certificate.new(OpenSSL::ASN1.decode(@constructed[3].value).to_der),
+                        public_key: ECCPublicKey.from_point(@asn1.value[2].value),
+                        certificates: Models::Certificate.new(OpenSSL::X509::Certificate.new(certificate)),
                         unk4: @constructed[4]
                       }
                     when :dCfg
@@ -105,7 +107,7 @@ module MooTool
                       { hint => construct(@asn1) }
                     end
         rescue StandardError => e
-          @parsed = { value: Models::Digest.create(value), error: e }
+          @parsed = { value: Models::Digest.create(value), error: e.full_message.ai }
         end
       end
 
@@ -122,15 +124,27 @@ module MooTool
         results.compact.uniq { |entry| entry[:value] }
       end
 
-      def inspect
-        return { value: nil }.ai if @parsed.nil?
+      def to_tree
+        children = to_h.map do |key, value|
+          Helpers::TreeNode.new(key, [Helpers::TreeNode.new(value.ai)])
+        end
+
+        Helpers::TreeNode.new('Decompressor', children)
+      end
+
+      def to_h
+        return { value: nil } if @parsed.nil?
 
         result = { length: @value.size, hash: to_hash(@hash), parsed: @parsed }
         result[:compression] = @compression if @compression != :raw
         result[:decompressed_hash] = to_hash(@decompressed_hash) if @decompressed_hash && @decompressed_hash != @hash
         result[:parsed] = @parsed if @parsed
         result[:hint] = @hint if @hint
-        result.ai
+        result
+      end
+
+      def inspect
+        to_h.ai
       end
     end
   end

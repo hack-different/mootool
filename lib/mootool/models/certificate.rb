@@ -11,6 +11,8 @@ module MooTool
 
       attr_reader :digest, :fingerprint
 
+      delegate :issuer, :subject, to: :@certificate
+
       def self.load_oid_map
         YAML.load_file(File.join(DATA_PATH, 'pki.yaml')).deep_symbolize_keys
       end
@@ -33,7 +35,7 @@ module MooTool
         [@fingerprint, @extensions[:subjectKeyIdentifier]]
       end
 
-      def validate(public_key)
+      def verify(public_key)
         @certificate.verify(public_key)
       rescue StandardError
         false
@@ -121,6 +123,22 @@ module MooTool
         end
       end
 
+      def to_tree
+        properties = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
+
+        properties[:key_id] = key_id if key_id
+        properties[:public_key] = formatted_public_key(find_matches: true)
+        properties[:fingerprint] = @fingerprint
+
+        node = Helpers::TreeNode.new("Certificate:#{digest.ai}")
+        node.children << Helpers::TreeNode.new('Properties', [Helpers::TreeNode.new(properties.ai)])
+        validation_nodes = validations.map { |id, v| Helpers::TreeNode.new(id, [Helpers::TreeNode.new(v.ai)]) }
+        node.children << Helpers::TreeNode.new('Validations', validation_nodes)
+        extension_nodes = @extensions.map { |id, e| Helpers::TreeNode.new(id, [Helpers::TreeNode.new(e.ai)]) }
+        node.children << Helpers::TreeNode.new('Extensions', extension_nodes)
+        node
+      end
+
       def parse_identifiers(extension)
         identifiers = extension.value.include?("\n") ? extension.value.split("\n") : [extension.value]
         identifiers.map do |id|
@@ -166,7 +184,7 @@ module MooTool
         when :sequence
           resequence(construct(OpenSSL::ASN1.decode(extension.value_der)))
         else
-          construct(OpenSSL::ASN1.decode(extension.value_der))
+          extension.value
         end
       end
 
@@ -241,14 +259,6 @@ module MooTool
         Models::Digest.create [common_name].pack('H*')
       end
 
-      def issuer
-        @certificate.issuer
-      end
-
-      def subject
-        @certificate.subject
-      end
-
       def validations
         validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
           validator_certificate.subject.to_s
@@ -261,7 +271,7 @@ module MooTool
             issuer: validator_certificate.issuer.to_s,
             fingerprint: validator_certificate.fingerprint,
             digest: validator_certificate.digest,
-            valid: validate(validator_certificate.public_key)
+            valid: verify(validator_certificate.public_key)
           }
         end
         valid_certs = validations.select do |validation|

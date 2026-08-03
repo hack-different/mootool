@@ -66,12 +66,12 @@ module MooTool
           construct_bitstring(input)
         when OpenSSL::ASN1::OCTET_STRING
           construct_octet_string(input)
-        when *self.class::KVP_TAGS
-          MooTool::Models::IMG4::KeyValueProperty.new input
         when *self.class::SEQUENCE_TAGS
           MooTool::Models::IMG4::PropertySequence.new input
         when *self.class::FIRMWARE_TAGS
           MooTool::Models::IMG4::FirmwareEntry.new input
+        when *self.class::KVP_TAGS
+          MooTool::Models::IMG4::KeyValueProperty.new input
         when OpenSSL::ASN1::EOC, OpenSSL::ASN1::SET, OpenSSL::ASN1::ENUMERATED, OpenSSL::ASN1::SEQUENCE
           input.value&.map { |v| construct(v) }
         else

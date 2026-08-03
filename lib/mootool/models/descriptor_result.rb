@@ -10,6 +10,17 @@ module MooTool
         @key = key
         @string_name = string_name
       end
+
+      def ==(other)
+        @key == case other
+                when DescriptorResult
+                  other.key
+                when String
+                  other.to_sym
+                else
+                  other
+                end
+      end
     end
   end
 end

@@ -20,6 +20,10 @@ module MooTool
       def to_h
         { Models::IMG4.key_name(@key) => self }
       end
+
+      def to_tree
+        Helpers::TreeNode.new(ai)
+      end
     end
   end
 end

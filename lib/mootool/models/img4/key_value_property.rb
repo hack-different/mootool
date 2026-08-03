@@ -15,7 +15,7 @@ module MooTool
         def initialize(input)
           KeyValueProperty.validate! input
 
-          @key = input.tag.to_4cc
+          @key = Models::IMG4.key_name(input.tag.to_4cc)
           @object = input
 
           construction = construct(input.value.first)
@@ -27,6 +27,18 @@ module MooTool
 
         def to_h
           { Models::IMG4.key_name(@key) => @value }
+        end
+
+        def to_pair
+          [Models::IMG4.key_name(@key), @value]
+        end
+
+        def to_tree
+          if @value.respond_to? :to_tree
+            @value.to_tree
+          else
+            Helpers::TreeNode.new(Models::IMG4.key_name(@key).ai, [TreeNode.new(@value.ai)])
+          end
         end
 
         def inspect

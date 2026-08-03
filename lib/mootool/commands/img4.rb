@@ -12,7 +12,7 @@ module MooTool
         Models::CertificateIndex.load_default_certs
         file = Models::IMG4::File.load(filename)
         Models::IMG4.friendly = options[:friendly]
-        file.print
+        puts file.to_tree.render
       end
 
       desc :save_file, 'The file to save the results too'

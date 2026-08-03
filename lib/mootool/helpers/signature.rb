@@ -25,20 +25,19 @@ module MooTool
           signature = signature_pair[:value]
           signature = signature.value if signature.is_a?(Models::ECCSignature)
           public_keys.flat_map do |fingerprint, public_key|
-            raw_hashes.map do |hash_pairing|
-              hash_kind = hash_pairing[:kind]
-              raw_hash = hash_pairing[:value]
-              printable_hash = Models::Digest.new(::Digest::SHA384.digest(raw_hash))
+            hash_pairing = raw_hashes.find { |h| h[:kind] == :signed_data }
+            hash_kind = hash_pairing[:kind]
+            raw_hash = hash_pairing[:value]
+            printable_hash = Models::Digest.new(::Digest::SHA384.digest(raw_hash))
 
-              raw_hash = raw_hash.value if raw_hash.is_a?(Models::Digest)
-              signature = signature.value if signature.is_a?(Models::Digest)
-              result = public_key.verify('SHA384', signature, raw_hash)
-              {
-                "#{signature_kind}:#{fingerprint}:#{hash_kind}": { hash: printable_hash, valid: result }
-              }
-            end
+            raw_hash = raw_hash.value if raw_hash.is_a?(Models::Digest)
+            signature = signature.value if signature.is_a?(Models::Digest)
+            result = public_key.verify('SHA384', signature, raw_hash)
+            {
+              "#{signature_kind}:#{fingerprint}:#{hash_kind}": { hash: printable_hash, valid: result }
+            }
           end
-        end.reduce(&:merge)
+        end.reduce(&:merge) || {}
       end
 
       class_methods do

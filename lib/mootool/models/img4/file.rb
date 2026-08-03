@@ -6,12 +6,44 @@ module MooTool
     module IMG4
       # An IMG4 file, or, occasionally, a file read in from another source
       class File
-        attr_reader :manifest, :file_index
+        attr_reader :file_index
 
         include MooTool::Helpers::IMG4
         include Helpers::Signature
         include Helpers::File
         include Helpers::Hashing
+
+        def to_tree_hashes(node)
+          hash_nodes = named_hashes.map do |id, h|
+            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(h.ai)])
+          end
+          node.children << Helpers::TreeNode.new('Hashes', hash_nodes) if hash_nodes.any?
+        end
+
+        def to_tree_validations(node)
+          validation_nodes = validate_signature.map do |id, v|
+            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(v.ai)])
+          end
+          node.children << Helpers::TreeNode.new('Validation', validation_nodes) if validation_nodes.any?
+          return unless @content[:IM4M]
+
+          node.children << Helpers::TreeNode.new('Certificate Validations', @content[:IM4M].validate.map { |id, v|
+            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(v.ai)])
+          })
+        end
+
+        def to_tree
+          node = Helpers::TreeNode.new(Models::IMG4.key_name(:IMG4))
+          @content.each_value { |value| node.children << value.to_tree }
+          to_tree_hashes(node)
+          to_tree_validations(node)
+
+          node
+        end
+
+        def manifest
+          @content[:IM4M]
+        end
 
         def payload_type
           @content[:IM4P]&.type&.to_sym
@@ -55,7 +87,7 @@ module MooTool
         end
 
         def payload
-          @content[:IM4P].payload
+          @content[:IM4P]&.payload
         end
 
         def payload?
@@ -108,27 +140,6 @@ module MooTool
 
         private
 
-        def parse_secb
-          @value = construct(@data)
-          @content[:secb] = @value.drop(1).map do |entry|
-            case entry[0]
-            when 'trst', 'rssl'
-              { entry[0].to_sym => File.parse_certificates(entry.drop(1)) }
-            when 'rvok'
-              { entry[0].to_sym => entry[1] }
-            when 'trpk'
-              { entry[0].to_sym => entry.drop(1).map { |e| MooTool::Models::ECCPublicKey.new e } }
-            end
-          end.reduce(&:merge)
-        end
-
-        def parse_comb
-          @value = construct(@data)
-          @content[:comb] = @value.drop(1).map do |entry|
-            { entry[0] => File.new(entry[1]) }
-          end.reduce(&:merge)
-        end
-
         def parse
           case @type
           when 'IM4P'
@@ -139,9 +150,9 @@ module MooTool
             @content[:IM4P] = MooTool::Models::IMG4::IMG4Payload.new(@data.value[1])
             @content[:IM4M] = MooTool::Models::IMG4::IMG4Manifest.new(@data.value[2])
           when 'secb'
-            parse_secb
+            @content[:secb] = MooTool::Models::IMG4::SecurityBody.new(@data)
           when 'comb'
-            parse_comb
+            @content[:comb] = MooTool::Models::IMG4::CombinedPayload.new(@data)
           else
             @content = @value.map(&:to_h).reduce(&:merge)
           end

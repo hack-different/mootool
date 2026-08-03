@@ -44,7 +44,19 @@ module MooTool
           @data.to_der
         end
 
+        def to_tree
+          node = Helpers::TreeNode.new(Models::IMG4.key_name(:IM4M).ai)
+
+          node.children << Helpers::TreeNode.new("Version: #{@version.ai}")
+          node.children << @body.to_tree if @body
+          node.children << Helpers::TreeNode.new('Signature', [Helpers::TreeNode.new(@signature.ai)]) if @signature
+          node.children << Helpers::TreeNode.new('Certificates', @certificates.map(&:to_tree)) if @certificates
+
+          node
+        end
+
         def validate
+          @certificates ||= []
           @certificates.map do |certificate|
             validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
               validator_certificate.subject.to_s
@@ -57,7 +69,7 @@ module MooTool
                 issuer: validator_certificate.issuer.to_s,
                 fingerprint: validator_certificate.fingerprint,
                 digest: validator_certificate.digest,
-                valid: certificate.validate(validator_certificate.public_key)
+                valid: certificate.verify(validator_certificate.public_key)
               }
             end
             valid_certs = validations.select do |validation|
@@ -70,7 +82,7 @@ module MooTool
                 validations: valid_certs.uniq { |cert| cert[:digest].shasum }
               }
             }
-          end
+          end.reduce(&:merge) || {}
         end
 
         def signed_data
