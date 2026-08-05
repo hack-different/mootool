@@ -124,6 +124,10 @@ module MooTool
         results.compact.uniq { |entry| entry[:value] }
       end
 
+      def extract_to(path)
+        File.binwrite(path, @data)
+      end
+
       def to_tree
         children = to_h.map do |key, value|
           Helpers::TreeNode.new(key, [Helpers::TreeNode.new(value.ai)])

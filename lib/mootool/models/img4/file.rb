@@ -21,14 +21,14 @@ module MooTool
         end
 
         def to_tree_validations(node)
-          validation_nodes = validate_signature.map do |id, v|
-            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(v.ai)])
+          validation_nodes = validate_signature.map do |v|
+            Helpers::TreeNode.new(v.ai)
           end
           node.children << Helpers::TreeNode.new('Validation', validation_nodes) if validation_nodes.any?
           return unless @content[:IM4M]
 
-          node.children << Helpers::TreeNode.new('Certificate Validations', @content[:IM4M].validate.map { |id, v|
-            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(v.ai)])
+          node.children << Helpers::TreeNode.new('Certificate Validations', @content[:IM4M].validate.map { |v|
+            Helpers::TreeNode.new(v.ai)
           })
         end
 
@@ -59,7 +59,7 @@ module MooTool
 
           raw_data = der.is_a?(MooTool::Models::Digest) ? der.value : der
 
-          @hash_data = [raw_data]
+          @hash_data = [{ kind: :'file:hash', value: raw_data }]
           @data = OpenSSL::ASN1.decode(raw_data)
           @type = @data.value[0].value
           @content = {}
@@ -77,6 +77,10 @@ module MooTool
           result[:validation] = validate_signature
           result[:certificate_validation] = @certificate_validation
           result.deep_symbolize_keys
+        end
+
+        def file_hash
+          named_hashes[:'file:hash'].shasum
         end
 
         def types
@@ -117,10 +121,19 @@ module MooTool
           end
         end
 
-        def raw_hashes
-          results = []
-          results += @content[:IM4M]&.raw_hashes if @content[:IM4M]
-          results += @content[:IM4P]&.raw_hashes if @content[:IM4P]
+        def raw_hashes(prefix = nil)
+          results = @hash_data.dup
+          results += @content[:IM4M].raw_hashes if @content[:IM4M]
+          results += @content[:IM4P].raw_hashes if @content[:IM4P]
+          results += @content[:secb].raw_hashes if @content[:secb]
+          results += @content[:comb].raw_hashes if @content[:comb]
+
+          if prefix
+            results = results.map do |entry|
+              entry[:kind] = :"#{prefix}:#{entry[:kind]}"
+              entry
+            end
+          end
 
           results.compact.uniq
         end

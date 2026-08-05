@@ -21,5 +21,8 @@ module MooTool
 
     desc 'env', 'Environment Variables'
     subcommand :env, Commands::Environment
+
+    desc 'strings', 'Strings'
+    subcommand :strings, Commands::Strings
   end
 end

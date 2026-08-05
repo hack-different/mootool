@@ -13,7 +13,7 @@ module MooTool
       )
 
       DECODE_TAGS = parse_4cc(
-        %w[prid]
+        %w[prid time]
       )
 
       OCTET_TAGS = parse_4cc(

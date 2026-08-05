@@ -23,7 +23,7 @@ module MooTool
         end
       end
 
-      def decode_construct(input)
+      def decode_construct(input, tag)
         decode_target = case input
                         when MooTool::Models::Digest, OpenSSL::ASN1::OctetString
                           input.value
@@ -34,7 +34,32 @@ module MooTool
                         else
                           input
                         end
-        construct(OpenSSL::ASN1.decode(decode_target))
+        result = construct(OpenSSL::ASN1.decode(decode_target))
+
+        case tag
+        when :prid
+          case result&.size
+          when 3
+            {
+              scheme: :ecies_ecdh,
+              ecc_r: result[0],
+              hmac_e: result[1],
+              hmac_m: result[2]
+            }
+          when 4
+            {
+              scheme: :ecies_ecdhe,
+              ecc_r: result[0],
+              hmac_e: result[1],
+              hmac_r: result[2],
+              ephemeral_r: result[3]
+            }
+          else
+            raise ArgumentError, 'Invalid PRID ASN1 object'
+          end
+        else
+          result
+        end
       end
 
       private

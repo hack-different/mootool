@@ -13,7 +13,11 @@ module MooTool
         @key = Models::IMG4.key_name(construction[0])
         value = construction[1]
 
-        @value = value.to_h(&:to_pair)
+        @value = value.to_h do |element|
+          element.respond_to?(:to_pair) ? element.to_pair : element.first
+        end
+      rescue StandardError => e
+        puts "Unable to handle #{input.ai}\n#{e.full_message}"
       end
 
       def to_tree

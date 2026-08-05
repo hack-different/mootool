@@ -8,6 +8,7 @@ module MooTool
         include MooTool::Helpers::IMG4
 
         def initialize(data)
+          @data = data.is_a?(String) ? data : data.to_der
           @value = construct(data)
           @content = @value.drop(1).map do |entry|
             case entry[0]
@@ -19,6 +20,10 @@ module MooTool
               { entry[0].to_sym => entry.drop(1).map { |e| MooTool::Models::ECCPublicKey.new e } }
             end
           end.reduce(&:merge)
+        end
+
+        def raw_hashes
+          [{ kind: 'secb:hash', value: @data }]
         end
 
         def to_tree

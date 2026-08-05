@@ -2,6 +2,7 @@
 
 module MooTool
   module Models
+    # Models responses from certification services
     class RemoteResponse
       MATCHER_REGEX = /---------RESPONSE START---------.*BODY:(?<body>.*)----------RESPONSE END----------/m
 

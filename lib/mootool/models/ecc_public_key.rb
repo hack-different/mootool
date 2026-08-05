@@ -25,6 +25,12 @@ module MooTool
         parse_point_any(point)
       end
 
+      def self.try_from_x_y(x, y)
+        combined_point = "\u0004#{x.value}#{y.value}"
+        result = parse_point_any(combined_point)
+        result || [x, y]
+      end
+
       def self.parse_point_any(point)
         %w[prime256v1 secp384r1].map do |group|
           group = OpenSSL::PKey::EC::Group.new(group)

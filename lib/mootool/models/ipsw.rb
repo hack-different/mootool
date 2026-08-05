@@ -3,6 +3,7 @@
 
 module MooTool
   module Models
+    # Model of an IPSW file
     class IPSW
       attr_reader :manifest
 

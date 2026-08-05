@@ -128,11 +128,12 @@ module MooTool
 
         properties[:key_id] = key_id if key_id
         properties[:public_key] = formatted_public_key(find_matches: true)
+        properties[:public_key_sha] = public_key_sha
         properties[:fingerprint] = @fingerprint
 
         node = Helpers::TreeNode.new("Certificate:#{digest.ai}")
         node.children << Helpers::TreeNode.new('Properties', [Helpers::TreeNode.new(properties.ai)])
-        validation_nodes = validations.map { |id, v| Helpers::TreeNode.new(id, [Helpers::TreeNode.new(v.ai)]) }
+        validation_nodes = validations[:validations].map { |v| Helpers::TreeNode.new(v.ai) }
         node.children << Helpers::TreeNode.new('Validations', validation_nodes)
         extension_nodes = @extensions.map { |id, e| Helpers::TreeNode.new(id, [Helpers::TreeNode.new(e.ai)]) }
         node.children << Helpers::TreeNode.new('Extensions', extension_nodes)
@@ -259,6 +260,21 @@ module MooTool
         Models::Digest.create [common_name].pack('H*')
       end
 
+      def public_key_sha
+        targets = [
+          @certificate.public_key.to_der
+        ]
+
+        if @certificate.public_key.is_a?(OpenSSL::PKey::EC)
+          targets << @certificate.public_key.public_key.to_octet_string(:uncompressed)
+          targets << @certificate.public_key.public_key.to_octet_string(:compressed)
+        end
+
+        targets.map do |target|
+          Models::Digest.create(::Digest::SHA384.digest(target))
+        end
+      end
+
       def validations
         validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
           validator_certificate.subject.to_s
@@ -279,10 +295,12 @@ module MooTool
         end
 
         {
-          subject.to_s => {
-            issuer: issuer.to_s,
-            validations: valid_certs.uniq { |cert| cert[:digest].shasum }
-          }
+          fingerprint: fingerprint,
+          subject: subject.to_s,
+          issuer: issuer.to_s,
+          key_id: key_id,
+          public_key_sha: public_key_sha,
+          validations: valid_certs.uniq { |cert| cert[:digest].shasum }
         }
       end
 
@@ -291,6 +309,7 @@ module MooTool
 
         result[:key_id] = key_id if key_id
         result[:public_key] = formatted_public_key(find_matches: true)
+        result[:public_key_sha] = public_key_sha
         result[:fingerprint] = @fingerprint
         result[:validations] = validations
 

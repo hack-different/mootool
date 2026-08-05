@@ -34,10 +34,14 @@ module MooTool
             signature = signature.value if signature.is_a?(Models::Digest)
             result = public_key.verify('SHA384', signature, raw_hash)
             {
-              "#{signature_kind}:#{fingerprint}:#{hash_kind}": { hash: printable_hash, valid: result }
+              signature_kind: signature_kind,
+              fingerprint: fingerprint,
+              hash_kind: hash_kind,
+              hash: printable_hash,
+              valid: result
             }
           end
-        end.reduce(&:merge) || {}
+        end
       end
 
       class_methods do

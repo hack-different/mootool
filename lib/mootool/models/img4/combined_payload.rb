@@ -14,6 +14,12 @@ module MooTool
           end.reduce(&:merge)
         end
 
+        def raw_hashes
+          @content.map do |key, value|
+            value.raw_hashes(key)
+          end.flatten
+        end
+
         def to_tree
           node = Helpers::TreeNode.new(Models::IMG4.key_name(:secb))
 

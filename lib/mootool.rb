@@ -13,6 +13,7 @@ require 'net/https'
 require 'zip'
 require 'plist'
 require 'net/http'
+require 'fileutils'
 
 require 'zeitwerk'
 
@@ -20,6 +21,13 @@ require 'zeitwerk'
 module MooTool
   class Error < StandardError; end
   DATA_PATH = File.join(__dir__, '../data/apple-knowledge/_data')
+  TEMP_PATH = File.join(__dir__, '../tmp')
+
+  def self.temp_directory(namespace = nil)
+    full_path = File.join(TEMP_PATH, namespace)
+    FileUtils.mkdir_p(full_path)
+    File.realpath full_path
+  end
 end
 
 Dir["#{__dir__}/mootool/config/initializers/*.rb"].each do |file|

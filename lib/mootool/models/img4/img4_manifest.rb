@@ -77,12 +77,13 @@ module MooTool
             end
 
             {
-              certificate.subject.to_s => {
-                issuer: certificate.issuer.to_s,
-                validations: valid_certs.uniq { |cert| cert[:digest].shasum }
-              }
-            }
-          end.reduce(&:merge) || {}
+              subject: certificate.subject.to_s,
+              issuer: certificate.issuer.to_s,
+              fingerprint: certificate.fingerprint,
+              key_id: certificate.key_id,
+              validations: valid_certs.uniq { |cert| cert[:digest].shasum }
+            }.compact
+          end
         end
 
         def signed_data

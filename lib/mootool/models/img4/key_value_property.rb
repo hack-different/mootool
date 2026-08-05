@@ -64,11 +64,11 @@ module MooTool
           when *self.class::KEY_INSTANCE_TAGS
             value.nil? ? nil : MooTool::Models::Certificate.parse_sik(value)
           when *self.class::DECODE_TAGS
-            decode_construct(value)
+            decode_construct(value, tag.to_4cc)
           when *self.class::OCTET_TAGS
             value.is_a?(MooTool::Models::Digest) ? value : MooTool::Models::Digest.create(value)
           when *self.class::SIGNATURE_TAGS
-            decode_construct(input.value[0].value[1].value)
+            decode_construct(input.value[0].value[1].value, tag.to_4cc)
           else
             value
           end
