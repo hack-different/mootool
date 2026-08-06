@@ -1,0 +1,14 @@
+title: MooTool - macOS' Other Tooling
+description: A Ruby gem for diving deep into Apple ecosystem data
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-gist
+  - jekyll-github-metadata
+
+theme: just-the-docs
+keep_files: [api]
+baseurl: "/mootool"
+url: "https://hack-different.github.io"
