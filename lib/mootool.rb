@@ -14,6 +14,7 @@ require 'zip'
 require 'plist'
 require 'net/http'
 require 'fileutils'
+require 'apple_data'
 
 require 'zeitwerk'
 
@@ -41,6 +42,8 @@ loader.ignore("#{__dir__}/mootool/config/initializers")
 loader.inflector = ActiveSupport::Inflector
 loader.setup
 loader.eager_load_dir("#{__dir__}/mootool/formatters")
+
+AppleData.data_location = ENV['APPLE_DATA'] if ENV['APPLE_DATA']
 
 AmazingPrint::Formatter.class_eval do
   include MooTool::Formatters

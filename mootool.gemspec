@@ -4,11 +4,6 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'mootool/version'
 
-DATA_FILE_DIR = 'data/apple-knowledge'
-DATA_FILES = Dir.chdir(File.expand_path(File.join(__dir__, DATA_FILE_DIR))) do
-  `git ls-files -z`.split("\x0").select { |f| f.match(%r{(_data)/}) }.map { |f| File.join(DATA_FILE_DIR, f) }
-end
-
 Gem::Specification.new do |spec|
   spec.name = 'mootool'
   spec.version = MooTool::VERSION
@@ -38,13 +33,13 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
-  spec.files += DATA_FILES
   spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activemodel'
   spec.add_dependency 'amazing_print'
+  spec.add_dependency 'apple-data'
   spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'
   spec.add_dependency 'ecies'

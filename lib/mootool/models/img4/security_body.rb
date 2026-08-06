@@ -18,6 +18,8 @@ module MooTool
               { entry[0].to_sym => entry[1] }
             when 'trpk'
               { entry[0].to_sym => entry.drop(1).map { |e| MooTool::Models::ECCPublicKey.new e } }
+            else
+              { entry[0].to_sym => entry }
             end
           end.reduce(&:merge)
         end
@@ -31,11 +33,15 @@ module MooTool
 
           @content.each do |key, value|
             child = Helpers::TreeNode.new(Models::IMG4.key_name(key))
-            child.children << if value.respond_to?(:to_tree)
-                                value.to_tree
-                              else
-                                Helpers::TreeNode.new(value.ai)
-                              end
+            case value
+            when Array
+              value.each do |element|
+                result_node = element.respond_to?(:to_tree) ? element.to_tree : Helpers::TreeNode.new(element.ai)
+                child.children << result_node
+              end
+            else
+              child.children << Helpers::TreeNode.new(value.ai)
+            end
             node.children << child
           end
 

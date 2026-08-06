@@ -33,7 +33,7 @@ module MooTool
             body: @body,
             signature: @signature,
             certificates: @certificates
-          }
+          }.compact
         end
 
         def inspect

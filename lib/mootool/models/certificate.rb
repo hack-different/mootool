@@ -6,6 +6,8 @@ module MooTool
   module Models
     # A wrapper around OpenSSL::X509::Certificate with additional fuctionality
     class Certificate
+      PREFIX_MAP = ['keyid:', 'DirName:', 'serial:'].freeze
+
       include Helpers::IMG4
       include Helpers::Hashing
 
@@ -13,11 +15,7 @@ module MooTool
 
       delegate :issuer, :subject, to: :@certificate
 
-      def self.load_oid_map
-        YAML.load_file(File.join(DATA_PATH, 'pki.yaml')).deep_symbolize_keys
-      end
-
-      APPLE_OID_MAP = load_oid_map
+      APPLE_OID_MAP = AppleData::Schemas::PKI.new.oids.deep_symbolize_keys
 
       def initialize(certificate)
         @certificate = certificate
@@ -50,12 +48,12 @@ module MooTool
       end
 
       def ==(other)
-        case other
-        when Certificate
-          @certificate == other.openssl_certificate
-        when OpenSSL::X509::Certificate
-          @certificate == other
-        end
+        @certificate == case other
+                        when Certificate
+                          other.openssl_certificate
+                        else
+                          other
+                        end
       end
 
       def public_key
@@ -74,11 +72,15 @@ module MooTool
       end
 
       def self.oid_properties(oid)
-        match = APPLE_OID_MAP.dig :oids, oid.to_sym
+        element = APPLE_OID_MAP[oid.to_sym]
 
         match ||= { name: oid.to_sym }
-        match[:name] = (match[:name] || oid).to_sym
-        match[:type] = match[:type].to_sym if match[:type]
+
+        if element
+          match[:name] = element.to_s.to_sym
+          match[:type] = element.type.to_sym if element.type
+        end
+
         match
       end
 
@@ -97,21 +99,27 @@ module MooTool
                   construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
                   parse_identifiers extension
-                when :'1.2.840.113635.100.6.17'
+                when :appleKeyInstanceName
                   data = construct(OpenSSL::ASN1.decode(extension.value_der))
                   Certificate.parse_sik(data)
-                when :'1.2.840.113635.100.6.16'
+                when :appleSecureEnclaveFDRCommands
                   construct(OpenSSL::ASN1.decode(extension.value_der)).split(';').map do |entry|
                     command, value = entry.split(':')
                     direction, config = command.split('/')
                     { direction: direction, config: config, value: Certificate.parse_sik(value) }
                   end
+                when :appleImg4Manifest
+                  Models::IMG4::IMG4Manifest.new(OpenSSL::ASN1.decode(extension.value_der))
+                when :appleImg4ManifestSpecification
+                  IMG4::ManifestSpecification.new(extension.value_der)
                 when :appleDeviceAttestationKeyUsageProperties
                   parse_apple_device_attestation(extension)
                 when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
                   :appleDeviceAttestationHardwareProperties
 
                   parse_apple_sequence(extension)
+                when :appleSomeSHA256Hash
+                  Models::Digest.create extension.value
                 else
                   parse_other_extension(oid_properties, extension)
                 end
@@ -135,7 +143,14 @@ module MooTool
         node.children << Helpers::TreeNode.new('Properties', [Helpers::TreeNode.new(properties.ai)])
         validation_nodes = validations[:validations].map { |v| Helpers::TreeNode.new(v.ai) }
         node.children << Helpers::TreeNode.new('Validations', validation_nodes)
-        extension_nodes = @extensions.map { |id, e| Helpers::TreeNode.new(id, [Helpers::TreeNode.new(e.ai)]) }
+        extension_nodes = @extensions.map do |id, e|
+          result = e.is_a?(Hash) && e.key?(:value) ? e[:value] : e
+          if result.respond_to?(:to_tree)
+            Helpers::TreeNode.new(id, [result.to_tree])
+          else
+            Helpers::TreeNode.new(id, [Helpers::TreeNode.new(result.ai)])
+          end
+        end
         node.children << Helpers::TreeNode.new('Extensions', extension_nodes)
         node
       end
@@ -144,7 +159,7 @@ module MooTool
         identifiers = extension.value.include?("\n") ? extension.value.split("\n") : [extension.value]
         identifiers.map do |id|
           { id => CertificateIndex.current.with_identifier(id) }
-        end
+        end.reduce(&:merge)
       end
 
       def parse_apple_sequence(extension)
@@ -233,7 +248,7 @@ module MooTool
                      when OpenSSL::PKey::EC, OpenSSL::PKey::EC::Point
                        ECCPublicKey.new key
                      when OpenSSL::PKey::RSA
-                       Models::Digest.create key.to_der, 'RSAPublicKey'
+                       RSAPublicKey.new key
                      else
                        { class: key.class, key: key }
                      end

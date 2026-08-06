@@ -30,6 +30,8 @@ module MooTool
         :ecc_signature
       when MooTool::Models::ECIESEncryption
         :ecc_encryption
+      when Models::RSAPublicKey
+        :rsa_public_key
       when Models::DescriptorResult
         :string_descriptor
       when :ALLOW_ANY_VALUE
@@ -37,6 +39,10 @@ module MooTool
       else
         cast
       end
+    end
+
+    def awesome_rsa_public_key(key)
+      "#{colorize('RSAPublicKey', :class)} e=#{colorize(key.e, :integer)}, n=#{colorize(key.n_hex, :digest)}"
     end
 
     def awesome_string_descriptor(descriptor)

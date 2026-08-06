@@ -24,7 +24,7 @@ module MooTool
 
       include MooTool::Helpers::IMG4
 
-      def initialize(data, hint)
+      def initialize(data, hint = nil)
         @hint = hint.to_sym
         data = data.value if data.is_a? MooTool::Models::Digest
         @hash = data
@@ -82,7 +82,15 @@ module MooTool
           @compression = :asn1
 
           @parsed = case hint
-                    when :scrt, :lcrt
+                    when :appv, :dCfg, :fCfg
+                      {
+                        :type => @constructed[0].to_4cc(reverse: true),
+                        :unk => @constructed[1].to_s(16),
+                        Models::IMG4.key_name(:SPAY) => @constructed[2].to_h,
+                        :META => @constructed[3][:META].map(&:to_h).reduce(&:merge),
+                        **@constructed[4].to_h
+                      }
+                    when :lcrt
                       certificate = OpenSSL::ASN1.decode(@asn1.value[3].value)
 
                       {
@@ -92,8 +100,8 @@ module MooTool
                         certificates: Models::Certificate.new(OpenSSL::X509::Certificate.new(certificate)),
                         unk4: @constructed[4]
                       }
-                    when :dCfg
-                      @constructed
+                    when :scrt
+                      Models::Certificate.new(OpenSSL::X509::Certificate.new(value))
                     when :FSC2
                       @constructed.map do |item|
                         case item
@@ -113,13 +121,13 @@ module MooTool
 
       def raw_hashes
         results = [
-          { kind: 'IM4P:hash', value: @hash }
+          { kind: :'IM4P:hash', value: @hash }
         ]
         if @decompressed_hash && @decompressed_hash != @hash
-          results << { kind: 'IM4P:decompressed',
+          results << { kind: :'IM4P:decompressed',
                        value: @decompressed_hash }
         end
-        results << { kind: 'IM4P:ASN1', value: @asn1.to_der } if @asn1
+        results << { kind: :'IM4P:ASN1', value: @asn1.to_der } if @asn1
 
         results.compact.uniq { |entry| entry[:value] }
       end
@@ -129,11 +137,26 @@ module MooTool
       end
 
       def to_tree
-        children = to_h.map do |key, value|
-          Helpers::TreeNode.new(key, [Helpers::TreeNode.new(value.ai)])
+        node = Helpers::TreeNode.new('Decompressor')
+
+        node.children << Helpers::TreeNode.new("Length: #{@value.size.ai}")
+        node.children << Helpers::TreeNode.new('Hash', [Helpers::TreeNode.new(to_hash(@hash))])
+        node.children << Helpers::TreeNode.new("Encoding: #{@compression.ai}") if @compression
+
+        parsed = Helpers::TreeNode.new('Parsed')
+
+        case @parsed
+        when Hash
+          @parsed.map do |key, value|
+            prop = Helpers::TreeNode.new(Models::IMG4.key_name(key), [Helpers::TreeNode.new(value.ai)])
+            parsed.children << prop
+          end
+        else
+          parsed.children << Helpers::TreeNode.new(@parsed.ai)
         end
 
-        Helpers::TreeNode.new('Decompressor', children)
+        node.children << parsed
+        node
       end
 
       def to_h

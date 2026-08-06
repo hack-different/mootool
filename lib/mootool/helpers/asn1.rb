@@ -23,7 +23,7 @@ module MooTool
         end
       end
 
-      def decode_construct(input, tag)
+      def decode_construct(input, tag = nil)
         decode_target = case input
                         when MooTool::Models::Digest, OpenSSL::ASN1::OctetString
                           input.value
@@ -37,6 +37,8 @@ module MooTool
         result = construct(OpenSSL::ASN1.decode(decode_target))
 
         case tag
+        when :clid
+          Models::Digest.from_hex construct(OpenSSL::ASN1.decode(result))
         when :prid
           case result&.size
           when 3
@@ -126,7 +128,7 @@ module MooTool
           values = value[0].map do |entry|
             Models::IMG4::SysCfgEntry.new(entry)
           end
-          { Models::IMG4.key_name(cc_tag) => values }
+          Models::IMG4::SysCfgPayload.new values
         else
           { cc_tag => value }
         end

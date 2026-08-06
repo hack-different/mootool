@@ -9,7 +9,7 @@ module MooTool
       def valid_signature?
         signatures = validate_signature
         if signatures
-          signatures.any? { |_key, entry| entry[:valid] == true }
+          signatures.any? { |entry| entry[:valid] == true }
         else
           true
         end

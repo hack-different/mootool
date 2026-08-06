@@ -81,7 +81,7 @@ module MooTool
         end
 
         def raw_hashes
-          [{ kind: 'IM4P:to_bytes', value: to_bytes }] + @payload.raw_hashes
+          [{ kind: :'IM4P@to_bytes', value: to_bytes }] + @payload.raw_hashes
         end
       end
     end
