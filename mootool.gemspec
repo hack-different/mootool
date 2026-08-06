@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
 
   spec.required_ruby_version = '>= 4.0'
+  spec.metadata["yard.run"] = "yard"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -53,6 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty'
   spec.add_dependency 'uuidtools'
   spec.add_dependency 'zeitwerk'
+  spec.add_development_dependency 'yard'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

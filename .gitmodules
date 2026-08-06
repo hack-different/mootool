@@ -1,4 +1,0 @@
-[submodule "data/apple-knowledge"]
-	path = data/apple-knowledge
-	url = https://github.com/hack-different/apple-knowledge.git
-	branch = main

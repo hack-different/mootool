@@ -20,5 +20,4 @@ group :development, :test do
   gem 'spoom'
   gem 'steep'
   gem 'typeprof'
-  gem 'yard'
 end
