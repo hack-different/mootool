@@ -2,20 +2,34 @@
 
 module MooTool
   module Models
-    # A combined index of certificates
+    # A combined index of certificates for lookup and validation
+    #
+    # This class maintains a singleton-like registry of certificates, allowing
+    # lookup by digest, public key, or other identifiers.
     class CertificateIndex
+      # @return [Hash{Models::Digest => Models::Certificate}] The index of certificates.
       attr_accessor :index
 
+      # Initializes a new CertificateIndex
+      #
+      # @param _path [String, nil] Unused path parameter.
       def initialize(_path = nil)
         @index = {}
       end
 
+      # Loads default certificates from the project's data path
+      #
+      # @return [void]
       def self.load_default_certs
         Dir[File.join(DATA_PATH, '**/*.{cer,der}')].each do |path|
           Models::Certificate.load path
         end
       end
 
+      # Adds a certificate to the index
+      #
+      # @param certificate [Models::Certificate, OpenSSL::X509::Certificate] The certificate to add.
+      # @return [Models::Certificate] The added certificate.
       def add_certificate(certificate)
         case certificate
         when Models::Certificate
@@ -26,6 +40,9 @@ module MooTool
         end
       end
 
+      # Returns the singleton-like current certificate index
+      #
+      # @return [CertificateIndex]
       def self.current
         unless @certificate_index
           @certificate_index = new
@@ -36,6 +53,10 @@ module MooTool
         @certificate_index
       end
 
+      # Finds certificates with a matching public key
+      #
+      # @param key [OpenSSL::PKey::PKey, Models::ECCPublicKey, Models::RSAPublicKey] The key to match.
+      # @return [Array<Hash>] List of matching certificate summaries.
       def matching_key(key)
         key = MooTool::Models::Certificate.formatted_public_key(key)
         results = index.select do |_hash, certificate|
@@ -48,16 +69,28 @@ module MooTool
         results.uniq { |entry| entry[:hash].value }
       end
 
+      # Finds certificates containing a specific identifier
+      #
+      # @param id [String] The identifier to search for (e.g., fingerprint or key ID).
+      # @return [Hash{Models::Digest => Models::Certificate}] Matching certificates.
       def with_identifier(id)
         index.select do |_hash, certificate|
           certificate.identifiers.include? id
         end
       end
 
+      # Adds a certificate to the current singleton index
+      #
+      # @param certificate [Models::Certificate] The certificate to add.
+      # @return [void]
       def self.add_certificate(certificate)
         current.index[certificate.digest] = certificate
       end
 
+      # Saves the index to a JSON file
+      #
+      # @param path [String, Pathname] Path to save the JSON file.
+      # @return [void]
       def save(path)
         data = index.map do |hash, certificate|
           pkey = certificate.formatted_public_key

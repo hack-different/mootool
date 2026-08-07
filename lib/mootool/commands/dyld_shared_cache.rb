@@ -3,6 +3,7 @@
 
 module MooTool
   module Commands
+    # CLI commands for interacting with dyld shared caches.
     class DyldSharedCache < Thor
     end
   end

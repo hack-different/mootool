@@ -3,9 +3,16 @@
 
 module MooTool
   module Commands
-    # Controller for extracting or viewing a KernelCollection (.kc file)
+    # CLI commands for extracting or viewing Apple Kernel Collection (.kc) files.
     class KernelCollection < Thor
       desc 'extract', 'Extracts a KernelCollection (.kc file)'
+      # Extracts the components of a Kernel Collection file to the specified output folder.
+      #
+      # @param command [Object] an object representing the kernel collection command context, expected to have a `file` attribute.
+      # @param output_folder [String] the directory where the extracted components should be saved.
+      # @return [void]
+      # @example Extract components from a kernel collection
+      #   mootool kc extract kernelcache.release.iphone14 ./extracted_kernels
       def extract(command, output_folder)
         file = command.file
         File.open(command.file, 'rb') do |input|

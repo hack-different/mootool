@@ -3,6 +3,7 @@
 
 module MooTool
   module Commands
+    # CLI commands for interacting with Mach-O Fat Binaries.
     class FatBinary < Thor
     end
   end

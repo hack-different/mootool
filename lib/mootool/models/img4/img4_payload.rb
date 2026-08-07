@@ -3,18 +3,29 @@
 module MooTool
   module Models
     module IMG4
-      # Represents an IM4P or payload
+      # Represents an IMG4 Payload (IM4P), which contains the actual firmware data and its metadata.
       class IMG4Payload
         include MooTool::Helpers::IMG4
         include Helpers::Hashing
 
-        attr_reader :signature, :payload, :type
+        # @return [String, nil] The signature if present.
+        attr_reader :signature
 
+        # @return [Models::Decompressor] The decompressor wrapping the raw payload data.
+        attr_reader :payload
+
+        # @return [String] The four-character tag identifying the payload type (e.g., 'ibot').
+        attr_reader :type
+
+        # Mapping of keybag type identifiers to their symbolic names.
         KEYBAG_TYPES = {
           1 => :PROD,
           2 => :DEV
         }.freeze
 
+        # Converts the payload into a tree structure for visualization.
+        #
+        # @return [Helpers::TreeNode] The root node of the generated tree.
         def to_tree
           Helpers::TreeNode.new(Models::IMG4.key_name(:IM4P).ai, [
                                   Helpers::TreeNode.new("Type: #{Models::IMG4.key_name(@type).ai}"),
@@ -23,6 +34,9 @@ module MooTool
                                 ])
         end
 
+        # Initializes a new IMG4Payload from ASN.1 data.
+        #
+        # @param input [OpenSSL::ASN1::ASN1Data] The raw ASN.1 structure to parse.
         def initialize(input)
           @input = input
           @type = input.value[1].value
@@ -38,6 +52,10 @@ module MooTool
           end.reduce(&:merge)
         end
 
+        # Parses keybag information from a raw ASN.1 object.
+        #
+        # @param input [OpenSSL::ASN1::ASN1Data] The encoded keybag data.
+        # @return [Hash, Array, Object] The parsed keybag mapping or raw object if parsing fails.
         def parse_keybag(input)
           value = construct(OpenSSL::ASN1.decode(input))
           return value unless value.is_a? Array
@@ -50,6 +68,10 @@ module MooTool
           end.reduce(&:merge)
         end
 
+        # Validates the payload against an IMG4 manifest.
+        #
+        # @param manifest [IMG4Manifest] The manifest containing expected digests.
+        # @return [Hash] A validation status hash with :valid and :hash keys.
         def validate(manifest)
           firmware_tag = manifest.firmware_tag(@type)
 
@@ -62,6 +84,9 @@ module MooTool
           }
         end
 
+        # Converts the payload and its metadata into a hash representation.
+        #
+        # @return [Hash] A hash containing type, description, payload, and other metadata.
         def to_h
           result = { type: @type, description: @description, payload: @payload }
 
@@ -72,14 +97,23 @@ module MooTool
           result
         end
 
+        # Returns a human-readable inspection of the payload.
+        #
+        # @return [String] The awesome_print representation.
         def inspect
           to_h.ai
         end
 
+        # Returns the DER-encoded bytes of the payload structure.
+        #
+        # @return [String] The raw DER bytes.
         def to_bytes
           @input.to_der
         end
 
+        # Retrieves all raw hashes for this payload.
+        #
+        # @return [Array<Hash>] An array of hash entries for the payload and its components.
         def raw_hashes
           [{ kind: :'IM4P@to_bytes', value: to_bytes }] + @payload.raw_hashes
         end

@@ -2,11 +2,19 @@
 
 module MooTool
   module Commands
-    # Commands for interacting with certificates
+    # CLI commands for parsing, handling, and indexing certificates.
     class Certificate < Thor
       desc 'friendly', 'Print in a friendly way'
       option :friendly, type: :boolean, default: true
       desc 'print', 'Prints the certificate'
+      # Parses and prints one or more certificates from a file.
+      #
+      # Optionally transforms keys to more human-readable names using IMG4 mappings.
+      #
+      # @param file [String] the path to the certificate file.
+      # @return [void]
+      # @example Print a certificate
+      #   mootool cert print example.crt
       def print(file)
         @certificates = Models::Certificate.load(file)
 
@@ -28,6 +36,11 @@ module MooTool
 
       method_option :save_file, type: :string, default: nil
       desc 'index', 'Indexes certificates throughout the land'
+      # Indexes certificates found in the environment and optionally saves the index.
+      #
+      # @return [void]
+      # @example Index certificates and save results
+      #   mootool cert index --save-file index.json
       def index
         CertificateIndex.load_default_certs
         Models::FileIndex.current.index.each do |file|

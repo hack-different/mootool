@@ -3,10 +3,15 @@
 
 module MooTool
   module Models
-    # Model of an IPSW file
+    # Represents an Apple iPhone Software (IPSW) package.
     class IPSW
+      # @return [Hash] The parsed BuildManifest.plist content.
       attr_reader :manifest
 
+      # Initializes a new IPSW instance.
+      #
+      # @param file [String] The path to the IPSW file.
+      # @raise [RuntimeError] If the IPSW does not contain a BuildManifest.plist.
       def initialize(file)
         @file = file
         @zip = Zip::File.open(file)

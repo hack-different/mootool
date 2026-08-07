@@ -3,6 +3,7 @@
 
 module MooTool
   module Commands
+    # CLI commands for interacting with Mach-O sections.
     class Sections < Thor
     end
   end

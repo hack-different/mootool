@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Custom inflections for MooTool.
+#
+# This initializer defines acronyms for various cryptographic and project-specific
+# terms to ensure they are handled correctly by the ActiveSupport inflector.
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'IMG4'
   inflect.acronym 'EC'

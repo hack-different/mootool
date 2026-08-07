@@ -2,6 +2,7 @@
 
 module MooTool
   module Formatters
+    # Formatter for Pathname objects.
     module PathnameFormatter
     end
   end

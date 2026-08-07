@@ -3,10 +3,13 @@
 module MooTool
   module Models
     module IMG4
-      # Part of certificates indicating the presence or values in a signed manifest that are delegated
+      # Represents a manifest specification within a certificate, defining delegated manifest and object properties.
       class ManifestSpecification
         include MooTool::Helpers::IMG4
 
+        # Initializes a new ManifestSpecification from ASN.1 data.
+        #
+        # @param input [OpenSSL::ASN1::ASN1Data] The raw ASN.1 structure to decode.
         def initialize(input)
           @value = decode_construct(input)
           @composite = {}
@@ -17,14 +20,23 @@ module MooTool
           @object_properties = @composite[:OBJP] || {}
         end
 
+        # Returns the decoded internal value of the specification.
+        #
+        # @return [Object] The decoded value.
         def to_h
           @value
         end
 
+        # Provides a human-readable inspection of the specification.
+        #
+        # @return [String] The awesome_print representation.
         def inspect
           to_h.ai
         end
 
+        # Converts the specification into a tree structure for visualization.
+        #
+        # @return [Helpers::TreeNode] The root node of the generated tree.
         def to_tree
           node = Helpers::TreeNode.new('IMG4 Specification')
 

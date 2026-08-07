@@ -3,7 +3,8 @@
 require 'thor'
 
 module MooTool
-  # Base top level command, subcommands are referenced from here
+  # Base top-level Thor command for the MooTool CLI.
+  # This class serves as the entry point for all subcommands in the mootool project.
   class Command < Thor
     package_name 'mootool'
 

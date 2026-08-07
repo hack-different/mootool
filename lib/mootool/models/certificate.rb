@@ -4,19 +4,30 @@ require 'cfpropertylist'
 
 module MooTool
   module Models
-    # A wrapper around OpenSSL::X509::Certificate with additional fuctionality
+    # A wrapper around OpenSSL::X509::Certificate with additional functionality for Apple PKI
+    #
+    # This class provides enhanced parsing of Apple-specific X.509 extensions,
+    # certificate validation, and tree-based rendering.
     class Certificate
+      # Map of prefixes used in certificate identifiers
       PREFIX_MAP = ['keyid:', 'DirName:', 'serial:'].freeze
 
       include Helpers::IMG4
       include Helpers::Hashing
 
-      attr_reader :digest, :fingerprint
+      # @return [Models::Digest] The digest of the certificate's DER encoding.
+      attr_reader :digest
+      # @return [String] The SHA-1 fingerprint of the certificate.
+      attr_reader :fingerprint
 
       delegate :issuer, :subject, to: :@certificate
 
+      # Map of Apple OIDs to their symbolic names and types
       APPLE_OID_MAP = AppleData::Schemas::PKI.new.oids.deep_symbolize_keys
 
+      # Initializes a new Certificate object
+      #
+      # @param certificate [OpenSSL::X509::Certificate] The underlying OpenSSL certificate object.
       def initialize(certificate)
         @certificate = certificate
         @digest = to_hash(certificate.to_der)
@@ -29,24 +40,42 @@ module MooTool
         CertificateIndex.add_certificate(self)
       end
 
+      # Returns identifying strings for the certificate (fingerprint and subject key identifier)
+      #
+      # @return [Array<String>] List of identifiers.
       def identifiers
         [@fingerprint, @extensions[:subjectKeyIdentifier]]
       end
 
+      # Verifies the certificate's signature using a public key
+      #
+      # @param public_key [OpenSSL::PKey::PKey] The public key to verify against.
+      # @return [Boolean] True if the signature is valid.
       def verify(public_key)
         @certificate.verify(public_key)
       rescue StandardError
         false
       end
 
+      # Returns a formatted representation of the certificate's public key
+      #
+      # @param find_matches [Boolean] Whether to search for matching certificates in the index.
+      # @return [Object] The formatted public key.
       def formatted_public_key(find_matches: false)
         Certificate.formatted_public_key(public_key, find_matches: find_matches)
       end
 
+      # Returns the underlying OpenSSL certificate object
+      #
+      # @return [OpenSSL::X509::Certificate]
       def openssl_certificate
         @certificate
       end
 
+      # Compares this certificate with another
+      #
+      # @param other [Certificate, OpenSSL::X509::Certificate] The object to compare with.
+      # @return [Boolean] True if the certificates are equal.
       def ==(other)
         @certificate == case other
                         when Certificate
@@ -56,10 +85,17 @@ module MooTool
                         end
       end
 
+      # Returns the public key of the certificate
+      #
+      # @return [OpenSSL::PKey::PKey]
       def public_key
         @certificate.public_key
       end
 
+      # Loads one or more certificates from a file
+      #
+      # @param path [String, Pathname] Path to the certificate file (PEM or DER).
+      # @return [Certificate, Array<Certificate>] The loaded certificate(s).
       def self.load(path)
         file_data = File.read(path)
         if file_data.include?('-----BEGIN CERTIFICATE-----')
@@ -71,6 +107,10 @@ module MooTool
         end
       end
 
+      # Looks up properties for a given OID
+      #
+      # @param oid [String, Symbol] The OID to look up.
+      # @return [Hash] Properties of the OID (name, type).
       def self.oid_properties(oid)
         element = APPLE_OID_MAP[oid.to_sym]
 
@@ -84,12 +124,20 @@ module MooTool
         match
       end
 
+      # Maps an OID to its symbolic name
+      #
+      # @param oid [String, Symbol] The OID to map.
+      # @return [Symbol] The symbolic name.
       def self.oid_to_name(oid)
         oid = oid.to_sym
         result = APPLE_OID_MAP.dig(:oids, oid, :name) || oid
         result.to_sym
       end
 
+      # Parses a single certificate extension
+      #
+      # @param extension [OpenSSL::X509::Extension] The extension to parse.
+      # @return [Hash] The parsed extension data.
       def parse_extension(extension)
         oid_properties = Certificate.oid_properties(extension.oid)
         value = case oid_properties[:name]
@@ -131,6 +179,9 @@ module MooTool
         end
       end
 
+      # Converts the certificate to a TreeNode structure for display
+      #
+      # @return [Helpers::TreeNode] The tree representation.
       def to_tree
         properties = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
 
@@ -155,6 +206,10 @@ module MooTool
         node
       end
 
+      # Parses identifiers from an extension value
+      #
+      # @param extension [OpenSSL::X509::Extension] The extension containing identifiers.
+      # @return [Hash] Map of identifier string to certificate list.
       def parse_identifiers(extension)
         identifiers = extension.value.include?("\n") ? extension.value.split("\n") : [extension.value]
         identifiers.map do |id|
@@ -162,6 +217,10 @@ module MooTool
         end.reduce(&:merge)
       end
 
+      # Parses an Apple-specific sequence extension
+      #
+      # @param extension [OpenSSL::X509::Extension] The extension to parse.
+      # @return [Hash] The parsed sequence data.
       def parse_apple_sequence(extension)
         resequence(construct(OpenSSL::ASN1.decode(extension.value_der))).transform_keys do |key|
           if key.is_a?(Symbol)
@@ -173,6 +232,10 @@ module MooTool
         end.transform_values(&:first)
       end
 
+      # Parses Apple device attestation key usage properties
+      #
+      # @param extension [OpenSSL::X509::Extension] The extension to parse.
+      # @return [Array] The parsed attestation properties.
       def parse_apple_device_attestation(extension)
         result = construct(OpenSSL::ASN1.decode(extension.value_der))
 
@@ -204,6 +267,10 @@ module MooTool
         end
       end
 
+      # Parses a SIK (Secure Instance Key) identifier string
+      #
+      # @param key [String, Models::Digest, UUIDTools::UUID, nil] The SIK key to parse.
+      # @return [Hash, String, nil] The parsed SIK properties or the original key.
       def self.parse_sik(key)
         key = case key
               when MooTool::Models::Digest
@@ -243,6 +310,11 @@ module MooTool
         map_to_arrays(name).flatten.each_slice(2).to_h.transform_keys(&:to_sym)
       end
 
+      # Returns a formatted public key, optionally with matches from the certificate index
+      #
+      # @param key [OpenSSL::PKey::PKey] The public key to format.
+      # @param find_matches [Boolean] Whether to look for matching certificates.
+      # @return [Object] The formatted public key.
       def self.formatted_public_key(key, find_matches: false)
         result_key = case key
                      when OpenSSL::PKey::EC, OpenSSL::PKey::EC::Point
@@ -265,6 +337,9 @@ module MooTool
         end
       end
 
+      # Extracts the Key ID from the certificate's subject Common Name
+      #
+      # @return [Models::Digest, nil] The extracted Key ID.
       def key_id
         common_name = @certificate.subject.to_a.to_h do |entry|
           [entry[0], entry[1]]
@@ -275,6 +350,9 @@ module MooTool
         Models::Digest.create [common_name].pack('H*')
       end
 
+      # Calculates SHA-384 digests of the public key in various formats
+      #
+      # @return [Array<Models::Digest>] List of digests.
       def public_key_sha
         targets = [
           @certificate.public_key.to_der
@@ -290,6 +368,9 @@ module MooTool
         end
       end
 
+      # Performs various validations on the certificate against the index
+      #
+      # @return [Hash] Validation results.
       def validations
         validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
           validator_certificate.subject.to_s
@@ -319,6 +400,9 @@ module MooTool
         }
       end
 
+      # Converts the certificate to a Hash representation
+      #
+      # @return [Hash]
       def to_h
         result = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
 
@@ -332,6 +416,9 @@ module MooTool
         result
       end
 
+      # Returns a Hash representation for inspection
+      #
+      # @return [Hash]
       def inspect
         to_h
       end

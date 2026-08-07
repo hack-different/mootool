@@ -18,12 +18,25 @@ require 'apple_data'
 
 require 'zeitwerk'
 
-# MooTool
+# Main MooTool module providing utility functions and namespace for the project.
 module MooTool
+  # Generic error class for MooTool related exceptions.
   class Error < StandardError; end
+
+  # The path to the Apple knowledge data.
+  # @return [String]
   DATA_PATH = File.join(__dir__, '../data/apple-knowledge/_data')
+
+  # The base path for temporary files.
+  # @return [String]
   TEMP_PATH = File.join(__dir__, '../tmp')
 
+  # Ensures a temporary directory exists for the given namespace and returns its absolute path.
+  #
+  # @param namespace [String, nil] optional subdirectory name within the temporary path.
+  # @return [String] the absolute real path to the temporary directory.
+  # @example Create a namespaced temporary directory
+  #   MooTool.temp_directory('extraction') # => "/absolute/path/to/mootool/tmp/extraction"
   def self.temp_directory(namespace = nil)
     full_path = File.join(TEMP_PATH, namespace)
     FileUtils.mkdir_p(full_path)

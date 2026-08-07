@@ -7,23 +7,44 @@ require 'compress/lzss'
 
 module MooTool
   module Models
-    # The magic Apple decompressor (as in it uses magics)
+    # Handles decompression of Apple firmware data using various compression algorithms
+    #
+    # This class detects the compression format based on magic bytes (e.g., bvx2 for LZFSE)
+    # and decompresses the data. It also supports parsing the decompressed data based on
+    # hints (e.g., Apple-specific tags).
     class Decompressor
       include Helpers::Hashing
 
+      # Magic for LZSS compression
       COMPRESSION_LZSS = 'lzss'
+      # Magic for LZVN compression
       COMPRESSION_LZVN = 'lzvn'
+      # Magic for LZFSE compression
       COMPRESSION_LZFSE = 'bvx2'
+      # Magic for LZMA compression
       COMPRESSION_LZMA = 'lzma'
 
-      attr_reader :value, :hash, :data
+      # @return [String, nil] The decompressed value.
+      attr_reader :value
+      # @return [String] The original hash/data that was decompressed.
+      attr_reader :hash
+      # @return [String] The original raw data.
+      attr_reader :data
 
+      # Loads data from a file and initializes a new Decompressor
+      #
+      # @param filename [String] The path to the file.
+      # @return [Decompressor]
       def self.load(filename)
         new File.binread(filename)
       end
 
       include MooTool::Helpers::IMG4
 
+      # Initializes a new Decompressor
+      #
+      # @param data [String, Models::Digest] The compressed data to decompress.
+      # @param hint [Symbol, String, nil] A hint for how to parse the decompressed data.
       def initialize(data, hint = nil)
         @hint = hint.to_sym
         data = data.value if data.is_a? MooTool::Models::Digest
@@ -58,6 +79,10 @@ module MooTool
         @decompressed_hash = @value
       end
 
+      # Attempts to parse a public key point using various EC groups
+      #
+      # @param point [String] The raw point data.
+      # @return [OpenSSL::PKey::EC::Point, nil] The parsed point, or nil if failed.
       def parse_point_any(point)
         %w[prime256v1 secp384r1].map do |group|
           group = OpenSSL::PKey::EC::Group.new(group)
@@ -67,6 +92,11 @@ module MooTool
         end.compact.first
       end
 
+      # Parses the decompressed value based on a provided hint
+      #
+      # @param value [String] The decompressed data.
+      # @param hint [Symbol] The hint describing the data type.
+      # @return [void]
       def parse_based_on_hint(value, hint)
         @compression = :raw
 
@@ -119,6 +149,9 @@ module MooTool
         end
       end
 
+      # Returns a list of hashes for the compressed and decompressed data
+      #
+      # @return [Array<Hash>] List of hash entries.
       def raw_hashes
         results = [
           { kind: :'IM4P:hash', value: @hash }
@@ -132,10 +165,17 @@ module MooTool
         results.compact.uniq { |entry| entry[:value] }
       end
 
+      # Writes the original compressed data to a file
+      #
+      # @param path [String] The path to write to.
+      # @return [void]
       def extract_to(path)
         File.binwrite(path, @data)
       end
 
+      # Converts the decompressor state to a TreeNode structure
+      #
+      # @return [Helpers::TreeNode]
       def to_tree
         node = Helpers::TreeNode.new('Decompressor')
 
@@ -159,6 +199,9 @@ module MooTool
         node
       end
 
+      # Converts the decompressor state to a Hash representation
+      #
+      # @return [Hash]
       def to_h
         return { value: nil } if @parsed.nil?
 
@@ -170,6 +213,9 @@ module MooTool
         result
       end
 
+      # Returns a string representation for inspection
+      #
+      # @return [String]
       def inspect
         to_h.ai
       end

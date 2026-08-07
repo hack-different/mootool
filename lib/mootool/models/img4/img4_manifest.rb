@@ -3,14 +3,20 @@
 module MooTool
   module Models
     module IMG4
-      # IMG4 Manifests are used in multiple ways, such as an APTicket which is a combined set of acceptable hashes,
-      # or as additional properties included in data such as FDR.
+      # Represents an IMG4 Manifest (IM4M), typically used for APTickets or data validation.
       class IMG4Manifest
         include MooTool::Helpers::IMG4
         include Helpers::Hashing
 
-        attr_reader :certificates, :signature
+        # @return [Array<OpenSSL::X509::Certificate>, nil] The certificate chain included in the manifest.
+        attr_reader :certificates
 
+        # @return [String, nil] The cryptographic signature of the manifest body.
+        attr_reader :signature
+
+        # Initializes a new IMG4Manifest from ASN.1 data.
+        #
+        # @param input [OpenSSL::ASN1::ASN1Data] The raw ASN.1 structure.
         def initialize(input)
           @input = input
 
@@ -27,6 +33,9 @@ module MooTool
           @certificates = File.parse_certificates(@data.value[4]) if @data.value[4]
         end
 
+        # Converts the manifest to a hash representation.
+        #
+        # @return [Hash] A hash containing the manifest components.
         def to_h
           {
             version: @version,
@@ -36,14 +45,23 @@ module MooTool
           }.compact
         end
 
+        # Provides a human-readable inspection of the manifest.
+        #
+        # @return [String] The awesome_print representation.
         def inspect
           to_h.ai
         end
 
+        # Returns the DER-encoded bytes of the manifest.
+        #
+        # @return [String] The DER bytes.
         def to_bytes
           @data.to_der
         end
 
+        # Converts the manifest into a tree structure for visualization.
+        #
+        # @return [Helpers::TreeNode] The root node of the tree.
         def to_tree
           node = Helpers::TreeNode.new(Models::IMG4.key_name(:IM4M).ai)
 
@@ -55,6 +73,9 @@ module MooTool
           node
         end
 
+        # Validates the certificate chain against known root certificates.
+        #
+        # @return [Array<Hash>] An array of validation results for each certificate in the chain.
         def validate
           @certificates ||= []
           @certificates.map do |certificate|
@@ -86,10 +107,16 @@ module MooTool
           end
         end
 
+        # Returns the DER-encoded signed data (the MANB sequence).
+        #
+        # @return [String] The raw DER bytes of the body.
         def signed_data
           @data.value[2].to_der
         end
 
+        # Provides raw hashes for the manifest and its signed data.
+        #
+        # @return [Array<Hash>] An array of hash entries.
         def raw_hashes
           [
             { kind: :manifest_hash, value: to_bytes },
@@ -97,10 +124,17 @@ module MooTool
           ]
         end
 
+        # Retrieves a specific firmware entry from the manifest body.
+        #
+        # @param type [Symbol, String] The tag of the firmware entry.
+        # @return [FirmwareEntry, nil] The firmware entry if found.
         def firmware_tag(type)
           @body.to_h[:MANB][type.to_sym]
         end
 
+        # Extracts all public keys from the certificate chain.
+        #
+        # @return [Hash{String => OpenSSL::PKey::PKey}] A map of subjects to public keys.
         def public_keys
           @certificates.to_h do |certificate|
             [certificate.subject.to_s, certificate.public_key]

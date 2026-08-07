@@ -3,13 +3,23 @@
 require 'openssl'
 
 module MooTool
+  # Helper modules for MooTool
   module Helpers
-    # Helpers for parsing DER / IMG4
+    # Helpers for parsing DER / IMG4 formatted ASN.1 data
+    #
+    # This module provides utilities for constructing Ruby objects from ASN.1 structures,
+    # specifically tailored for Apple's IMG4 and related formats.
     module ASN1
       extend ActiveSupport::Concern
 
+      # List of common hash bit-lengths used in Apple ASN.1 structures
       HASH_LENGTHS = [128, 160, 224, 256, 384, 512].freeze
 
+      # Recursively constructs Ruby objects from OpenSSL ASN.1 objects
+      #
+      # @param input [OpenSSL::ASN1::ASN1Data, OpenSSL::BN, nil, true, false, String, Models::Digest, Integer, Hash, Array]
+      #   The ASN.1 object or raw value to convert.
+      # @return [Object, nil] The converted Ruby object (Integer, String, Array, Hash, etc.)
       def construct(input)
         case input
         when OpenSSL::ASN1::Null
@@ -23,6 +33,16 @@ module MooTool
         end
       end
 
+      # Decodes a DER-encoded ASN.1 structure and constructs it into Ruby objects
+      #
+      # @param input [MooTool::Models::Digest, OpenSSL::ASN1::OctetString, UUIDTools::UUID, String, nil]
+      #   The encoded data to decode.
+      # @param tag [Symbol, nil] Optional tag to specify special decoding logic (e.g., :clid, :prid)
+      # @return [Object, nil] The decoded and constructed Ruby object.
+      # @raise [ArgumentError] If a special tag is provided but the structure is invalid.
+      #
+      # @example Decoding a PRID structure
+      #   decode_construct(der_data, :prid)
       def decode_construct(input, tag = nil)
         decode_target = case input
                         when MooTool::Models::Digest, OpenSSL::ASN1::OctetString
@@ -135,6 +155,11 @@ module MooTool
       end
 
       class_methods do
+        # Parses a list of strings into their 4CC (Four-Character Code) integer representations
+        #
+        # @param input [Array<String>] List of 4-character strings.
+        # @param raw_int [Array<Integer>] Optional list of existing integers to prepend.
+        # @return [Array<Integer>] The combined list of 4CC integers.
         def parse_4cc(input, raw_int = [])
           mapped = input.map do |value|
             value.b.unpack1('N')
@@ -143,6 +168,12 @@ module MooTool
           raw_int + mapped
         end
 
+        # Defines a constant containing a list of 4CC integers
+        #
+        # @param name [Symbol, String] The name of the constant to define.
+        # @param literal_ints [Array<Integer>] A list of literal integers to include.
+        # @yieldreturn [Array<Integer>] An optional block returning more integers.
+        # @return [Array<Integer>] The final list of integers assigned to the constant.
         def define(name, literal_ints = [], &block)
           list_4ccs = block_given? ? block.call : []
           list_4ccs += literal_ints

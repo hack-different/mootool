@@ -2,11 +2,17 @@
 
 module MooTool
   module Commands
-    # IMG4 parsing and related commands
+    # CLI commands for parsing and interacting with IMG4 and DER files.
     class IMG4 < Thor
       method_option :manifest, type: :string, required: false, default: nil
       method_option :friendly, type: :boolean, default: true
       desc 'print', 'Parses and prints pretty versions of an img4/DER'
+      # Parses and prints a representation of an IMG4 or DER file as a tree.
+      #
+      # @param filename [String] the path to the file to be parsed.
+      # @return [void]
+      # @example Print an IMG4 file tree
+      #   mootool img4 print firmware.img4
       def print(filename)
         Models::Digest.load_manifests(options[:manifest]) if options[:manifest]
         Models::CertificateIndex.load_default_certs
@@ -20,6 +26,11 @@ module MooTool
       desc :generate_hashes, 'If the contents should be hashed'
       method_option :generate_hashes, type: :boolean, required: false, default: true
       desc :index, 'Index for any relevant files on a live system'
+      # Indexes relevant IMG4/DER files on the live system.
+      #
+      # @return [void]
+      # @example Index system files and save to a JSON file
+      #   mootool img4 index --save-file index.json
       def index
         indexer = Models::FileIndex.new
         indexer.perform
@@ -32,6 +43,11 @@ module MooTool
       end
 
       desc :index, 'Index for any relevant files on a live system'
+      # Analyzes system files to find and display unique IMG4 payload types.
+      #
+      # @return [void]
+      # @example List unique payload types and their examples
+      #   mootool img4 types
       def types
         indexer = Models::FileIndex.new
         indexer.perform
@@ -57,6 +73,11 @@ module MooTool
 
       method_option :path, type: :string, default: nil
       desc 'manifest', 'Prints the manifest of an img4/DER'
+      # Extracts and prints the manifest of an IMG4/DER from the IORegistry.
+      #
+      # @return [void]
+      # @example Print the manifest for a specific registry path
+      #   mootool img4 manifest --path "IOService:/AppleARMPE/chosen"
       def manifest
         ap Models::IOReg.create(options[:path]).manifests
       end

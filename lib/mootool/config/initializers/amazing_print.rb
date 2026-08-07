@@ -2,6 +2,10 @@
 
 require 'amazing_print'
 
+# Default configuration for the AmazingPrint gem within MooTool.
+#
+# This sets indentation, multiline preferences, and custom colors for various
+# data types encountered in the project.
 AmazingPrint.defaults = ({
   indent: 4, # Number of spaces for indenting.
   index: true, # Display array indices.
