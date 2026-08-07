@@ -32,7 +32,7 @@ module MooTool
       def to_h
         {
           n: @n.to_s(16),
-        e: @e
+          e: @e
         }
       end
 

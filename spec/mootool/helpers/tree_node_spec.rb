@@ -196,22 +196,22 @@ RSpec.describe MooTool::Helpers::TreeNode do
       root = described_class.new('Root', [child1, child2])
       lines = root.render
       expect(lines[0]).to eq('Root')
-      expect(lines[1]).to eq('├── Child1')
-      expect(lines[2]).to eq('└── Child2')
+      expect(lines[1]).to eq('├───◦ Child1')
+      expect(lines[2]).to eq('└───◦ Child2')
     end
 
     it 'renders type and id in header' do
       node = described_class.new('MyNode', type: :class, id: 'abc')
       lines = node.render
-      expect(lines[0]).to eq('MyNode (class, abc)')
+      expect(lines[0]).to eq("class @ \e[1;33m\"abc\"\e[0m")
     end
 
     it 'renders properties in header' do
       node = described_class.new('Node', properties: { 'version' => '1.0', 'author' => 'test' })
       lines = node.render
       expect(lines[0]).to eq('Node')
-      expect(lines[1]).to eq('  version: 1.0')
-      expect(lines[2]).to eq('  author: test')
+      expect(lines[1]).to eq("│   \e[1;33m\"version\"\e[0m => \e[1;33m\"1.0\"\e[0m")
+      expect(lines[2]).to eq("│   \e[1;33m\"author\"\e[0m => \e[1;33m\"test\"\e[0m")
     end
 
     it 'renders LeafNode children correctly' do
@@ -219,7 +219,7 @@ RSpec.describe MooTool::Helpers::TreeNode do
       root = described_class.new('Root', [leaf])
       lines = root.render
       expect(lines[0]).to eq('Root')
-      expect(lines[1]).to eq('└── leaf_value')
+      expect(lines[1]).to eq('└───◦ leaf_value')
     end
 
     it 'handles multi-line leaf values with proper continuation' do
@@ -228,9 +228,9 @@ RSpec.describe MooTool::Helpers::TreeNode do
       root = described_class.new('Root', [leaf, child2])
       lines = root.render
       expect(lines[0]).to eq('Root')
-      expect(lines[1]).to eq('├── line1')
+      expect(lines[1]).to eq('├───◦ line1')
       expect(lines[2]).to eq('│   line2')
-      expect(lines[3]).to eq('└── After')
+      expect(lines[3]).to eq('└───◦ After')
     end
 
     it 'handles multi-line leaf as last child' do
@@ -238,7 +238,7 @@ RSpec.describe MooTool::Helpers::TreeNode do
       root = described_class.new('Root', [leaf])
       lines = root.render
       expect(lines[0]).to eq('Root')
-      expect(lines[1]).to eq('└── line1')
+      expect(lines[1]).to eq('└───◦ line1')
       expect(lines[2]).to eq('    line2')
     end
 
@@ -248,8 +248,8 @@ RSpec.describe MooTool::Helpers::TreeNode do
       root = described_class.new('Root', [child])
       lines = root.render
       expect(lines[0]).to eq('Root')
-      expect(lines[1]).to eq('└── Child')
-      expect(lines[2]).to eq('    └── GrandChild')
+      expect(lines[1]).to eq('└───◦ Child')
+      expect(lines[2]).to eq('    └───◦ GrandChild')
     end
   end
 
@@ -259,7 +259,7 @@ RSpec.describe MooTool::Helpers::TreeNode do
       output = StringIO.new
       node.print(stream: output, prefix: '>> ')
       expect(output.string).to include('>> Root')
-      expect(output.string).to include('>> └── Child')
+      expect(output.string).to include('>> └───◦ Child')
     end
   end
 end

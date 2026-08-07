@@ -13,7 +13,7 @@ module MooTool
       # Initializes a new CertificateIndex
       #
       # @param _path [String, nil] Unused path parameter.
-      def initialize()
+      def initialize
         @index = {}
       end
 
@@ -26,7 +26,6 @@ module MooTool
           @index[digest] = certificate
         end
       end
-
 
       # Loads default certificates from the project's data path
       #
@@ -56,7 +55,7 @@ module MooTool
       # @return [CertificateIndex]
       def self.current
         unless @certificate_index
-          default_path = File.expand_path("~/Desktop/certificates.index.json")
+          default_path = File.expand_path('~/Desktop/certificates.index.json')
           path = File.exist?(default_path) ? default_path : nil
           @certificate_index = new
           if path
@@ -79,7 +78,7 @@ module MooTool
         results = index.select do |_hash, certificate|
           key == certificate.formatted_public_key
         end
-        results = results.map do |hash, certificate|
+        results = results.map do |_hash, certificate|
           { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
             hash: certificate.digest }
         end
