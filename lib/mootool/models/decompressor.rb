@@ -170,7 +170,7 @@ module MooTool
       def to_tree
         node = Helpers::TreeNode.new('Decompressor')
 
-        node.children << Helpers::TreeNode.new("Length: #{@value&.size.ai}")
+        node.children << Helpers::TreeNode.new("Length: #{@value&.size&.ai}")
         node.children << Helpers::TreeNode.new('Hash', [Helpers::TreeNode.new(to_hash(@hash))])
         node.children << Helpers::TreeNode.new("Encoding: #{@compression.ai}") if @compression
 

@@ -190,8 +190,7 @@ module MooTool
         properties[:public_key_sha] = public_key_sha
         properties[:fingerprint] = @fingerprint
 
-        node = Helpers::TreeNode.new("Certificate:#{digest.ai}")
-        node.children << Helpers::TreeNode.new('Properties', [Helpers::TreeNode.new(properties.ai)])
+        node = Helpers::TreeNode.new("Certificate:#{digest.ai}", properties: properties)
         validation_nodes = validations[:validations].map { |v| Helpers::TreeNode.new(v.ai) }
         node.children << Helpers::TreeNode.new('Validations', validation_nodes)
         extension_nodes = @extensions.map do |id, e|

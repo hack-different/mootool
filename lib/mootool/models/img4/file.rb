@@ -20,7 +20,7 @@ module MooTool
         # @return [void]
         def to_tree_hashes(node)
           hash_nodes = named_hashes.map do |id, h|
-            Helpers::TreeNode.new(id.ai, [Helpers::TreeNode.new(h.ai)])
+            Helpers::TreeNode.new(h.ai, id: id, type: 'DigestHash')
           end
           node.children << Helpers::TreeNode.new('Hashes', hash_nodes) if hash_nodes.any?
         end
@@ -37,7 +37,7 @@ module MooTool
           return unless @content[:IM4M]
 
           node.children << Helpers::TreeNode.new('Certificate Validations', @content[:IM4M].validate.map { |v|
-            Helpers::TreeNode.new(v.ai)
+            Helpers::LeafNode.new(v.ai)
           })
         end
 
