@@ -29,6 +29,13 @@ module MooTool
         Models::Digest.new(@n.to_i).shasum
       end
 
+      def to_h
+        {
+          n: @n.to_s(16),
+        e: @e
+        }
+      end
+
       # Compares this RSA public key with another RSA key.
       #
       # @param other [OpenSSL::PKey::RSA, MooTool::Models::RSAPublicKey] The other key to compare with.

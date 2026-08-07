@@ -28,7 +28,7 @@ module MooTool
         point = parse_point_any(point)
         matches = Models::CertificateIndex.current.matching_key(point)
         if matches.any?
-          { key: point, matches: matches }
+          { key: point.to_h, matches: matches }
         else
           point
         end

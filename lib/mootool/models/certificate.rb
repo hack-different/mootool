@@ -28,7 +28,7 @@ module MooTool
       # Initializes a new Certificate object
       #
       # @param certificate [OpenSSL::X509::Certificate] The underlying OpenSSL certificate object.
-      def initialize(certificate)
+      def initialize(certificate, skip_index: false)
         @certificate = certificate
         @digest = to_hash(certificate.to_der)
         @fingerprint = ::Digest::SHA1.hexdigest(@certificate.to_der).scan(/../).join(':').upcase
@@ -37,7 +37,7 @@ module MooTool
           parse_extension(extension)
         end.reduce(&:merge)
 
-        CertificateIndex.add_certificate(self)
+        Models::CertificateIndex.add_certificate(self) unless skip_index
       end
 
       # Returns identifying strings for the certificate (fingerprint and subject key identifier)
@@ -63,6 +63,10 @@ module MooTool
       # @return [Object] The formatted public key.
       def formatted_public_key(find_matches: false)
         Certificate.formatted_public_key(public_key, find_matches: find_matches)
+      end
+
+      def raw
+        @certificate.to_der
       end
 
       # Returns the underlying OpenSSL certificate object
@@ -327,7 +331,7 @@ module MooTool
         if find_matches
           matches = CertificateIndex.current.matching_key(key)
           if matches.any?
-            { key: result_key, matches: matches }
+            { key: result_key, matches: matches.uniq { |match| match[:hash].hex } }
           else
             result_key
           end
@@ -397,6 +401,13 @@ module MooTool
           public_key_sha: public_key_sha,
           validations: valid_certs.uniq { |cert| cert[:digest].shasum }
         }
+      end
+
+      def self.read(data)
+        data = data.value if data.is_a?(Models::Digest)
+        certificate = OpenSSL::X509::Certificate.load(data)
+        certificate = certificate.first if certificate.is_a?(Array)
+        new(certificate, skip_index: true)
       end
 
       # Converts the certificate to a Hash representation

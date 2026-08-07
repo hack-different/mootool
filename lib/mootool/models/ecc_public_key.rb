@@ -59,6 +59,10 @@ module MooTool
         end.compact.first
       end
 
+      def inspect
+        to_h.ai
+      end
+
       # Compares this ECC public key with another key or point.
       #
       # @param other [MooTool::Models::ECCPublicKey, OpenSSL::PKey::EC] The object to compare with.

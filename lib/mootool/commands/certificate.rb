@@ -42,7 +42,7 @@ module MooTool
       # @example Index certificates and save results
       #   mootool cert index --save-file index.json
       def index
-        CertificateIndex.load_default_certs
+        Models::CertificateIndex.load_default_certs
         Models::FileIndex.current.index.each do |file|
           Models.file_guesser(file.fullname)
         end

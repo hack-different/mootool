@@ -13,9 +13,20 @@ module MooTool
       # Initializes a new CertificateIndex
       #
       # @param _path [String, nil] Unused path parameter.
-      def initialize(_path = nil)
+      def initialize()
         @index = {}
       end
+
+      def import_index(path)
+        loaded_data = JSON.load_file(path).map(&:deep_symbolize_keys)
+        loaded_data.each do |entry|
+          digest = Models::Digest.from_hex(entry[:digest])
+          raw_data = Models::Digest.from_hex(entry[:raw])
+          certificate = Models::Certificate.read(raw_data.value)
+          @index[digest] = certificate
+        end
+      end
+
 
       # Loads default certificates from the project's data path
       #
@@ -45,9 +56,15 @@ module MooTool
       # @return [CertificateIndex]
       def self.current
         unless @certificate_index
+          default_path = File.expand_path("~/Desktop/certificates.index.json")
+          path = File.exist?(default_path) ? default_path : nil
           @certificate_index = new
-          MooTool::Models::FileIndex.current.index.each do |file|
-            MooTool::Models.file_guesser(file.fullname)
+          if path
+            @certificate_index.import_index(path)
+          else
+            MooTool::Models::FileIndex.current.index.each do |file|
+              MooTool::Models.file_guesser(file.fullname)
+            end
           end
         end
         @certificate_index
@@ -62,11 +79,11 @@ module MooTool
         results = index.select do |_hash, certificate|
           key == certificate.formatted_public_key
         end
-        results = results.map do |_hash, certificate|
+        results = results.map do |hash, certificate|
           { subject: certificate.subject.to_s, fingerprint: certificate.fingerprint,
             hash: certificate.digest }
         end
-        results.uniq { |entry| entry[:hash].value }
+        results.uniq { |entry| entry[:hash].hex }
       end
 
       # Finds certificates containing a specific identifier
@@ -108,13 +125,18 @@ module MooTool
                      x: Models::Digest.create(x_data).hex,
                      y: Models::Digest.create(y_data).hex
                    }
+                 when RSAPublicKey
+                   {
+                     **pkey.to_h
+                   }
                  else
-                   pkey.to_h
+                   raise Error, "Unknown Public Key: #{pkey}"
                  end
 
           {
             hash: hash.shasum,
             pkey: pkey,
+            raw: certificate.raw.to_hex,
             **certificate.to_h
           }
         end
