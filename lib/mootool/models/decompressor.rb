@@ -132,15 +132,6 @@ module MooTool
                       }
                     when :scrt
                       Models::Certificate.new(OpenSSL::X509::Certificate.new(value))
-                    when :FSC2
-                      @constructed.map do |item|
-                        case item
-                        when Integer
-                          item.to_4cc
-                        when Hash
-                          item.transform_keys(&:to_4cc)
-                        end
-                      end
                     else
                       { hint => construct(@asn1) }
                     end
@@ -179,7 +170,7 @@ module MooTool
       def to_tree
         node = Helpers::TreeNode.new('Decompressor')
 
-        node.children << Helpers::TreeNode.new("Length: #{@value.size.ai}")
+        node.children << Helpers::TreeNode.new("Length: #{@value&.size.ai}")
         node.children << Helpers::TreeNode.new('Hash', [Helpers::TreeNode.new(to_hash(@hash))])
         node.children << Helpers::TreeNode.new("Encoding: #{@compression.ai}") if @compression
 

@@ -18,6 +18,10 @@ module MooTool
         @string_name = string_name
       end
 
+      def inspect
+        @string_name.blank? ? @key.ai : "#{@key.ai}:#{string_name.ai}"
+      end
+
       # Compares this descriptor with another
       #
       # @param other [DescriptorResult, String, Symbol] The object to compare with.

@@ -15,6 +15,7 @@ require 'plist'
 require 'net/http'
 require 'fileutils'
 require 'apple_data'
+require 'rasn1'
 
 require 'zeitwerk'
 

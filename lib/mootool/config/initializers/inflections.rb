@@ -17,4 +17,6 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'DWARF'
   inflect.acronym 'ASN1'
   inflect.acronym 'RSA'
+  inflect.acronym 'RASN1'
+  inflect.acronym 'SSL'
 end

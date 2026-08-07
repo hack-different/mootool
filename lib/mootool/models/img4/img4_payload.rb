@@ -74,8 +74,10 @@ module MooTool
         # @return [Hash] A validation status hash with :valid and :hash keys.
         def validate(manifest)
           firmware_tag = manifest.firmware_tag(@type)
+          return nil unless firmware_tag
 
           match = hashes.select do |hash|
+            puts(firmware_tag.ai) if firmware_tag.is_a? Array
             hash == firmware_tag.digest
           end
           @validated = {

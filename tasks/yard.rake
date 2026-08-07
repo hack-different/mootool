@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yard'
 
 desc 'Build All Static Content / Documentation'
