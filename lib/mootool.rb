@@ -15,7 +15,7 @@ require 'plist'
 require 'net/http'
 require 'fileutils'
 require 'apple_data'
-require 'rasn1'
+require 'rasn2'
 
 require 'zeitwerk'
 
@@ -26,7 +26,7 @@ module MooTool
 
   # The path to the Apple knowledge data.
   # @return [String]
-  DATA_PATH = File.join(__dir__, '../data/apple-knowledge/_data')
+  DATA_PATH = ENV['APPLE_DATA'] || File.join(__dir__, '../data/apple-knowledge/_data')
 
   # The base path for temporary files.
   # @return [String]

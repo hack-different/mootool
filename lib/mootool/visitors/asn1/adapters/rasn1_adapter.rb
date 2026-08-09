@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'rasn1'
+require 'rasn2'
 
 module MooTool
   module Visitors
     module ASN1
       module Adapters
-        # Adapter for RASN1Adapter::Types::Base nodes.
+        # Adapter for RASN2Adapter::Types::Base nodes.
         #
-        # Wraps RASN1Adapter type objects to conform to the common
+        # Wraps RASN2Adapter type objects to conform to the common
         # {MooTool::Visitors::Adapters::AdapterBase} interface used by visitors.
-        class RASN1Adapter < AdapterBase
+        class RASN2Adapter < AdapterBase
           # @return [Integer] The ASN1 tag number.
           def tag
             @node.id
@@ -18,7 +18,7 @@ module MooTool
 
           # Returns the tag class as an uppercase symbol to match OpenSSL convention.
           #
-          # RASN1Adapter uses lowercase symbols (:universal, :private, etc.) while the
+          # RASN2Adapter uses lowercase symbols (:universal, :private, etc.) while the
           # adapter interface uses uppercase (:UNIVERSAL, :PRIVATE, etc.).
           #
           # @return [Symbol] The tag class as an uppercase symbol.

@@ -100,9 +100,18 @@ module MooTool
       def parse_based_on_hint(value, hint)
         @compression = :raw
 
-        if hint == :sePk
+        case hint
+        when :sePk
           @compression = :ecc_point
           @parsed = parse_point_any(value)
+          return
+        when :excl
+          size = 0x4000
+          asn_data = MooTool::Schemas::ASN1::Bundle.parse(@data[-size..])
+          @parsed = asn_data
+          return
+        when :appv, :fCfg, :dCfg, :FSC2, :iCCl
+          @parsed = Schemas::ASN1::SystemConfiguration.parse(@data)
           return
         end
 
@@ -112,14 +121,6 @@ module MooTool
           @compression = :asn1
 
           @parsed = case hint
-                    when :appv, :dCfg, :fCfg
-                      {
-                        :type => @constructed[0].to_4cc(reverse: true),
-                        :unk => @constructed[1].to_s(16),
-                        Models::IMG4.key_name(:SPAY) => @constructed[2].to_h,
-                        :META => @constructed[3][:META].map(&:to_h).reduce(&:merge),
-                        **@constructed[4].to_h
-                      }
                     when :lcrt
                       certificate = OpenSSL::ASN1.decode(@asn1.value[3].value)
 

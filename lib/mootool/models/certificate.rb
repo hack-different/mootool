@@ -163,7 +163,10 @@ module MooTool
                 when :appleImg4Manifest
                   Models::IMG4::IMG4Manifest.new(OpenSSL::ASN1.decode(extension.value_der))
                 when :appleImg4ManifestSpecification
-                  IMG4::ManifestSpecification.new(extension.value_der)
+                  RASN2.trace($stdout, color: true) do
+                    MooTool::Schemas::ASN1::ManifestSpecification.parse(extension.value_der)
+                  end
+
                 when :appleDeviceAttestationKeyUsageProperties
                   parse_apple_device_attestation(extension)
                 when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
@@ -371,6 +374,14 @@ module MooTool
         end
       end
 
+      def self_signed?
+        verify(public_key)
+      end
+
+      def missing_root?
+        validations[:validations].any? == false
+      end
+
       # Performs various validations on the certificate against the index
       #
       # @return [Hash] Validation results.
@@ -384,6 +395,7 @@ module MooTool
           {
             subject: validator_certificate.subject.to_s,
             issuer: validator_certificate.issuer.to_s,
+            self_digest: (validator_certificate.digest == digest),
             fingerprint: validator_certificate.fingerprint,
             digest: validator_certificate.digest,
             valid: verify(validator_certificate.public_key)
@@ -421,6 +433,7 @@ module MooTool
         result[:public_key_sha] = public_key_sha
         result[:fingerprint] = @fingerprint
         result[:validations] = validations
+        result[:self_signed] = self_signed?
 
         result[:extensions] = @extensions
         result

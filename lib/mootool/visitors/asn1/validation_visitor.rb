@@ -5,27 +5,27 @@ require 'openssl'
 module MooTool
   module Visitors
     module ASN1
-      # Visitor that validates ASN1 structures against RASN1 type expectations.
+      # Visitor that validates ASN1 structures against RASN2 type expectations.
       #
-      # Works with both OpenSSL::ASN1 and RASN1::Types nodes via adapters.
+      # Works with both OpenSSL::ASN1 and RASN2::Types nodes via adapters.
       #
-      # Walks an ASN1 tree and checks each node against a parallel RASN1 model structure,
+      # Walks an ASN1 tree and checks each node against a parallel RASN2 model structure,
       # collecting validation errors with path information.
       #
       # Supports PRIVATE tag validation, optional/required field checks, and
-      # type matching against RASN1 type systems.
+      # type matching against RASN2 type systems.
       #
       # @example Validating a structure
-      #   schema = RASN1::Types::Sequence.new
-      #   schema.value = [RASN1::Types::Integer.new, RASN1::Types::OctetString.new]
+      #   schema = RASN2::Types::Sequence.new
+      #   schema.value = [RASN2::Types::Integer.new, RASN2::Types::OctetString.new]
       #
       #   visitor = MooTool::Visitors::ValidationVisitor.new(schema)
       #   result = visitor.visit(asn1_structure)
       #   visitor.valid?    #=> true or false
       #   visitor.errors    #=> [] or ["path: error message", ...]
       class ValidationVisitor < VisitorBase
-        # Tag number mapping from RASN1 type names to ASN1 universal tag numbers.
-        RASN1_TYPE_TO_TAG = {
+        # Tag number mapping from RASN2 type names to ASN1 universal tag numbers.
+        RASN2_TYPE_TO_TAG = {
           boolean: 1,
           integer: 2,
           bit_string: 3,
@@ -49,9 +49,9 @@ module MooTool
         # @return [Array<String>] Collected validation error messages.
         attr_reader :errors
 
-        # Initializes a new ValidationVisitor with a RASN1 schema.
+        # Initializes a new ValidationVisitor with a RASN2 schema.
         #
-        # @param schema [RASN1::Types::Base, nil] The RASN1 type to validate against.
+        # @param schema [RASN2::Types::Base, nil] The RASN2 type to validate against.
         #   If nil, only structural validation is performed.
         def initialize(schema = nil)
           super()
@@ -70,7 +70,7 @@ module MooTool
 
         # Visits an ASN1 node, validating it against the current schema position.
         #
-        # @param node [OpenSSL::ASN1::ASN1Data, RASN1::Types::Base, MooTool::Visitors::Adapters::AdapterBase] The ASN1 node to validate.
+        # @param node [OpenSSL::ASN1::ASN1Data, RASN2::Types::Base, MooTool::Visitors::Adapters::AdapterBase] The ASN1 node to validate.
         # @return [Boolean] true if this node is valid.
         def visit(node)
           return visit_nil if node.nil?
@@ -91,7 +91,7 @@ module MooTool
 
         # Returns true after validation if the structure is valid.
         #
-        # @param node [OpenSSL::ASN1::ASN1Data, RASN1::Types::Base, MooTool::Visitors::Adapters::AdapterBase] The root ASN1 node.
+        # @param node [OpenSSL::ASN1::ASN1Data, RASN2::Types::Base, MooTool::Visitors::Adapters::AdapterBase] The root ASN1 node.
         # @return [Boolean] true if the structure is valid.
         def validate(node)
           visit(node)
@@ -166,10 +166,10 @@ module MooTool
           end
         end
 
-        # Validates a node against its corresponding RASN1 schema type.
+        # Validates a node against its corresponding RASN2 schema type.
         #
         # @param adapter [MooTool::Visitors::Adapters::AdapterBase] The adapter wrapping the ASN1 node.
-        # @param schema [RASN1::Types::Base] The expected RASN1 type.
+        # @param schema [RASN2::Types::Base] The expected RASN2 type.
         def validate_against_schema(adapter, schema)
           validate_tag_class(adapter, schema)
           validate_tag_type(adapter, schema)
@@ -179,7 +179,7 @@ module MooTool
         # Checks that the tag class matches the schema expectation.
         #
         # @param adapter [MooTool::Visitors::Adapters::AdapterBase] The adapter wrapping the ASN1 node.
-        # @param schema [RASN1::Types::Base] The expected RASN1 type.
+        # @param schema [RASN2::Types::Base] The expected RASN2 type.
         def validate_tag_class(adapter, schema)
           expected_class = schema.asn1_class.to_s.upcase.to_sym
           actual_class = adapter.tag_class
@@ -193,7 +193,7 @@ module MooTool
         # Checks that the tag type matches the schema expectation.
         #
         # @param adapter [MooTool::Visitors::Adapters::AdapterBase] The adapter wrapping the ASN1 node.
-        # @param schema [RASN1::Types::Base] The expected RASN1 type.
+        # @param schema [RASN2::Types::Base] The expected RASN2 type.
         def validate_tag_type(adapter, schema)
           return if adapter.private_tag?
 
@@ -207,7 +207,7 @@ module MooTool
         # Pushes child schemas onto the stack for constructed types.
         #
         # @param adapter [MooTool::Visitors::Adapters::AdapterBase] The adapter wrapping the ASN1 node.
-        # @param schema [RASN1::Types::Base] The current schema type.
+        # @param schema [RASN2::Types::Base] The current schema type.
         def push_child_schemas(adapter, schema)
           return unless schema.respond_to?(:value) && schema.value.is_a?(Array)
           return unless adapter.value.is_a?(Array)
@@ -223,27 +223,27 @@ module MooTool
           end
         end
 
-        # Resolves the RASN1 base type class, loading rasn1 if available.
+        # Resolves the RASN2 base type class, loading rasn1 if available.
         #
-        # @return [Class] The RASN1::Types::Base class, or a fallback.
+        # @return [Class] The RASN2::Types::Base class, or a fallback.
         def rasn1_base_class
           @rasn1_base_class ||= begin
-            require 'rasn1'
-            RASN1::Types::Base
+            require 'rasn2'
+            RASN2::Types::Base
           rescue LoadError
             # Fallback if rasn1 is not available
             Class.new
           end
         end
 
-        # Converts a RASN1 type to its corresponding ASN1 tag number.
+        # Converts a RASN2 type to its corresponding ASN1 tag number.
         #
-        # @param schema [RASN1::Types::Base] The RASN1 type.
+        # @param schema [RASN2::Types::Base] The RASN2 type.
         # @return [Integer, nil] The ASN1 tag number, or nil if unknown.
         def rasn1_type_to_tag(schema)
           type_name = schema.type.to_s.downcase
           type_key = type_name.gsub(/\s+/, '_').to_sym
-          RASN1_TYPE_TO_TAG[type_key]
+          RASN2_TYPE_TO_TAG[type_key]
         end
 
         # Records a validation error with the current path context.

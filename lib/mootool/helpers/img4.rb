@@ -34,12 +34,13 @@ module MooTool
 
       # Tags identifying key-value properties
       KVP_TAGS = parse_4cc(
-        %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID
+        %w[mmap kcep kclf clas inst kclo kclz kcrf kcrz kcwf kcwz rddg tbmr tz0s drmc cons arms time UDID PAYP
            srnm auxp ksku mlb# BMac time acid WSKU Regn SrNm sei3 nuid WMac CLHS Mod# clid sip0 sip1 sip2 sip3
            smb0 auxi wmac smb1 smb2 upcl udid seid ESEC BNCH EPRO DSEC DPRO smb5 ronh AMNM trpk faic augs inst
            prid spih hrlp stng tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH
            EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt
-           tstp love kuid vuid rolp nish lobo nsih bmac faus fsca iuos rfcg esic epse FSC2 iCCl MSRk FSCl hop0]
+           tstp love kuid vuid rolp nish lobo nsih bmac faus fsca iuos rfcg esic epse FSC2 iCCl MSRk FSCl hop0
+           kcxf kcxz]
       )
 
       # Tags identifying firmware entries

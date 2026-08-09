@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'lzfse'
   spec.add_dependency 'lzss'
   spec.add_dependency 'plist'
-  spec.add_dependency 'rasn1'
+  spec.add_dependency 'rasn2'
   spec.add_dependency 'ruby-lzma'
   spec.add_dependency 'ruby-macho'
   spec.add_dependency 'rubyzip'

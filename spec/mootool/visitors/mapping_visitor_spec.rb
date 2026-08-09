@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'openssl'
-require 'rasn1'
+require 'rasn2'
 
 RSpec.describe MooTool::Visitors::ASN1::MappingVisitor do
   subject(:visitor) { described_class.new }
@@ -143,58 +143,58 @@ RSpec.describe MooTool::Visitors::ASN1::MappingVisitor do
     end
   end
 
-  context 'with RASN1 nodes' do
+  context 'with RASN2 nodes' do
     describe 'primitive type mapping' do
       it 'maps Integer to Ruby Integer' do
-        node = RASN1::Types::Integer.new(value: 42)
+        node = RASN2::Types::Integer.new(value: 42)
         expect(visitor.visit(node)).to eq(42)
       end
 
       it 'maps Boolean true' do
-        node = RASN1::Types::Boolean.new(value: true)
+        node = RASN2::Types::Boolean.new(value: true)
         expect(visitor.visit(node)).to be true
       end
 
       it 'maps Boolean false' do
-        node = RASN1::Types::Boolean.new(value: false)
+        node = RASN2::Types::Boolean.new(value: false)
         expect(visitor.visit(node)).to be false
       end
 
       it 'maps Null to nil' do
-        node = RASN1::Types::Null.new
+        node = RASN2::Types::Null.new
         expect(visitor.visit(node)).to be_nil
       end
 
       it 'maps OctetString to String' do
-        node = RASN1::Types::OctetString.new(value: "\x01\x02\x03")
+        node = RASN2::Types::OctetString.new(value: "\x01\x02\x03")
         result = visitor.visit(node)
         expect(result).to eq("\x01\x02\x03")
         expect(result).to be_a(String)
       end
 
       it 'maps BitString to String' do
-        node = RASN1::Types::BitString.new(value: "\xFF\x00")
+        node = RASN2::Types::BitString.new(value: "\xFF\x00")
         result = visitor.visit(node)
         expect(result).to be_a(String)
       end
 
       it 'maps Utf8String to String' do
-        node = RASN1::Types::Utf8String.new(value: 'hello')
+        node = RASN2::Types::Utf8String.new(value: 'hello')
         expect(visitor.visit(node)).to eq('hello')
       end
 
       it 'maps IA5String to String' do
-        node = RASN1::Types::IA5String.new(value: 'test@example.com')
+        node = RASN2::Types::IA5String.new(value: 'test@example.com')
         expect(visitor.visit(node)).to eq('test@example.com')
       end
 
       it 'maps PrintableString to String' do
-        node = RASN1::Types::PrintableString.new(value: 'US')
+        node = RASN2::Types::PrintableString.new(value: 'US')
         expect(visitor.visit(node)).to eq('US')
       end
 
       it 'maps ObjectId to String' do
-        node = RASN1::Types::ObjectId.new(value: '2.5.4.3')
+        node = RASN2::Types::ObjectId.new(value: '2.5.4.3')
         result = visitor.visit(node)
         expect(result).to eq('2.5.4.3')
       end
@@ -202,20 +202,20 @@ RSpec.describe MooTool::Visitors::ASN1::MappingVisitor do
 
     describe 'constructive type mapping' do
       it 'maps Sequence to Array' do
-        seq = RASN1::Types::Sequence.new
+        seq = RASN2::Types::Sequence.new
         seq.value = [
-          RASN1::Types::Integer.new(value: 1),
-          RASN1::Types::Integer.new(value: 2)
+          RASN2::Types::Integer.new(value: 1),
+          RASN2::Types::Integer.new(value: 2)
         ]
         result = visitor.visit(seq)
         expect(result).to eq([1, 2])
       end
 
       it 'maps nested Sequence' do
-        inner = RASN1::Types::Sequence.new
-        inner.value = [RASN1::Types::Integer.new(value: 99)]
-        outer = RASN1::Types::Sequence.new
-        outer.value = [inner, RASN1::Types::Null.new]
+        inner = RASN2::Types::Sequence.new
+        inner.value = [RASN2::Types::Integer.new(value: 99)]
+        outer = RASN2::Types::Sequence.new
+        outer.value = [inner, RASN2::Types::Null.new]
         result = visitor.visit(outer)
         expect(result).to eq([[99], nil])
       end
@@ -223,9 +223,9 @@ RSpec.describe MooTool::Visitors::ASN1::MappingVisitor do
 
     describe 'depth tracking during mapping' do
       it 'resets depth after mapping' do
-        inner = RASN1::Types::Sequence.new
-        inner.value = [RASN1::Types::Integer.new(value: 1)]
-        outer = RASN1::Types::Sequence.new
+        inner = RASN2::Types::Sequence.new
+        inner.value = [RASN2::Types::Integer.new(value: 1)]
+        outer = RASN2::Types::Sequence.new
         outer.value = [inner]
         visitor.visit(outer)
         expect(visitor.depth).to eq(0)

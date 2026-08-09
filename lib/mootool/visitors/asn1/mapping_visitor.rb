@@ -5,7 +5,7 @@ module MooTool
     module ASN1
       # Visitor that maps ASN1 structures to native Ruby types.
       #
-      # Works with both OpenSSL::ASN1 and RASN1::Types nodes via adapters.
+      # Works with both OpenSSL::ASN1 and RASN2::Types nodes via adapters.
       #
       # Transforms ASN1 primitives into their natural Ruby equivalents:
       # - INTEGER → Integer

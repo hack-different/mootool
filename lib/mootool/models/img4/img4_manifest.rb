@@ -79,11 +79,11 @@ module MooTool
         def validate
           @certificates ||= []
           @certificates.map do |certificate|
-            validator_certs = CertificateIndex.current.index.sort_by do |_hash, validator_certificate|
-              validator_certificate.subject.to_s
+            validator_certs = CertificateIndex.current.index.dup
+            @certificates.each do |self_certificate|
+              validator_certs[self_certificate.digest] = self_certificate
             end
 
-            validator_certs = validator_certs.uniq { |_hash, cert| cert.digest }
             validations = validator_certs.map do |_hash, validator_certificate|
               {
                 subject: validator_certificate.subject.to_s,

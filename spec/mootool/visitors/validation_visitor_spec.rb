@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'openssl'
-require 'rasn1'
+require 'rasn2'
 
 RSpec.describe MooTool::Visitors::ASN1::ValidationVisitor do
   context 'with OpenSSL nodes' do
@@ -35,23 +35,23 @@ RSpec.describe MooTool::Visitors::ASN1::ValidationVisitor do
       end
     end
 
-    describe 'with RASN1 schema' do
+    describe 'with RASN2 schema' do
       it 'validates matching integer type' do
-        schema = RASN1::Types::Integer.new
+        schema = RASN2::Types::Integer.new
         node = OpenSSL::ASN1::Integer.new(42)
         visitor = described_class.new(schema)
         expect(visitor.validate(node)).to be true
       end
 
       it 'validates matching boolean type' do
-        schema = RASN1::Types::Boolean.new
+        schema = RASN2::Types::Boolean.new
         node = OpenSSL::ASN1::Boolean.new(true)
         visitor = described_class.new(schema)
         expect(visitor.validate(node)).to be true
       end
 
       it 'detects type mismatch' do
-        schema = RASN1::Types::Integer.new
+        schema = RASN2::Types::Integer.new
         node = OpenSSL::ASN1::Boolean.new(true)
         visitor = described_class.new(schema)
         visitor.validate(node)
@@ -94,46 +94,46 @@ RSpec.describe MooTool::Visitors::ASN1::ValidationVisitor do
     end
   end
 
-  context 'with RASN1 nodes' do
+  context 'with RASN2 nodes' do
     describe 'without schema' do
       subject(:visitor) { described_class.new }
 
       it 'validates any primitive node' do
-        node = RASN1::Types::Integer.new(value: 42)
+        node = RASN2::Types::Integer.new(value: 42)
         expect(visitor.validate(node)).to be true
       end
 
       it 'validates any constructive node' do
-        seq = RASN1::Types::Sequence.new
-        seq.value = [RASN1::Types::Integer.new(value: 1)]
+        seq = RASN2::Types::Sequence.new
+        seq.value = [RASN2::Types::Integer.new(value: 1)]
         expect(visitor.validate(seq)).to be true
       end
 
       it 'has no errors' do
-        node = RASN1::Types::Integer.new(value: 42)
+        node = RASN2::Types::Integer.new(value: 42)
         visitor.validate(node)
         expect(visitor.errors).to be_empty
       end
     end
 
-    describe 'with RASN1 schema' do
+    describe 'with RASN2 schema' do
       it 'validates matching integer type' do
-        schema = RASN1::Types::Integer.new
-        node = RASN1::Types::Integer.new(value: 42)
+        schema = RASN2::Types::Integer.new
+        node = RASN2::Types::Integer.new(value: 42)
         visitor = described_class.new(schema)
         expect(visitor.validate(node)).to be true
       end
 
       it 'validates matching boolean type' do
-        schema = RASN1::Types::Boolean.new
-        node = RASN1::Types::Boolean.new(value: true)
+        schema = RASN2::Types::Boolean.new
+        node = RASN2::Types::Boolean.new(value: true)
         visitor = described_class.new(schema)
         expect(visitor.validate(node)).to be true
       end
 
       it 'detects type mismatch' do
-        schema = RASN1::Types::Integer.new
-        node = RASN1::Types::Boolean.new(value: true)
+        schema = RASN2::Types::Integer.new
+        node = RASN2::Types::Boolean.new(value: true)
         visitor = described_class.new(schema)
         visitor.validate(node)
         expect(visitor.valid?).to be false
@@ -143,10 +143,10 @@ RSpec.describe MooTool::Visitors::ASN1::ValidationVisitor do
 
     describe 'nested validation' do
       it 'validates nested structures' do
-        seq = RASN1::Types::Sequence.new
+        seq = RASN2::Types::Sequence.new
         seq.value = [
-          RASN1::Types::Integer.new(value: 1),
-          RASN1::Types::Boolean.new(value: true)
+          RASN2::Types::Integer.new(value: 1),
+          RASN2::Types::Boolean.new(value: true)
         ]
         visitor = described_class.new
         expect(visitor.validate(seq)).to be true

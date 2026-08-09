@@ -6,7 +6,7 @@ module MooTool
       module Adapters
         # Common interface for ASN1 node adapters.
         #
-        # Wraps nodes from different ASN1 libraries (OpenSSL, RASN1) to provide
+        # Wraps nodes from different ASN1 libraries (OpenSSL, RASN2) to provide
         # a uniform API for the visitor pattern. Subclasses must implement
         # all abstract methods.
         #
@@ -199,18 +199,18 @@ module MooTool
 
           # Wraps an ASN1 node with the appropriate adapter.
           #
-          # Detects whether the node is from OpenSSL or RASN1 and returns
+          # Detects whether the node is from OpenSSL or RASN2 and returns
           # the corresponding adapter.
           #
-          # @param node [Object] An ASN1 node from OpenSSL or RASN1.
+          # @param node [Object] An ASN1 node from OpenSSL or RASN2.
           # @return [MooTool::Visitors::Adapters::AdapterBase] The wrapped adapter.
           # @raise [ArgumentError] If the node type is not recognized.
           def self.wrap(node)
             case node
             when OpenSSL::ASN1::ASN1Data
               OpenSSLAdapter.new(node)
-            when RASN1::Types::Base
-              RASN1Adapter.new(node)
+            when RASN2::Types::Base
+              RASN2Adapter.new(node)
             else
               raise ArgumentError, "unsupported ASN1 node type: #{node.class}"
             end

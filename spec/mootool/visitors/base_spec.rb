@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'openssl'
-require 'rasn1'
+require 'rasn2'
 
 RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
   subject(:visitor) { described_class.new }
@@ -166,9 +166,9 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
   end
 
-  context 'with RASN1 nodes' do
+  context 'with RASN2 nodes' do
     describe '#visit with a primitive node' do
-      let(:node) { RASN1::Types::Integer.new(value: 42) }
+      let(:node) { RASN2::Types::Integer.new(value: 42) }
 
       it 'returns the underlying node' do
         result = visitor.visit(node)
@@ -187,10 +187,10 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
 
     describe '#visit with a constructive node' do
-      let(:child1) { RASN1::Types::Integer.new(value: 1) }
-      let(:child2) { RASN1::Types::Integer.new(value: 2) }
+      let(:child1) { RASN2::Types::Integer.new(value: 1) }
+      let(:child2) { RASN2::Types::Integer.new(value: 2) }
       let(:sequence) do
-        seq = RASN1::Types::Sequence.new
+        seq = RASN2::Types::Sequence.new
         seq.value = [child1, child2]
         seq
       end
@@ -213,14 +213,14 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
 
     describe '#visit with nested constructive nodes' do
-      let(:inner_child) { RASN1::Types::Integer.new(value: 99) }
+      let(:inner_child) { RASN2::Types::Integer.new(value: 99) }
       let(:inner_seq) do
-        seq = RASN1::Types::Sequence.new
+        seq = RASN2::Types::Sequence.new
         seq.value = [inner_child]
         seq
       end
       let(:outer_seq) do
-        seq = RASN1::Types::Sequence.new
+        seq = RASN2::Types::Sequence.new
         seq.value = [inner_seq]
         seq
       end
@@ -258,10 +258,10 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
       end
 
       it 'tracks depth through nested structures' do
-        inner = RASN1::Types::Integer.new(value: 1)
-        mid = RASN1::Types::Sequence.new
+        inner = RASN2::Types::Integer.new(value: 1)
+        mid = RASN2::Types::Sequence.new
         mid.value = [inner]
-        outer = RASN1::Types::Sequence.new
+        outer = RASN2::Types::Sequence.new
         outer.value = [mid]
 
         tv = tracking_visitor_class.new
@@ -270,10 +270,10 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
       end
 
       it 'tracks parent chain' do
-        inner = RASN1::Types::Integer.new(value: 1)
-        mid = RASN1::Types::Sequence.new
+        inner = RASN2::Types::Integer.new(value: 1)
+        mid = RASN2::Types::Sequence.new
         mid.value = [inner]
-        outer = RASN1::Types::Sequence.new
+        outer = RASN2::Types::Sequence.new
         outer.value = [mid]
 
         tv = tracking_visitor_class.new

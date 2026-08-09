@@ -51,6 +51,26 @@ module MooTool
 
         ap(Models::CertificateIndex.current.index)
       end
+
+      method_option :missing, type: :boolean, default: false
+      desc 'index', 'Indexes certificates throughout the land'
+      def roots
+        Models::CertificateIndex.load_default_certs
+        result = if options[:missing]
+                   Models::CertificateIndex.current.index.values.select(&:missing_root?)
+                 else
+                   Models::CertificateIndex.current.index.values.select(&:self_signed?)
+                 end
+
+        ap(result.uniq { |c| c.digest.hex }.map do |c|
+          {
+            subject: c.subject.to_s,
+            issuer: c.issuer.to_s,
+            fingerprint: c.fingerprint,
+            digest: c.digest
+          }
+        end)
+      end
     end
   end
 end

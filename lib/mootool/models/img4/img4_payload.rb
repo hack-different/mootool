@@ -30,6 +30,8 @@ module MooTool
           Helpers::TreeNode.new(Models::IMG4.key_name(:IM4P).ai, [
                                   Helpers::TreeNode.new("Type: #{Models::IMG4.key_name(@type).ai}"),
                                   Helpers::TreeNode.new("Description: #{@description.ai}"),
+                                  Helpers::TreeNode.new('Keybag', properties: @keybag || {}),
+                                  Helpers::TreeNode.new('Extensions', properties: @extensions || {}),
                                   @payload.to_tree
                                 ])
         end
@@ -57,15 +59,7 @@ module MooTool
         # @param input [OpenSSL::ASN1::ASN1Data] The encoded keybag data.
         # @return [Hash, Array, Object] The parsed keybag mapping or raw object if parsing fails.
         def parse_keybag(input)
-          value = construct(OpenSSL::ASN1.decode(input))
-          return value unless value.is_a? Array
-
-          return value unless value.all?(OpenSSL::ASN1)
-
-          value.map do |keybag|
-            iv = Models::Digest.create(keybag[1].raw, 'IV')
-            { KEYBAG_TYPES[keybag[0]] => { iv: iv, key: keybag[2] } }
-          end.reduce(&:merge)
+          construct(OpenSSL::ASN1.decode(input))
         end
 
         # Validates the payload against an IMG4 manifest.

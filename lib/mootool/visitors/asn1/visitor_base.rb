@@ -5,13 +5,13 @@ require 'openssl'
 module MooTool
   module Visitors
     module ASN1
-      # VisitorBase visitor for traversing ASN1 structures from OpenSSL or RASN1.
+      # VisitorBase visitor for traversing ASN1 structures from OpenSSL or RASN2.
       #
       # Provides recursive traversal of ASN1 trees with depth and parent tracking.
       # Subclasses implement {#visit_primitive}, {#visit_constructive}, and optionally
       # {#visit_private} to define behavior at each node.
       #
-      # Accepts raw nodes from either OpenSSL::ASN1 or RASN1::Types and wraps them
+      # Accepts raw nodes from either OpenSSL::ASN1 or RASN2::Types and wraps them
       # in a unified adapter ({MooTool::Visitors::Adapters::AdapterBase}) before dispatching.
       #
       # Supports map/reduce style operations:
@@ -43,13 +43,13 @@ module MooTool
 
         # Visits an ASN1 node, dispatching to the appropriate handler.
         #
-        # Accepts raw nodes from OpenSSL::ASN1 or RASN1::Types and wraps them
+        # Accepts raw nodes from OpenSSL::ASN1 or RASN2::Types and wraps them
         # in an adapter. Also accepts pre-wrapped adapters.
         #
         # Automatically recurses into constructed children,
         # tracking parents and depth throughout the traversal.
         #
-        # @param node [OpenSSL::ASN1::ASN1Data, RASN1::Types::VisitorBase, MooTool::Visitors::Adapters::AdapterBase] The ASN1 node to visit.
+        # @param node [OpenSSL::ASN1::ASN1Data, RASN2::Types::VisitorBase, MooTool::Visitors::Adapters::AdapterBase] The ASN1 node to visit.
         # @return [Object] The result of visiting this node.
         def visit(node)
           return visit_nil if node.nil?

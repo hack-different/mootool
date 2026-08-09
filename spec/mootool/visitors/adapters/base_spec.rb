@@ -10,10 +10,10 @@ RSpec.describe MooTool::Visitors::ASN1::Adapters::AdapterBase do
       expect(adapter).to be_a(MooTool::Visitors::ASN1::Adapters::OpenSSLAdapter)
     end
 
-    it 'wraps RASN1::Types nodes in Rasn1 adapter' do
-      node = RASN1::Types::Integer.new(value: 42)
+    it 'wraps RASN2::Types nodes in Rasn1 adapter' do
+      node = RASN2::Types::Integer.new(value: 42)
       adapter = described_class.wrap(node)
-      expect(adapter).to be_a(MooTool::Visitors::ASN1::Adapters::RASN1Adapter)
+      expect(adapter).to be_a(MooTool::Visitors::ASN1::Adapters::RASN2Adapter)
     end
 
     it 'raises ArgumentError for unsupported types' do
