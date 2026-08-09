@@ -157,8 +157,6 @@ module MooTool
           str << "\n" << @value.inspect(lvl + 1)
         end
 
-        private
-
         # Accept any private constructed identifier, and remember the one which was decoded.
         #
         # @param der [String] DER binary data

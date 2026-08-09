@@ -40,7 +40,7 @@ module MooTool
            prid spih hrlp stng tbms vnum clas cnch fchp ndom pave styp type DGST EPRO ESEC CEPO SDOM SDOM BNCH
            EKEY CSEC CPRO BORD CHIP ECID uidm rpnh esdm apmv srvn eg0n prtp oppd sdkp snon snuf lpnh tatp tagt
            tstp love kuid vuid rolp nish lobo nsih bmac faus fsca iuos rfcg esic epse FSC2 iCCl MSRk FSCl hop0
-           kcxf kcxz]
+           kcxf kcxz Coor supm]
       )
 
       # Tags identifying firmware entries

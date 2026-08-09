@@ -17,20 +17,21 @@ module MooTool
       #   mootool cert print example.crt
       def print(file)
         @certificates = Models::Certificate.load(file)
+        @certificates = [@certificates] unless @certificates.is_a?(Array)
 
         friendly = options[:friendly]
         mappings = Models::IMG4.mappings
         if friendly
           @certificates.map do |certificate|
             certificate.to_h.deep_transform_keys do |key|
-              new_key = mappings.dig(key.to_s, 'title') || mappings.dig(key.to_s, 'description') || key
+              new_key = mappings[key]
               new_key.respond_to?(:to_sym) ? new_key.to_sym : new_key
             end
           end
         end
 
-        @certificates.each do |_certificate|
-          ap c
+        @certificates.each do |certificate|
+          ap certificate
         end
       end
 

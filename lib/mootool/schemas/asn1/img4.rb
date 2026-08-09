@@ -254,7 +254,7 @@ module MooTool
           # @return [Keybags, nil]
           def keybags
             keybags = self[:keybags]
-            keybags.value?? keybags : nil
+            keybags.value? ? keybags : nil
           end
 
           # Whether this payload is encrypted, i.e. carries keybags.
@@ -289,7 +289,7 @@ module MooTool
         # @return [Payload, nil]
         def payload
           payload = self[:payload]
-          payload.value?? payload : nil
+          payload.value? ? payload : nil
         end
 
         # Whether this container embeds a payload.

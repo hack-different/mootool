@@ -23,7 +23,7 @@ module MooTool
       delegate :issuer, :subject, to: :@certificate
 
       # Map of Apple OIDs to their symbolic names and types
-      APPLE_OID_MAP = AppleData::Schemas::PKI.new.oids.deep_symbolize_keys
+      APPLE_OID_MAP = AppleData::Schemas::PKI.new.oids.with_indifferent_access
 
       # Initializes a new Certificate object
       #
@@ -145,10 +145,6 @@ module MooTool
       def parse_extension(extension)
         oid_properties = Certificate.oid_properties(extension.oid)
         value = case oid_properties[:name]
-                when :basicConstraints
-                  extension.value
-                when :keyUsage
-                  construct(OpenSSL::ASN1.decode(extension.value_der))
                 when :authorityKeyIdentifier, :subjectKeyIdentifier
                   parse_identifiers extension
                 when :appleKeyInstanceName
@@ -162,17 +158,11 @@ module MooTool
                   end
                 when :appleImg4Manifest
                   Models::IMG4::IMG4Manifest.new(OpenSSL::ASN1.decode(extension.value_der))
+                when :basicConstraints, :keyUsage, :appleDeviceAttestationKeyUsageProperties, :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
+                  :appleDeviceAttestationHardwareProperties, :applePinningAllowTestCertsUCRT
+                  RASN2.parse(extension.value_der)
                 when :appleImg4ManifestSpecification
-                  RASN2.trace($stdout, color: true) do
-                    MooTool::Schemas::ASN1::ManifestSpecification.parse(extension.value_der)
-                  end
-
-                when :appleDeviceAttestationKeyUsageProperties
-                  parse_apple_device_attestation(extension)
-                when :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
-                  :appleDeviceAttestationHardwareProperties
-
-                  parse_apple_sequence(extension)
+                  Schemas::ASN1::ManifestSpecification.parse(extension.value_der)
                 when :appleSomeSHA256Hash
                   Models::Digest.create extension.value
                 else

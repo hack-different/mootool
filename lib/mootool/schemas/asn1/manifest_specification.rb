@@ -31,17 +31,23 @@ module MooTool
       class ManifestSpecification < RASN2::Model
         # A single delegated property, whose value may be of any ASN.1 type.
         class Property < RASN2::Model
-          sequence :property,
-                   content: [
-                     ia5_string(:key),
-                     choice(:value, content: [
-                       null(:VALUE_NULL),
-                       boolean(:VALUE_BOOLEAN),
-                       integer(:VALUE_INTEGER),
-                       any(:VALUE_ANY),
-                       wrapper(any(:SetValue), explicit: 0, constructed: true),
-                     ])
-                   ]
+          sequence :property do
+            ia5_string(:key)
+            choice :value do
+              null(:VALUE_NULL)
+              boolean(:VALUE_BOOLEAN)
+              integer(:VALUE_INTEGER)
+              tag(:MUST_BE_SET, class: :context, tag: 0) do
+                null(:MUST_BE_SET_NULL)
+              end
+              tag(:MUST_NOT_BE_SET, class: :context, tag: 1) do
+                null(:MUST_NOT_BE_SET_NULL)
+              end
+              bit_string(:VALUE_BIT_STRING)
+              octet_string(:VALUE_OCTET_STRING)
+              any(:VALUE_ANY)
+            end
+          end
         end
 
         # A property, tagged with the private 4CC repeating its key.
@@ -62,7 +68,6 @@ module MooTool
         end
 
         set_of(:ManifestSpecification, PropertySetTag)
-
 
         # The tags of every property group of this specification.
         #
