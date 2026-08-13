@@ -54,7 +54,7 @@ module MooTool
       end
 
       method_option :missing, type: :boolean, default: false
-      desc 'index', 'Indexes certificates throughout the land'
+      desc 'roots', 'Indexes certificates throughout the land'
       def roots
         Models::CertificateIndex.load_default_certs
         result = if options[:missing]

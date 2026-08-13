@@ -31,20 +31,12 @@ module MooTool
         def visit_primitive(adapter)
           return adapter.value if adapter.value.nil?
 
-          if adapter.null?
+          case adapter
+          in _ if adapter.nil? || adapter.null?
             nil
-          elsif adapter.integer? || adapter.enumerated?
-            adapter.native_value
-          elsif adapter.boolean?
-            adapter.value
-          elsif adapter.octet_string? || adapter.bit_string?
-            adapter.value
-          elsif adapter.string_type?
-            adapter.value
-          elsif adapter.object_id?
-            adapter.value
-          elsif adapter.utc_time? || adapter.generalized_time?
-            adapter.value
+          in result if adapter.utc_time? || adapter.generalized_time? || adapter.object_id? || adapter.string_type? ||
+            adapter.octet_string? || adapter.bit_string? || adapter.boolean?
+            result.value
           else
             adapter.native_value
           end

@@ -4,6 +4,7 @@ module MooTool
   module Schemas
     module ASN1
       class Bundle < RASN2::Model
+        # A signluar Bundle Object Index Element (name or int)
         class ObjectIndex < RASN2::Model
           sequence :object_index_pair do
             endprintable_string(:object_name)

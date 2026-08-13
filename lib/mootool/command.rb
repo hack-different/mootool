@@ -25,5 +25,8 @@ module MooTool
 
     desc 'strings', 'Strings'
     subcommand :strings, Commands::Strings
+
+    desc 'gui', 'Display Data in GUI'
+    subcommand :gui, MooTool::Commands::GUI
   end
 end

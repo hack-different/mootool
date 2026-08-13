@@ -20,4 +20,5 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'RASN2'
   inflect.acronym 'SSL'
   inflect.acronym 'AppV'
+  inflect.acronym 'GUI'
 end

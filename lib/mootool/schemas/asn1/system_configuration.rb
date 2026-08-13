@@ -3,7 +3,9 @@
 module MooTool
   module Schemas
     module ASN1
+      # System Configuration (SysCfg) Schema
       class SystemConfiguration < RASN2::Model
+        # A single SysConfig property
         class SysConfigProperty < RASN2::Model
           sequence :SYSCONFIG_PROPERTY do
             integer(:SPAY_TAG)
@@ -15,6 +17,7 @@ module MooTool
           end
         end
 
+        # A manifest property (either the MANP or OBJP)
         class ManifestProperty < RASN2::Model
           sequence :MANIFEST_PROPERTY do
             ia5_string(:MANP_KEY)
@@ -22,6 +25,7 @@ module MooTool
           end
         end
 
+        # MANI or manifest information
         class ManifestInformation < RASN2::Model
           octet_string(:MANI_KEY)
         end

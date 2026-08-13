@@ -38,10 +38,8 @@ module MooTool
               boolean(:VALUE_BOOLEAN)
               integer(:VALUE_INTEGER)
               tag(:MUST_BE_SET, class: :context, tag: 0) do
-                null(:MUST_BE_SET_NULL)
               end
               tag(:MUST_NOT_BE_SET, class: :context, tag: 1) do
-                null(:MUST_NOT_BE_SET_NULL)
               end
               bit_string(:VALUE_BIT_STRING)
               octet_string(:VALUE_OCTET_STRING)

@@ -16,6 +16,8 @@ require 'net/http'
 require 'fileutils'
 require 'apple_data'
 require 'rasn2'
+require 'gtk3'
+require 'pathutil'
 
 require 'zeitwerk'
 
@@ -26,7 +28,11 @@ module MooTool
 
   # The path to the Apple knowledge data.
   # @return [String]
-  DATA_PATH = ENV['APPLE_DATA'] || File.join(__dir__, '../data/apple-knowledge/_data')
+  APPLE_DATA_PATH = ENV['APPLE_DATA'] || File.join(__dir__, '../data/apple-knowledge/_data')
+
+  DATA_PATH = File.join(__dir__, '../data')
+  UI_PATH = File.expand_path(File.join(__dir__, '../data/ui'))
+  GRESOURCE_BIN = File.expand_path(File.join(__dir__, '../data/ui/resources.bin'))
 
   # The base path for temporary files.
   # @return [String]

@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'
   spec.add_dependency 'ecies'
+  spec.add_dependency 'gtk3'
   spec.add_dependency 'lzfse'
   spec.add_dependency 'lzss'
   spec.add_dependency 'plist'

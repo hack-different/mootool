@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.8 -->
+  <template class="MooToolGUIPrintWindow" parent="GtkApplicationWindow">
+    <property name="title" translatable="yes">MooTool</property>
+    <property name="default-width">1200</property>
+    <property name="default-height">700</property>
+    <child>
+      <object class="GtkPaned" id="main_paned">
+        <property name="visible">True</property>
+        <property name="orientation">horizontal</property>
+        <property name="position">250</property>
+        <child>
+          <object class="GtkScrolledWindow" id="file_list_scroll">
+            <property name="visible">True</property>
+            <property name="hscrollbar-policy">automatic</property>
+            <property name="vscrollbar-policy">automatic</property>
+            <property name="min-content-width">200</property>
+            <child>
+              <object class="GtkListBox" id="file_list">
+                <property name="visible">True</property>
+                <property name="selection-mode">single</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">False</property>
+            <property name="shrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkPaned" id="right_paned">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="position">400</property>
+            <child>
+              <object class="GtkScrolledWindow" id="tree_scroll">
+                <property name="visible">True</property>
+                <property name="hscrollbar-policy">automatic</property>
+                <property name="vscrollbar-policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="content_tree">
+                    <property name="visible">True</property>
+                    <property name="headers-visible">True</property>
+                    <property name="enable-tree-lines">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="properties_scroll">
+                <property name="visible">True</property>
+                <property name="hscrollbar-policy">automatic</property>
+                <property name="vscrollbar-policy">automatic</property>
+                <property name="min-content-height">150</property>
+                <child>
+                  <object class="GtkTreeView" id="properties_view">
+                    <property name="visible">True</property>
+                    <property name="headers-visible">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">False</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">False</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

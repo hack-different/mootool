@@ -145,18 +145,6 @@ module MooTool
           end
         end
 
-        # @param level [Integer]
-        # @return [String]
-        def inspect(level = 0)
-          lvl = [level, 0].max
-          str = +('  ' * lvl)
-          str << "#{@name} " unless @name.nil?
-          str << "PRIVATE [#{four_cc}] EXPLICIT #{type}:"
-          return str << ' (NO VALUE)' unless value?
-
-          str << "\n" << @value.inspect(lvl + 1)
-        end
-
         # Accept any private constructed identifier, and remember the one which was decoded.
         #
         # @param der [String] DER binary data

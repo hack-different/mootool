@@ -159,10 +159,8 @@ module MooTool
                 when :appleImg4Manifest
                   Models::IMG4::IMG4Manifest.new(OpenSSL::ASN1.decode(extension.value_der))
                 when :basicConstraints, :keyUsage, :appleDeviceAttestationKeyUsageProperties, :appleDeviceAttestationDeviceOSInformation, :appleFactoryTrustModeSigning,
-                  :appleDeviceAttestationHardwareProperties, :applePinningAllowTestCertsUCRT
+                  :appleDeviceAttestationHardwareProperties, :applePinningAllowTestCertsUCRT, :appleImg4ManifestSpecification
                   RASN2.parse(extension.value_der)
-                when :appleImg4ManifestSpecification
-                  Schemas::ASN1::ManifestSpecification.parse(extension.value_der)
                 when :appleSomeSHA256Hash
                   Models::Digest.create extension.value
                 else
@@ -194,6 +192,8 @@ module MooTool
           result = e.is_a?(Hash) && e.key?(:value) ? e[:value] : e
           if result.respond_to?(:to_tree)
             Helpers::TreeNode.new(id, [result.to_tree])
+          elsif result.is_a? RASN2::Types::Base
+            Helpers::TreeNode.new(id, [Helpers::TreeNode.new(result.inspect(color: true))])
           else
             Helpers::TreeNode.new(id, [Helpers::TreeNode.new(result.ai)])
           end
