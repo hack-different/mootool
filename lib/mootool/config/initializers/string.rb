@@ -10,7 +10,7 @@ class String
   # @example
   #   "\x00\xFF".to_hex #=> "00FF"
   def to_hex(upper: true)
-    upper ? unpack('H*').upcase : unpack('H*')
+    upper ? unpack1('H*').upcase : unpack('H*')
   end
 
   # Converts the hexadecimal string to its binary representation.

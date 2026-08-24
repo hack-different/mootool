@@ -116,6 +116,12 @@ module MooTool
       # @return [Array<String>] The lines of the rendered tree.
       def render
         lines = render_header
+
+        if @children.empty? && lines.size > 1
+          last_line = lines.pop
+          lines << '└─◦' + last_line[3..]
+          return lines
+        end
         @children.each_with_index do |child, index|
           child_lines = child.render
           last_child = index == @children.size - 1
@@ -151,10 +157,10 @@ module MooTool
         parts << @id.ai if @id
         header = parts.join(' @ ')
         name_fixup = @name.split("\n").map.with_index do |l, idx|
-          idx.zero? ? l : "  #{l}"
+          idx.zero? ? l : "│  #{l}"
         end.join("\n")
         header = if parts.any?
-                   "#{header}\n  #{name_fixup}"
+                   "#{header}\n│  #{name_fixup}"
                  else
                    name_fixup
                  end

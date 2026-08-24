@@ -28,9 +28,9 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
 
     describe '#visit with a constructive node' do
-      let(:child1) { OpenSSL::ASN1::Integer.new(1) }
-      let(:child2) { OpenSSL::ASN1::Integer.new(2) }
-      let(:sequence) { OpenSSL::ASN1::Sequence.new([child1, child2]) }
+      let(:first_child) { OpenSSL::ASN1::Integer.new(1) }
+      let(:second_child) { OpenSSL::ASN1::Integer.new(2) }
+      let(:sequence) { OpenSSL::ASN1::Sequence.new([first_child, second_child]) }
 
       it 'returns an array of visited children' do
         result = visitor.visit(sequence)
@@ -154,9 +154,9 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
 
     describe 'Set handling' do
-      let(:child1) { OpenSSL::ASN1::Integer.new(1) }
-      let(:child2) { OpenSSL::ASN1::Integer.new(2) }
-      let(:set_node) { OpenSSL::ASN1::Set.new([child1, child2]) }
+      let(:first_child) { OpenSSL::ASN1::Integer.new(1) }
+      let(:second_child) { OpenSSL::ASN1::Integer.new(2) }
+      let(:set_node) { OpenSSL::ASN1::Set.new([first_child, second_child]) }
 
       it 'recurses into Set nodes' do
         result = visitor.visit(set_node)
@@ -187,11 +187,11 @@ RSpec.describe MooTool::Visitors::ASN1::VisitorBase do
     end
 
     describe '#visit with a constructive node' do
-      let(:child1) { RASN2::Types::Integer.new(value: 1) }
-      let(:child2) { RASN2::Types::Integer.new(value: 2) }
+      let(:first_child) { RASN2::Types::Integer.new(value: 1) }
+      let(:second_child) { RASN2::Types::Integer.new(value: 2) }
       let(:sequence) do
         seq = RASN2::Types::Sequence.new
-        seq.value = [child1, child2]
+        seq.value = [first_child, second_child]
         seq
       end
 

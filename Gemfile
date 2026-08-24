@@ -7,6 +7,7 @@ gemspec
 
 gem 'jekyll'
 gem 'just-the-docs'
+gem 'yard'
 
 group :jekyll_plugins do
   gem 'jekyll-feed'

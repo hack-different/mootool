@@ -31,13 +31,13 @@ module MooTool
         # @return [void]
         def to_tree_validations(node)
           validation_nodes = validate_signature.map do |v|
-            Helpers::TreeNode.new(v.ai)
+            v.to_tree
           end
           node.children << Helpers::TreeNode.new('Validation', validation_nodes) if validation_nodes.any?
           return unless @content[:IM4M]
 
           node.children << Helpers::TreeNode.new('Certificate Validations', @content[:IM4M].validate.map { |v|
-            Helpers::LeafNode.new(v.ai)
+            v.to_tree
           })
         end
 
@@ -160,9 +160,10 @@ module MooTool
         # Extracts the payload and writes it to disk.
         #
         # @return [void]
-        def extract_payload
-          output_path = ::File.join(::File.dirname(@filename), basename)
-          ::File.write(output_path, @payload)
+        def extract_payload(path=nil)
+          path ||= ::File.dirname(@filename)
+          output_path = ::File.join(path, basename)
+          ::File.write(output_path, payload.value)
         end
 
         # Generates SHA-384 digests for all hashes in the file.

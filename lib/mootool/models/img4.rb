@@ -51,7 +51,7 @@ module MooTool
       # @param key [String, Symbol] The IMG4 tag (e.g., 'IM4M').
       # @return [Models::DescriptorResult, Symbol] The descriptive result or the original key.
       def self.key_name(key)
-        key = key.to_sym unless key.is_a?(Symbol)
+        key = key.to_sym if key.respond_to? :to_sym
 
         if friendly
           string_result = mappings[key].to_s

@@ -35,6 +35,7 @@ module MooTool
         end
       end
 
+      method_option :export_path, type: :string, default: nil
       method_option :save_file, type: :string, default: nil
       desc 'index', 'Indexes certificates throughout the land'
       # Indexes certificates found in the environment and optionally saves the index.
@@ -49,6 +50,13 @@ module MooTool
         end
 
         Models::CertificateIndex.current.save options[:save_file] if options[:save_file]
+
+        if options[:export_path]
+          Models::CertificateIndex.current.index.each do |id, cert|
+            output = File.join(options[:export_path], "#{id.shasum}.der")
+            File.open(output, "wb") { |f| f.print cert.openssl_certificate.to_der }
+          end
+        end
 
         ap(Models::CertificateIndex.current.index)
       end

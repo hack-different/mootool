@@ -81,6 +81,11 @@ module MooTool
       def manifest
         ap Models::IOReg.create(options[:path]).manifests
       end
+
+      desc 'extract <file> [outdir]', 'Extracts an img4/DER file'
+      def extract(file, outdir=nil)
+        ap Models::IMG4::File.load(file).extract_payload(outdir)
+      end
     end
   end
 end

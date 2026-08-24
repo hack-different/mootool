@@ -2,8 +2,6 @@
 
 require 'gtk3'
 
-
-
 module MooTool
   module GUI
     class Application < Gtk::Application
@@ -13,17 +11,16 @@ module MooTool
         super('me.rickmark.mootool', :handles_open)
 
         signal_connect 'startup' do |application|
-          builder = Gtk::Builder.new(:resource => "/me/rickmark/mootool/app-menu.ui")
-          app_menu = builder.get_object("appmenu")
+          builder = Gtk::Builder.new(resource: '/me/rickmark/mootool/app-menu.ui')
+          app_menu = builder.get_object('appmenu')
           application.set_app_menu(app_menu)
 
-          action = Gio::SimpleAction.new("quit")
-          action.signal_connect("activate") do |_action, parameter|
+          action = Gio::SimpleAction.new('quit')
+          action.signal_connect('activate') do |_action, _parameter|
             application.quit
           end
           application.add_action(action)
         end
-
 
         signal_connect 'activate' do |application|
           window = PrintWindow.new(application)
@@ -43,8 +40,6 @@ module MooTool
 
           win.present
         end
-
-
       end
     end
   end

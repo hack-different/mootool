@@ -19,9 +19,10 @@ module MooTool
       #
       # @param value [String, Object] The value of the leaf. Non-strings are converted via #to_s.
       # @param key [String, Symbol, nil] An optional key to form a key/value pair.
-      def initialize(value, key: nil)
+      def initialize(value, key: nil, props: nil)
         @value = value.is_a?(String) ? value : value.to_s
         @key = key&.to_s
+        @props = props
       end
 
       # Returns true if this leaf has a key (key/value form).

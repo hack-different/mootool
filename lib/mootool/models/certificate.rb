@@ -178,15 +178,15 @@ module MooTool
       #
       # @return [Helpers::TreeNode] The tree representation.
       def to_tree
-        properties = { subject: @certificate.subject.to_s, issuer: @certificate.issuer.to_s }
+        properties = { issuer: @certificate.issuer.to_s }
 
         properties[:key_id] = key_id if key_id
         properties[:public_key] = formatted_public_key(find_matches: true)
         properties[:public_key_sha] = public_key_sha
         properties[:fingerprint] = @fingerprint
 
-        node = Helpers::TreeNode.new("Certificate:#{digest.ai}", properties: properties)
-        validation_nodes = validations[:validations].map { |v| Helpers::TreeNode.new(v.ai) }
+        node = Helpers::TreeNode.new(self.subject.to_s.ai, [], type: 'Certificate', id: self.fingerprint, properties: properties)
+        validation_nodes = validations[:validations].map { |v| v.to_tree }
         node.children << Helpers::TreeNode.new('Validations', validation_nodes)
         extension_nodes = @extensions.map do |id, e|
           result = e.is_a?(Hash) && e.key?(:value) ? e[:value] : e
@@ -382,17 +382,17 @@ module MooTool
         validator_certs = validator_certs.uniq { |_hash, cert| cert.digest }
 
         validations = validator_certs.map do |_hash, validator_certificate|
-          {
+          CertificateValidation.new(
             subject: validator_certificate.subject.to_s,
             issuer: validator_certificate.issuer.to_s,
             self_digest: (validator_certificate.digest == digest),
             fingerprint: validator_certificate.fingerprint,
             digest: validator_certificate.digest,
             valid: verify(validator_certificate.public_key)
-          }
+          )
         end
         valid_certs = validations.select do |validation|
-          validation[:valid] || validation[:subject] == issuer.to_s
+          validation.valid? || validation.subject == issuer.to_s
         end
 
         {
@@ -401,7 +401,7 @@ module MooTool
           issuer: issuer.to_s,
           key_id: key_id,
           public_key_sha: public_key_sha,
-          validations: valid_certs.uniq { |cert| cert[:digest].shasum }
+          validations: valid_certs.uniq { |cert| cert.digest.shasum }
         }
       end
 

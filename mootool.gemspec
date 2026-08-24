@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel'
   spec.add_dependency 'amazing_print'
+  spec.add_dependency 'ansi2html'
   spec.add_dependency 'apple-data'
   spec.add_dependency 'CFPropertyList'
   spec.add_dependency 'colorize'
@@ -56,7 +57,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty'
   spec.add_dependency 'uuidtools'
   spec.add_dependency 'zeitwerk'
-  spec.add_development_dependency 'yard'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

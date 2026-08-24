@@ -68,7 +68,7 @@ module MooTool
           node.children << Helpers::TreeNode.new("Version: #{@version.ai}")
           node.children << @body.to_tree if @body
           node.children << Helpers::TreeNode.new('Signature', [Helpers::TreeNode.new(@signature.ai)]) if @signature
-          node.children << Helpers::TreeNode.new('Certificates', @certificates.map(&:to_tree)) if @certificates
+          node.children += @certificates.map(&:to_tree) if @certificates
 
           node
         end
@@ -97,13 +97,13 @@ module MooTool
               validation[:valid] || validation[:subject] == certificate.issuer.to_s
             end
 
-            {
+            CertificateValidation.new(
               subject: certificate.subject.to_s,
               issuer: certificate.issuer.to_s,
               fingerprint: certificate.fingerprint,
               key_id: certificate.key_id,
-              validations: valid_certs.uniq { |cert| cert[:digest].shasum }
-            }.compact
+              attestations: valid_certs.uniq { |cert| cert[:digest].shasum }
+            )
           end
         end
 

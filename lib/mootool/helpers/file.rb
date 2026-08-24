@@ -18,7 +18,7 @@ module MooTool
             data = ::File.binread(path.fullname)
             new(data, path.fullname)
           when String, Pathname
-            data = ::File.binread(path)
+            data = ::File.exist?(path) ? ::File.binread(path) : nil
             new(data, path)
           else
             new(data, nil)

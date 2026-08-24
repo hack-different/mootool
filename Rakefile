@@ -17,9 +17,9 @@ namespace :ui do
   task :build do
     gresource_bin = File.join(UI_PATH, 'resources.bin')
     gresource_xml = File.join(UI_PATH, 'application.gresource.xml')
-      system('glib-compile-resources',
-             '--target', gresource_bin,
-             '--sourcedir', File.dirname(gresource_xml),
-             gresource_xml)
-    end
+    system('glib-compile-resources',
+           '--target', gresource_bin,
+           '--sourcedir', File.dirname(gresource_xml),
+           gresource_xml)
+  end
 end

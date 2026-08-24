@@ -5,6 +5,7 @@ PATH
       CFPropertyList
       activemodel
       amazing_print
+      ansi2html
       apple-data
       colorize
       ecies
@@ -46,6 +47,7 @@ GEM
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     amazing_print (2.0.0)
+    ansi2html (5.3.4)
     apple-data (1.0.655)
       activesupport
       jsonpath
@@ -341,16 +343,16 @@ GEM
     securerandom (0.4.1)
     shale (1.2.2)
       bigdecimal
-    simplecov (1.1.0)
-    sorbet (0.6.13425)
-      sorbet-static (= 0.6.13425)
-    sorbet-runtime (0.6.13425)
-    sorbet-static (0.6.13425-aarch64-linux)
-    sorbet-static (0.6.13425-universal-darwin)
-    sorbet-static (0.6.13425-x86_64-linux)
-    sorbet-static-and-runtime (0.6.13425)
-      sorbet (= 0.6.13425)
-      sorbet-runtime (= 0.6.13425)
+    simplecov (1.1.1)
+    sorbet (0.6.13426)
+      sorbet-static (= 0.6.13426)
+    sorbet-runtime (0.6.13426)
+    sorbet-static (0.6.13426-aarch64-linux)
+    sorbet-static (0.6.13426-universal-darwin)
+    sorbet-static (0.6.13426-x86_64-linux)
+    sorbet-static-and-runtime (0.6.13426)
+      sorbet (= 0.6.13426)
+      sorbet-runtime (= 0.6.13426)
     spoom (1.8.7)
       erubi (>= 1.10.0)
       prism (>= 0.28.0)
@@ -487,6 +489,7 @@ CHECKSUMS
   activesupport (8.1.3.1) sha256=85458765f25ea48b9019c46b6bb3fa5683197bf4280d9f06710a6e8d7a831376
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   amazing_print (2.0.0) sha256=2e36aba46ac78d37ed27ca0e2056afe3583183bb5c64f157c246b267355e5d6a
+  ansi2html (5.3.4) sha256=270fd9161f5368b6cc359a919c0eb78a850c01453bace830358de3b95e659d5c
   apple-data (1.0.655) sha256=675fe8f685e0d64d5c217a8538950b644a2bbe59a458cee52a05e0f8cd9a869a
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   atk (4.3.7) sha256=29bcc6d46bd52b4616de95359d5492c4390e6532cd313b220525bdd812df7628
@@ -623,13 +626,13 @@ CHECKSUMS
   sawyer (0.9.3) sha256=0d0f19298408047037638639fe62f4794483fb04320269169bd41af2bdcf5e41
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
   shale (1.2.2) sha256=e298bd0658e2651c76a1a4ffc7db8d43592288181d28d78ce5748c8525094cca
-  simplecov (1.1.0) sha256=30f12f31a659c377ef402d5463a50eaf9037035fe1fac3d263cb389682cae1b4
-  sorbet (0.6.13425) sha256=255356926b7f95c35481cace5806b8b5f7849f8c2e635a426e1ba37ab1ecd913
-  sorbet-runtime (0.6.13425) sha256=92f55873199d8bb259ce20c4fc02d95b63e8d6c0c5abba60b7c67054f175f147
-  sorbet-static (0.6.13425-aarch64-linux) sha256=abfc2732b524e0e688639969716943d338340f50340f6341315911a532b81e05
-  sorbet-static (0.6.13425-universal-darwin) sha256=9cc966c69e30599fed8317882683e91c31d0587a7863fd904b18fe6921d9481e
-  sorbet-static (0.6.13425-x86_64-linux) sha256=eddc015b82786b589960038285f7516f0c93ac8d5437c4403463f781726f10c7
-  sorbet-static-and-runtime (0.6.13425) sha256=0c15785c6f9599377fa14e39aaebbe8da9e8a434e274c74692ceb5266e2b2e2f
+  simplecov (1.1.1) sha256=25825ef13f0b2e74694d769817dad6ab8e90131dabdaa666e522fea105521e78
+  sorbet (0.6.13426) sha256=e1f1fc220c37b93e4fe42892cadd2d348876f723c267efd0701ee14a7307c3f8
+  sorbet-runtime (0.6.13426) sha256=6c4edafc6406ff89ba819ac6f5e1441459a2ac36f463f65b04c34cb16213c998
+  sorbet-static (0.6.13426-aarch64-linux) sha256=ddec31922a5b4b91305354b6bda696bd4e5980cb07fb3e2798eed1f4c92c58ec
+  sorbet-static (0.6.13426-universal-darwin) sha256=0758b45a87e93a85370fb47584e301c5bc5db8d643605d43f466d8a374a6eb9a
+  sorbet-static (0.6.13426-x86_64-linux) sha256=9f211ec3695f4e8144172156c2f20ca580d46bb1de5cc30dbe40e827c6798510
+  sorbet-static-and-runtime (0.6.13426) sha256=b5cd434598e3de7fa776b5d18fc6483b489ac062b955c51d5c0ec6e968528d10
   spoom (1.8.7) sha256=81960502cdf23aa991f015988aa5dd43325e23ae4318b8e00d541299cbdb70f6
   steep (2.0.0) sha256=6eb0ecc09637bbb54f0a5f2cf63daea6d3208ccace64b4f1107d976333605c30
   strptime (0.2.5) sha256=98ed77ff7717a47387ba473614f478e78b162d70a64072fd71d54f547e079af9
@@ -659,7 +662,7 @@ CHECKSUMS
   verse (0.4.0) sha256=e02110665cbfdf3ff61cbe523977d1a253539108f41547577e4f7221cc0d9f37
   webrick (1.9.2) sha256=beb4a15fc474defed24a3bda4ffd88a490d517c9e4e6118c3edce59e45864131
   wisper (1.6.1) sha256=5ae88a4aa8cab54ec849a934c4e70aebbef560114dd164dfd9b0058ec3077ca5
-  yard (0.9.45) sha256=52e211493f7cb8a3ebf7e104a25a1e73937a3103092545d34cb88fafebb3dc51
+  yard (0.9.45)
   zeitwerk (2.8.3) sha256=2c85125a8467ce069e20123d1e709a08955c9d29c118c25b46b7b7fafdbb92e5
 
 BUNDLED WITH

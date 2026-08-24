@@ -7,7 +7,7 @@ module MooTool
         # A signluar Bundle Object Index Element (name or int)
         class ObjectIndex < RASN2::Model
           sequence :object_index_pair do
-            endprintable_string(:object_name)
+            printable_string(:object_name)
             integer(:object_index)
           end
         end

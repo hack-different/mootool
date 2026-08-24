@@ -41,7 +41,7 @@ module MooTool
           signature_kind = signature_pair[:kind]
           signature = signature_pair[:value]
           signature = signature.value if signature.is_a?(Models::ECCSignature)
-          public_keys.flat_map do |fingerprint, public_key|
+          public_keys.flat_map do |subject, public_key|
             hash_pairing = raw_hashes.find { |h| h[:kind] == :signed_data }
             hash_kind = hash_pairing[:kind]
             raw_hash = hash_pairing[:value]
@@ -50,13 +50,13 @@ module MooTool
             raw_hash = raw_hash.value if raw_hash.is_a?(Models::Digest)
             signature = signature.value if signature.is_a?(Models::Digest)
             result = public_key.verify('SHA384', signature, raw_hash)
-            {
+            MooTool::Models::PayloadSignature.new(
               signature_kind: signature_kind,
-              fingerprint: fingerprint,
+              subject: subject,
               hash_kind: hash_kind,
               hash: printable_hash,
               valid: result
-            }
+            )
           end
         end
       end
